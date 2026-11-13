@@ -331,6 +331,8 @@ for (const button of document.querySelectorAll("[data-lang]")) {
   button.addEventListener("click", () => changeLanguage(button.dataset.lang));
 }
 entry.addEventListener("click", enterGame);
+get("featured-detail").addEventListener("click", () => openProject(ambacar.id));
+get("preview-project").addEventListener("click", () => openProject("rgb"));
 get("exit").addEventListener("click", exitGame);
 get("game-language").addEventListener("click", () => changeLanguage(language === "es" ? "en" : "es"));
 cameraButton.addEventListener("click", () => {

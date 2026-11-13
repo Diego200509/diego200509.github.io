@@ -76,15 +76,23 @@ export const projects = [
 export const translations = {
   es: {
     skip: "Ir a proyectos", nav: "Principal", home: "Distrito Cero · Inicio",
-    projects: "Proyectos", profile: "Perfil", contact: "Contacto",
-    intro: "DIEGO JIJÓN / PORTAFOLIO",
-    lead: "Explora un barrio 3D inspirado en los Andes ecuatorianos. Cada lugar te lleva a un proyecto.",
+    projects: "Proyectos", profile: "Sobre mí", contact: "Contacto",
+    intro: "PORTAFOLIO · AMBATO, ECUADOR",
+    role: "Estudiante de Ingeniería en Software",
+    lead: "Desarrollo aplicaciones para resolver problemas de gestión, educación y automatización.",
     enter: "Explorar en 3D", viewProjects: "Ver proyectos ↓",
-    concept: "Arte conceptual · Laboratorio RGB", selected: "Proyectos seleccionados", allRepos: "Todos en GitHub ↗",
+    avatarAlt: "Avatar de Diego en la plaza de Distrito Cero", previewProject: "Laboratorio RGB ↗",
+    featured: "CASO DESTACADO · AMBACAR", featuredTitle: "Gestión de usuarios ZEUS",
+    featuredCopy: "En mis prácticas trabajé en el módulo de AMBYSOFT para crear y editar usuarios y asignarles agencias, divisiones y roles. Diseñé pantallas y las conecté con los servicios del backend.",
+    featuredDetail: "Ver mi aporte ↗", flowTitle: "Registro de un usuario",
+    flowUser: "Ingresar los datos del usuario", flowAssignment: "Asignar agencia, división y rol",
+    flowValidation: "Validar los datos y registrar el usuario", flowNote: "Flujo ilustrativo del módulo",
+    selected: "Proyectos seleccionados", allRepos: "Todos en GitHub ↗",
     about: "SOBRE MÍ", education: "Formación", degree: "Ingeniería en Software · Universidad Técnica de Ambato",
     experience: "Experiencia", skills: "Habilidades", languages: "Idiomas", languageLevels: "Español nativo · Inglés B1",
     garage: "Taller de TI", readExperience: "Ver experiencia ↗", readCv: "Ver CV completo ↗",
     bio: "Estudio Ingeniería en Software en la Universidad Técnica de Ambato. Me interesa desarrollar aplicaciones, trabajar con bases de datos y aplicar IA y automatización a problemas concretos.",
+    personal: "Me gustan los videojuegos como Valorant. Esa afición inspiró Distrito Cero, un barrio que puedes recorrer para descubrir lo que he construido.",
     cv: "Ver CV", cvSummary: "CV breve", print: "Imprimir / Guardar PDF", backSite: "← Portafolio",
     contactLabel: "CONTACTO", talk: "Hablemos de software.", githubProfile: "Mi perfil de GitHub ↗",
     exit: "← Salir", district: "DISTRITO CERO", map: "Mapa", mapTitle: "Mapa del distrito",
@@ -106,15 +114,23 @@ export const translations = {
   },
   en: {
     skip: "Skip to projects", nav: "Main navigation", home: "Distrito Cero · Home",
-    projects: "Projects", profile: "Profile", contact: "Contact",
-    intro: "DIEGO JIJÓN / PORTFOLIO",
-    lead: "Explore a 3D neighborhood inspired by the Ecuadorian Andes. Every location leads to a project.",
+    projects: "Projects", profile: "About me", contact: "Contact",
+    intro: "PORTFOLIO · AMBATO, ECUADOR",
+    role: "Software Engineering student",
+    lead: "I build applications for operations, education, and automation.",
     enter: "Explore in 3D", viewProjects: "View projects ↓",
-    concept: "Concept art · RGB Lab", selected: "Selected projects", allRepos: "All on GitHub ↗",
+    avatarAlt: "Diego’s avatar in the Distrito Cero plaza", previewProject: "RGB Lab ↗",
+    featured: "FEATURED CASE · AMBACAR", featuredTitle: "ZEUS user management",
+    featuredCopy: "During my internship, I worked on the AMBYSOFT module for creating and editing users and assigning branches, divisions, and roles. I designed screens and connected them to backend services.",
+    featuredDetail: "View my contribution ↗", flowTitle: "Registering a user",
+    flowUser: "Enter the user’s details", flowAssignment: "Assign a branch, division, and role",
+    flowValidation: "Validate and register the user", flowNote: "Illustrative module workflow",
+    selected: "Selected projects", allRepos: "All on GitHub ↗",
     about: "ABOUT ME", education: "Education", degree: "Software Engineering · Technical University of Ambato",
     experience: "Experience", skills: "Skills", languages: "Languages", languageLevels: "Native Spanish · English B1",
     garage: "IT workshop", readExperience: "View experience ↗", readCv: "View full résumé ↗",
     bio: "I study Software Engineering at the Technical University of Ambato. I’m interested in building applications, working with databases, and applying AI and automation to practical problems.",
+    personal: "I enjoy games like Valorant. That interest inspired Distrito Cero, a neighborhood you can explore to discover what I’ve built.",
     cv: "View résumé", cvSummary: "Résumé summary", print: "Print / Save PDF", backSite: "← Portfolio",
     contactLabel: "CONTACT", talk: "Let’s talk software.", githubProfile: "My GitHub profile ↗",
     exit: "← Exit", district: "DISTRITO CERO", map: "Map", mapTitle: "District map",
@@ -155,5 +171,6 @@ export function translatePage(language) {
   const words = translations[language];
   for (const item of document.querySelectorAll("[data-t]")) item.textContent = words[item.dataset.t];
   for (const item of document.querySelectorAll("[data-aria]")) item.setAttribute("aria-label", words[item.dataset.aria]);
+  for (const item of document.querySelectorAll("[data-alt]")) item.alt = words[item.dataset.alt];
   for (const item of document.querySelectorAll("[data-lang]")) item.setAttribute("aria-pressed", item.dataset.lang === language);
 }

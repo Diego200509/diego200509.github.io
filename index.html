@@ -19,7 +19,7 @@
     </a>
     <nav aria-label="Principal" data-aria="nav">
       <a href="#projects" data-t="projects">Proyectos</a>
-      <a href="#profile" data-t="profile">Perfil</a>
+      <a href="#profile" data-t="profile">Sobre mí</a>
       <a href="#experience" data-t="experience">Experiencia</a>
       <a href="#contact" data-t="contact">Contacto</a>
     </nav>
@@ -30,22 +30,47 @@
   </header>
   <main id="main">
     <section class="hero" id="inicio" aria-labelledby="title">
-      <img class="hero-image" src="./assets/distrito-concepto.webp" width="1440" height="810" alt="" fetchpriority="high">
-      <div class="hero-content">
-        <p class="eyebrow" data-t="intro">DIEGO JIJÓN / PORTAFOLIO</p>
-        <h1 id="title">Distrito<br><em>Cero</em></h1>
-        <p class="lead" data-t="lead">Explora un barrio 3D inspirado en los Andes ecuatorianos. Cada lugar te lleva a un proyecto.</p>
-        <div class="hero-actions">
-          <button class="button primary" id="enter" type="button" disabled>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7Z" fill="currentColor"/></svg>
-            <span data-t="enter">Explorar en 3D</span>
-          </button>
-          <a class="button secondary" href="#projects" data-t="viewProjects">Ver proyectos ↓</a>
+      <div class="hero-layout content">
+        <div class="hero-content">
+          <p class="eyebrow" data-t="intro">PORTAFOLIO · AMBATO, ECUADOR</p>
+          <h1 id="title">Diego <em>Jijón</em></h1>
+          <p class="hero-role" data-t="role">Estudiante de Ingeniería en Software</p>
+          <p class="lead" data-t="lead">Desarrollo aplicaciones para resolver problemas de gestión, educación y automatización.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#projects" data-t="viewProjects">Ver proyectos ↓</a>
+            <button class="button secondary" id="enter" type="button" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7Z" fill="currentColor"/></svg>
+              <span data-t="enter">Explorar en 3D</span>
+            </button>
+          </div>
+          <p class="game-error" id="game-error" role="status" hidden></p>
+          <noscript><p>Activa JavaScript para explorar el barrio 3D. Puedes acceder a los repositorios desde GitHub.</p></noscript>
         </div>
-        <p class="game-error" id="game-error" role="status" hidden></p>
-        <noscript><p>Activa JavaScript para explorar el barrio 3D. Puedes acceder a los repositorios desde GitHub.</p></noscript>
+        <figure class="hero-preview">
+          <img src="./assets/distrito-avatar.webp" width="1100" height="860" alt="Avatar de Diego en la plaza de Distrito Cero" data-alt="avatarAlt" fetchpriority="high">
+          <figcaption>
+            <span>DISTRITO CERO</span>
+            <button type="button" class="preview-project" id="preview-project" data-t="previewProject">Laboratorio RGB ↗</button>
+          </figcaption>
+        </figure>
       </div>
-      <span class="concept" data-t="concept">Arte conceptual · Laboratorio RGB</span>
+    </section>
+    <section class="featured content" id="featured" aria-labelledby="featured-title">
+      <div>
+        <p class="eyebrow" data-t="featured">CASO DESTACADO · AMBACAR</p>
+        <h2 id="featured-title" data-t="featuredTitle">Gestión de usuarios ZEUS</h2>
+        <p data-t="featuredCopy">En mis prácticas trabajé en el módulo de AMBYSOFT para crear y editar usuarios y asignarles agencias, divisiones y roles. Diseñé pantallas y las conecté con los servicios del backend.</p>
+        <button type="button" class="button secondary" id="featured-detail" data-t="featuredDetail">Ver mi aporte ↗</button>
+      </div>
+      <div class="featured-flow">
+        <h3 data-t="flowTitle">Registro de un usuario</h3>
+        <ol>
+          <li data-t="flowUser">Ingresar los datos del usuario</li>
+          <li data-t="flowAssignment">Asignar agencia, división y rol</li>
+          <li data-t="flowValidation">Validar los datos y registrar el usuario</li>
+        </ol>
+        <p data-t="flowNote">Flujo ilustrativo del módulo</p>
+      </div>
     </section>
     <section class="archive content" id="projects" aria-labelledby="projects-title">
       <header class="section-title">
@@ -63,15 +88,20 @@
       </noscript>
     </section>
     <section class="profile content" id="profile" aria-labelledby="profile-title">
-      <div>
-        <p class="eyebrow" data-t="about">SOBRE MÍ</p>
-        <h2 id="profile-title">Diego Jijón</h2>
+      <div class="profile-story">
+        <h2 id="profile-title" data-t="profile">Sobre mí</h2>
         <p class="profile-copy" data-t="bio">Estudio Ingeniería en Software en la Universidad Técnica de Ambato. Me interesa desarrollar aplicaciones, trabajar con bases de datos y aplicar IA y automatización a problemas concretos.</p>
+        <p class="profile-copy" data-t="personal">Me gustan los videojuegos como Valorant. Esa afición inspiró Distrito Cero, un barrio que puedes recorrer para descubrir lo que he construido.</p>
+        <div class="profile-actions">
+          <a class="button primary" href="./cv.html" id="cv-link" data-t="cv">Ver CV</a>
+          <a class="text-link" href="#experience" data-t="experience">Experiencia</a>
+        </div>
       </div>
-      <div class="profile-actions">
-        <a class="button secondary" href="./cv.html" id="cv-link" data-t="cv">Ver CV</a>
-        <a class="text-link" href="https://github.com/Diego200509" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-      </div>
+      <dl class="profile-facts">
+        <div><dt data-t="education">Formación</dt><dd data-t="degree">Ingeniería en Software · Universidad Técnica de Ambato</dd></div>
+        <div><dt data-t="skills">Habilidades</dt><dd>.NET · TypeScript · Python · SQL</dd></div>
+        <div><dt data-t="languages">Idiomas</dt><dd data-t="languageLevels">Español nativo · Inglés B1</dd></div>
+      </dl>
     </section>
     <section class="experience content" id="experience" aria-labelledby="experience-title">
       <header class="section-title"><h2 id="experience-title" data-t="experience">Experiencia</h2></header>
