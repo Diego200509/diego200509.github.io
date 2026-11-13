@@ -20,6 +20,7 @@
     <nav aria-label="Principal" data-aria="nav">
       <a href="#projects" data-t="projects">Proyectos</a>
       <a href="#profile" data-t="profile">Perfil</a>
+      <a href="#experience" data-t="experience">Experiencia</a>
       <a href="#contact" data-t="contact">Contacto</a>
     </nav>
     <div class="languages" role="group" aria-label="Idioma / Language">
@@ -72,6 +73,10 @@
         <a class="text-link" href="https://github.com/Diego200509" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
       </div>
     </section>
+    <section class="experience content" id="experience" aria-labelledby="experience-title">
+      <header class="section-title"><h2 id="experience-title" data-t="experience">Experiencia</h2></header>
+      <div class="experience-list" id="experience-list"></div>
+    </section>
     <footer class="footer content" id="contact">
       <div>
         <p class="eyebrow" data-t="contactLabel">CONTACTO</p>
@@ -89,19 +94,30 @@
         <span id="visited" aria-live="polite"></span>
       </div>
       <div class="game-menu">
-        <button class="button game-button" id="map-button" type="button" data-t="map">Mapa</button>
+        <button class="button game-button" id="camera-button" type="button" aria-pressed="false" disabled data-t="camera">Cámara</button>
+        <button class="button game-button" id="map-button" type="button" disabled data-t="map">Mapa</button>
         <button class="button game-button game-language" id="game-language" type="button" aria-label="Switch to English">EN</button>
       </div>
     </header>
-    <div id="loading" class="loading" role="status" hidden>
-      <div class="loading-plan" aria-hidden="true"></div>
-      <p data-t="loading">Preparando el distrito…</p>
+    <div id="loading" class="loading" data-phase="0" hidden>
+      <div class="loading-plan" aria-hidden="true">
+        <span class="plan-road"></span>
+        <span class="plan-block plan-lab"></span><span class="plan-block plan-hall"></span>
+        <span class="plan-block plan-school"></span><span class="plan-block plan-garage"></span>
+        <span class="plan-block plan-crossing"></span><span class="plan-square"></span>
+      </div>
+      <div class="loading-copy">
+        <p class="eyebrow" data-t="district">DISTRITO CERO</p>
+        <p id="loading-stage" role="status"></p>
+        <progress id="loading-progress" max="3" value="0" aria-label="Carga del distrito" data-aria="loadingProgress"></progress>
+      </div>
     </div>
     <div class="crosshair" aria-hidden="true"></div>
     <div class="game-bottom" id="game-bottom">
       <p id="objective" class="objective" aria-live="polite"></p>
       <button type="button" id="interact" class="button primary" data-t="interact">Interactuar</button>
       <p class="game-controls" id="controls-text"></p>
+      <p class="sr-only" id="camera-status" role="status"></p>
     </div>
     <div class="touch-ui" aria-label="Movimiento" data-aria="movement">
       <button data-move="KeyW" type="button" aria-label="Avanzar" data-aria="forward">↑</button>

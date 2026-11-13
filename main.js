@@ -1,11 +1,16 @@
 import { loadLanguage, projects, saveLanguage, translatePage, translations } from "./content.js";
+import { experience, experienceMarkup } from "./experience.js";
 
 const get = (id) => document.getElementById(id);
 const projectById = new Map(projects.map((project) => [project.id, project]));
+const ambacar = experience.find((entry) => entry.id === "ambacar");
+const destinations = ["rgb", "asotema", "edurural", "ambacar", "traffic"];
 const game = get("game");
 const viewport = get("viewport");
 const entry = get("enter");
 const loading = get("loading");
+const cameraButton = get("camera-button");
+const mapButton = get("map-button");
 const mapDialog = get("map-dialog");
 const projectDialog = get("project-dialog");
 const mobile = matchMedia("(pointer: coarse)");
@@ -19,12 +24,14 @@ let openingRequest = 0;
 let detailId = null;
 let target = { stop: null, prism: null, restored: false };
 let soundContext;
+let loadStage = 0;
+let thirdPerson = false;
 
 function loadProgress() {
   try {
     const value = JSON.parse(localStorage.getItem("district-progress"));
     return {
-      visited: new Set(Array.isArray(value?.visited) ? value.visited.filter(id => projectById.has(id)) : []),
+      visited: new Set(Array.isArray(value?.visited) ? value.visited.filter(id => destinations.includes(id)) : []),
       prisms: new Set(Array.isArray(value?.prisms) ? value.prisms.filter(index => [0, 1, 2].includes(index)) : [])
     };
   } catch { return { visited: new Set(), prisms: new Set() }; }
@@ -58,6 +65,16 @@ function renderCards() {
 
 function renderDetail() {
   if (!detailId) return;
+  const link = get("detail-link");
+  if (detailId === ambacar.id) {
+    get("detail-type").textContent = words().experience;
+    get("detail-title").textContent = "Ambacar S.A.";
+    get("detail-content").innerHTML = `<article class="experience-details">${experienceMarkup(ambacar, language)}</article>`;
+    link.href = "./cv.html?lang=" + language + "#cv-experience";
+    link.removeAttribute("target");
+    link.textContent = words().readCv;
+    return;
+  }
   const project = projectById.get(detailId);
   const copy = project[language];
   get("detail-type").textContent = copy.kind;
@@ -65,7 +82,9 @@ function renderDetail() {
   get("detail-content").innerHTML = `<section><h3>${words().problem}</h3><p>${copy.problem}</p></section>
     <section><h3>${words().solution}</h3><p>${copy.solution}</p></section>
     <p class="stack">${(language === "en" && project.stackEn) || project.stack}</p>`;
-  get("detail-link").href = project.repo;
+  link.href = project.repo;
+  link.target = "_blank";
+  link.textContent = words().source;
 }
 
 function openProject(id) {
@@ -81,24 +100,25 @@ function openProject(id) {
 }
 
 function renderProgress() {
-  get("visited").textContent = words().visited(progress.visited.size);
+  get("visited").textContent = words().visited(progress.visited.size, destinations.length);
 }
 
 function renderMap() {
-  const createDestination = (project) => {
+  const createDestination = (id) => {
+    const project = projectById.get(id);
     const button = document.createElement("button");
     const label = document.createElement("span");
     const subtitle = document.createElement("small");
     const status = document.createElement("small");
     button.type = "button";
-    button.dataset.destination = project.id;
-    label.textContent = project[language].location;
-    subtitle.textContent = project.name[language];
-    status.textContent = progress.visited.has(project.id) ? words().seen : words().unseen;
+    button.dataset.destination = id;
+    label.textContent = project?.[language].location ?? words().garage;
+    subtitle.textContent = project?.name[language] ?? "Ambacar";
+    status.textContent = progress.visited.has(id) ? words().seen : words().unseen;
     button.append(label, subtitle, status);
     button.addEventListener("click", () => {
       mapDialog.close();
-      world.moveTo(project.id);
+      world.moveTo(id);
       focusWorld();
     });
     return button;
@@ -106,8 +126,9 @@ function renderMap() {
   const plaza = document.createElement("span");
   plaza.className = "map-plaza";
   plaza.textContent = words().plaza;
-  get("map-list").replaceChildren(createDestination(projectById.get("rgb")), createDestination(projectById.get("asotema")), plaza,
-    createDestination(projectById.get("edurural")), createDestination(projectById.get("traffic")));
+  const buttons = destinations.map(createDestination);
+  buttons.splice(2, 0, plaza);
+  get("map-list").replaceChildren(...buttons);
 }
 
 function renderTarget() {
@@ -118,6 +139,11 @@ function renderTarget() {
   action.textContent = words().interact;
   if (!stop) {
     objective.textContent = words().explore;
+    return;
+  }
+  if (stop === ambacar.id) {
+    objective.textContent = `${words().garage} · Ambacar`;
+    action.textContent = words().readExperience;
     return;
   }
   const name = projectById.get(stop).name[language];
@@ -132,6 +158,37 @@ function renderTarget() {
   action.textContent = words().detail;
 }
 
+function renderExperience() {
+  get("experience-list").innerHTML = experience.map((entry) =>
+    `<article>${experienceMarkup(entry, language)}</article>`).join("");
+}
+
+function renderCamera() {
+  const mode = thirdPerson ? words().thirdPerson : words().firstPerson;
+  cameraButton.setAttribute("aria-pressed", String(thirdPerson));
+  cameraButton.setAttribute("aria-label", `${words().camera} · ${mode}`);
+  get("camera-status").textContent = mode;
+  game.dataset.camera = thirdPerson ? "third" : "first";
+}
+
+function setLoadStage(stage) {
+  loadStage = stage;
+  loading.dataset.phase = stage;
+  get("loading-stage").textContent = words().loadingStages[stage];
+  get("loading-progress").value = stage;
+}
+
+function nextPaint() {
+  return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+function updateDistrictLabels() {
+  world?.setLabels({
+    ...Object.fromEntries(projects.map((project) => [project.id, project.name[language]])),
+    ambacar: words().garage
+  });
+}
+
 function render() {
   translatePage(language);
   document.querySelector(".brand").setAttribute("aria-label", words().home);
@@ -142,11 +199,14 @@ function render() {
   get("controls-text").textContent = mobile.matches ? words().touchControls : words().controls;
   get("game-error").textContent = words().gameError;
   renderCards();
+  renderExperience();
   renderProgress();
+  renderCamera();
   renderTarget();
+  if (opening) setLoadStage(loadStage);
   if (mapDialog.open) renderMap();
   if (projectDialog.open) renderDetail();
-  world?.setLabels(Object.fromEntries(projects.map((project) => [project.id, project.name[language]])));
+  updateDistrictLabels();
 }
 
 function changeLanguage(next) {
@@ -188,17 +248,24 @@ async function enterGame() {
 
   get("game-error").hidden = true;
   game.hidden = false;
+  game.setAttribute("aria-busy", "true");
   loading.hidden = false;
+  setLoadStage(0);
+  mapButton.disabled = true;
+  cameraButton.disabled = true;
   get("game-bottom").hidden = true;
   get("main").inert = true;
   get("top").inert = true;
   document.body.classList.add("playing");
   get("exit").focus();
   try {
-    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    await nextPaint();
     if (request !== openingRequest) return;
     if (!world) {
-      const { createWorld } = await import("./world.js");
+      const { createWorld } = await import("./game/world.js");
+      if (request !== openingRequest) return;
+      setLoadStage(1);
+      await nextPaint();
       if (request !== openingRequest) return;
       world = createWorld(viewport, {
         onTarget(state) {
@@ -206,6 +273,10 @@ async function enterGame() {
           renderTarget();
         },
         onProject: openProject,
+        onCamera(enabled) {
+          thirdPerson = enabled;
+          renderCamera();
+        },
         onPrism(index) {
           progress.prisms.add(index);
           storeProgress();
@@ -214,12 +285,22 @@ async function enterGame() {
         }
       });
     }
+    setLoadStage(2);
+    await nextPaint();
+    if (request !== openingRequest) return;
+    updateDistrictLabels();
+    await world.prepare();
+    if (request !== openingRequest) return;
+    world.start(progress.prisms);
+    setLoadStage(3);
+    await nextPaint();
     if (request !== openingRequest) return;
     inGame = true;
-    world.start(progress.prisms);
-    render();
     loading.hidden = true;
     get("game-bottom").hidden = false;
+    game.removeAttribute("aria-busy");
+    cameraButton.disabled = false;
+    mapButton.disabled = false;
     focusWorld();
   } catch (error) {
     if (request !== openingRequest) return;
@@ -236,6 +317,7 @@ function exitGame() {
   inGame = false;
   opening = false;
   world?.stop();
+  game.removeAttribute("aria-busy");
   game.hidden = true;
   get("main").inert = false;
   get("top").inert = false;
@@ -251,7 +333,16 @@ for (const button of document.querySelectorAll("[data-lang]")) {
 entry.addEventListener("click", enterGame);
 get("exit").addEventListener("click", exitGame);
 get("game-language").addEventListener("click", () => changeLanguage(language === "es" ? "en" : "es"));
-get("map-button").addEventListener("click", () => {
+cameraButton.addEventListener("click", () => {
+  world?.toggleCamera();
+});
+game.addEventListener("wheel", (event) => {
+  if (!inGame || anyDialogOpen() || !event.ctrlKey || !event.deltaY) return;
+  event.preventDefault();
+  // Match the direction of zooming away from or toward the player.
+  if ((event.deltaY > 0) !== thirdPerson) world.toggleCamera();
+}, { passive: false });
+mapButton.addEventListener("click", () => {
   if (!inGame) return;
   renderMap();
   world.pause(true);
@@ -269,6 +360,10 @@ for (const dialog of [mapDialog, projectDialog]) {
   });
 }
 window.addEventListener("keydown", (event) => {
+  if (opening && event.code === "Escape") {
+    exitGame();
+    return;
+  }
   if (!inGame || anyDialogOpen() || event.ctrlKey || event.metaKey || event.altKey) return;
   const code = moveKeys.has(event.code) ? event.code : arrows[event.code];
   if (code) {
@@ -279,6 +374,8 @@ window.addEventListener("keydown", (event) => {
     world.look(event.code === "ArrowLeft" ? 0.075 : -0.075);
   } else if (event.code === "KeyE" && !event.repeat) {
     world.interact();
+  } else if (event.code === "KeyV" && !event.repeat) {
+    world.toggleCamera();
   } else if (event.code === "Escape" && !event.repeat) {
     exitGame();
   }

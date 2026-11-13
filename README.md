@@ -1,6 +1,20 @@
 # Distrito Cero
 
-Portafolio bilingüe de Diego Jijón. El barrio se construye con geometría de Three.js. El sitio incluye un recorrido en primera persona, cuatro proyectos y una vista de CV imprimible.
+Portafolio bilingüe de Diego Jijón. El barrio se construye con geometría de Three.js e incluye cuatro proyectos, una parada de experiencia en Ambacar y un CV web imprimible.
+
+## Controles
+
+- **WASD** para caminar, arrastrar para mirar y **E** para interactuar.
+- **Ctrl + rueda hacia abajo** para pasar a tercera persona, **Ctrl + rueda hacia arriba** para volver. **V** y el botón **Cámara** también alternan la vista.
+- En un dispositivo táctil, usa las flechas, arrastra sobre la escena y toca **Cámara** o el botón de acción.
+
+## Código
+
+- `content.js` contiene las fichas de proyectos y las traducciones de la interfaz.
+- `experience.js` contiene la trayectoria y las habilidades que comparten el sitio y el CV.
+- `main.js` conecta la interfaz del portafolio con el juego y guarda el progreso local.
+- `game/world.js` coordina el recorrido, los destinos y la misión RGB.
+- `game/scene.js`, `game/camera.js` y `game/avatar.js` contienen la construcción del barrio, las vistas y el personaje animado.
 
 ## Vista local
 
@@ -10,4 +24,4 @@ En la raíz, ejecuta `python -m http.server 8000 --bind 127.0.0.1` y abre `http:
 
 Publica esta carpeta en la raíz de `diego200509.github.io`. En Settings → Pages, elige **Deploy from a branch**, selecciona la rama `main` y la carpeta **/(root)**.
 
-Las fichas y sus fuentes públicas están en `content.js`. El menú de proyectos y el CV funcionan sin iniciar el 3D.
+El menú de proyectos y el CV funcionan sin iniciar el 3D.
