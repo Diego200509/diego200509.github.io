@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Distrito Cero, portafolio interactivo de Diego Jijón. Explora proyectos de software en un barrio 3D.">
+  <meta name="theme-color" content="#151b21">
+  <title>Distrito Cero · Diego Jijón</title>
+  <link rel="icon" href="./assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./main.js"></script>
+</head>
+<body>
+  <a class="skip" href="#projects" data-t="skip">Ir a proyectos</a>
+  <header class="top" id="top">
+    <a class="brand" href="#inicio" aria-label="Distrito Cero · Inicio">
+      <img src="./assets/mark.svg" width="31" height="31" alt="">
+      <span>DISTRITO CERO</span>
+    </a>
+    <nav aria-label="Principal" data-aria="nav">
+      <a href="#projects" data-t="projects">Proyectos</a>
+      <a href="#profile" data-t="profile">Perfil</a>
+      <a href="#contact" data-t="contact">Contacto</a>
+    </nav>
+    <div class="languages" role="group" aria-label="Idioma / Language">
+      <button type="button" lang="es" aria-label="Español" data-lang="es" aria-pressed="true">ES</button>
+      <button type="button" lang="en" aria-label="English" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+  <main id="main">
+    <section class="hero" id="inicio" aria-labelledby="title">
+      <img class="hero-image" src="./assets/distrito-concepto.webp" width="1440" height="810" alt="" fetchpriority="high">
+      <div class="hero-content">
+        <p class="eyebrow" data-t="intro">DIEGO JIJÓN / PORTAFOLIO</p>
+        <h1 id="title">Distrito<br><em>Cero</em></h1>
+        <p class="lead" data-t="lead">Explora un barrio 3D inspirado en los Andes ecuatorianos. Cada lugar te lleva a un proyecto.</p>
+        <div class="hero-actions">
+          <button class="button primary" id="enter" type="button" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7Z" fill="currentColor"/></svg>
+            <span data-t="enter">Explorar en 3D</span>
+          </button>
+          <a class="button secondary" href="#projects" data-t="viewProjects">Ver proyectos ↓</a>
+        </div>
+        <p class="game-error" id="game-error" role="status" hidden></p>
+        <noscript><p>Activa JavaScript para explorar el barrio 3D. Puedes acceder a los repositorios desde GitHub.</p></noscript>
+      </div>
+      <span class="concept" data-t="concept">Arte conceptual · Laboratorio RGB</span>
+    </section>
+    <section class="archive content" id="projects" aria-labelledby="projects-title">
+      <header class="section-title">
+        <h2 id="projects-title" data-t="selected">Proyectos seleccionados</h2>
+        <a href="https://github.com/Diego200509?tab=repositories" class="text-link" target="_blank" rel="noopener noreferrer" data-t="allRepos">Todos en GitHub ↗</a>
+      </header>
+      <div class="project-grid" id="project-grid"></div>
+      <noscript>
+        <ul>
+          <li><a href="https://github.com/Diego200509/asotema">ASOTEMA</a></li>
+          <li><a href="https://github.com/Diego200509/EduRural">EduRural</a></li>
+          <li><a href="https://github.com/Diego200509/Semaforo_IA">Semáforo IA</a></li>
+          <li><a href="https://github.com/Diego200509/Lab_imagenes_rgb">Laboratorio RGB</a></li>
+        </ul>
+      </noscript>
+    </section>
+    <section class="profile content" id="profile" aria-labelledby="profile-title">
+      <div>
+        <p class="eyebrow" data-t="about">SOBRE MÍ</p>
+        <h2 id="profile-title">Diego Jijón</h2>
+        <p class="profile-copy" data-t="bio">Estudio Ingeniería en Software en la Universidad Técnica de Ambato. Me interesa desarrollar aplicaciones, trabajar con bases de datos y aplicar IA y automatización a problemas concretos.</p>
+      </div>
+      <div class="profile-actions">
+        <a class="button secondary" href="./cv.html" id="cv-link" data-t="cv">Ver CV</a>
+        <a class="text-link" href="https://github.com/Diego200509" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      </div>
+    </section>
+    <footer class="footer content" id="contact">
+      <div>
+        <p class="eyebrow" data-t="contactLabel">CONTACTO</p>
+        <h2 data-t="talk">Hablemos de software.</h2>
+      </div>
+      <a class="button primary" href="https://github.com/Diego200509" target="_blank" rel="noopener noreferrer" data-t="githubProfile">Mi perfil de GitHub ↗</a>
+    </footer>
+  </main>
+  <section id="game" class="game" hidden aria-label="Distrito Cero 3D">
+    <div id="viewport" class="viewport" role="region"></div>
+    <header class="game-top">
+      <button class="button game-button" id="exit" type="button" data-t="exit">← Salir</button>
+      <div class="game-progress">
+        <span data-t="district">DISTRITO CERO</span>
+        <span id="visited" aria-live="polite"></span>
+      </div>
+      <div class="game-menu">
+        <button class="button game-button" id="map-button" type="button" data-t="map">Mapa</button>
+        <button class="button game-button game-language" id="game-language" type="button" aria-label="Switch to English">EN</button>
+      </div>
+    </header>
+    <div id="loading" class="loading" role="status" hidden>
+      <div class="loading-plan" aria-hidden="true"></div>
+      <p data-t="loading">Preparando el distrito…</p>
+    </div>
+    <div class="crosshair" aria-hidden="true"></div>
+    <div class="game-bottom" id="game-bottom">
+      <p id="objective" class="objective" aria-live="polite"></p>
+      <button type="button" id="interact" class="button primary" data-t="interact">Interactuar</button>
+      <p class="game-controls" id="controls-text"></p>
+    </div>
+    <div class="touch-ui" aria-label="Movimiento" data-aria="movement">
+      <button data-move="KeyW" type="button" aria-label="Avanzar" data-aria="forward">↑</button>
+      <button data-move="KeyA" type="button" aria-label="Izquierda" data-aria="left">←</button>
+      <button data-move="KeyS" type="button" aria-label="Atrás" data-aria="back">↓</button>
+      <button data-move="KeyD" type="button" aria-label="Derecha" data-aria="right">→</button>
+    </div>
+  </section>
+  <dialog class="sheet" id="project-dialog" aria-labelledby="detail-title">
+    <div class="sheet-top">
+      <p class="eyebrow" id="detail-type"></p>
+      <form method="dialog"><button class="close" data-aria="close" aria-label="Cerrar" type="submit">×</button></form>
+    </div>
+    <h2 id="detail-title"></h2>
+    <div id="detail-content"></div>
+    <a class="button primary" id="detail-link" target="_blank" rel="noopener noreferrer" data-t="source">Ver repositorio ↗</a>
+  </dialog>
+  <dialog class="sheet map-sheet" id="map-dialog" aria-labelledby="map-title">
+    <div class="sheet-top">
+      <h2 id="map-title" data-t="mapTitle">Mapa del distrito</h2>
+      <form method="dialog"><button class="close" data-aria="close" aria-label="Cerrar" type="submit">×</button></form>
+    </div>
+    <div id="map-list" class="map-list"></div>
+  </dialog>
+</body>
+</html>

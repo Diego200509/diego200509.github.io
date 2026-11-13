@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CV breve de Diego Jijón, estudiante de Ingeniería en Software.">
+  <title>Diego Jijón · CV</title>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="icon" href="./assets/mark.svg" type="image/svg+xml">
+  <script type="module" src="./cv.js"></script>
+</head>
+<body>
+  <main class="cv content">
+    <nav class="cv-nav">
+      <a class="text-link" id="return" href="./index.html" data-t="backSite">← Portafolio</a>
+      <div class="languages" aria-label="Idioma / Language">
+        <button type="button" data-lang="es" aria-label="Español">ES</button>
+        <button type="button" data-lang="en" aria-label="English">EN</button>
+      </div>
+      <button class="button secondary" type="button" id="print" data-t="print">Imprimir / Guardar PDF</button>
+    </nav>
+    <header>
+      <p class="eyebrow" data-t="cvSummary">CV breve</p>
+      <h1>Diego Jijón</h1>
+      <p data-t="bio">Estudio Ingeniería en Software en la Universidad Técnica de Ambato. Me interesa desarrollar aplicaciones, trabajar con bases de datos y aplicar IA y automatización a problemas concretos.</p>
+    </header>
+    <section><h2 data-t="education">Formación</h2><p data-t="degree">Ingeniería en Software · Universidad Técnica de Ambato</p></section>
+    <section><h2 data-t="selected">Proyectos seleccionados</h2><ul id="cv-projects"></ul></section>
+    <section><h2 data-t="contact">Contacto</h2><a href="https://github.com/Diego200509" class="text-link">github.com/Diego200509</a></section>
+  </main>
+</body>
+</html>
