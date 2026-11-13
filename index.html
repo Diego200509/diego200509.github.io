@@ -8,7 +8,9 @@
   <title>Distrito Cero · Diego Jijón</title>
   <link rel="icon" href="./assets/mark.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./landing.css">
   <script type="module" src="./main.js"></script>
+  <script type="module" src="./landing.js"></script>
 </head>
 <body>
   <a class="skip" href="#projects" data-t="skip">Ir a proyectos</a>
@@ -47,7 +49,9 @@
           <noscript><p>Activa JavaScript para explorar el barrio 3D. Puedes acceder a los repositorios desde GitHub.</p></noscript>
         </div>
         <figure class="hero-preview">
-          <img src="./assets/distrito-retrato.webp" width="1100" height="860" alt="Retrato 3D del rostro de Diego Jijón" data-alt="avatarAlt" fetchpriority="high">
+          <div class="portrait-frame">
+            <img src="./assets/distrito-retrato.webp" width="1100" height="860" alt="Retrato 3D del rostro de Diego Jijón" data-alt="avatarAlt" fetchpriority="high">
+          </div>
           <figcaption>
             <span>DISTRITO CERO</span>
             <button type="button" class="preview-project" id="preview-project" data-t="previewProject">Laboratorio RGB ↗</button>
@@ -56,28 +60,43 @@
       </div>
     </section>
     <section class="featured content" id="featured" aria-labelledby="featured-title">
-      <div>
+      <div data-reveal>
         <p class="eyebrow" data-t="featured">CASO DESTACADO · AMBACAR</p>
         <h2 id="featured-title" data-t="featuredTitle">Gestión de usuarios ZEUS</h2>
         <p data-t="featuredCopy">En mis prácticas trabajé en el módulo de AMBYSOFT para crear y editar usuarios y asignarles agencias, divisiones y roles. Diseñé pantallas y las conecté con los servicios del backend.</p>
         <button type="button" class="button secondary" id="featured-detail" data-t="featuredDetail">Ver mi aporte ↗</button>
       </div>
-      <div class="featured-flow">
+      <div class="featured-flow" data-reveal>
         <h3 data-t="flowTitle">Registro de un usuario</h3>
-        <ol>
-          <li data-t="flowUser">Ingresar los datos del usuario</li>
-          <li data-t="flowAssignment">Asignar agencia, división y rol</li>
-          <li data-t="flowValidation">Validar los datos y registrar el usuario</li>
+        <ol class="flow-steps">
+          <li>
+            <details name="user-flow" open>
+              <summary><span data-t="flowUser">Ingresar los datos del usuario</span></summary>
+              <p data-t="flowUserDetail">El formulario reúne los datos necesarios para crear el registro.</p>
+            </details>
+          </li>
+          <li>
+            <details name="user-flow">
+              <summary><span data-t="flowAssignment">Asignar agencia, división y rol</span></summary>
+              <p data-t="flowAssignmentDetail">Los catálogos conectados al backend ofrecen las opciones que corresponden a cada campo.</p>
+            </details>
+          </li>
+          <li>
+            <details name="user-flow">
+              <summary><span data-t="flowValidation">Validar los datos y registrar el usuario</span></summary>
+              <p data-t="flowValidationDetail">El backend comprueba los datos antes de guardar el registro.</p>
+            </details>
+          </li>
         </ol>
-        <p data-t="flowNote">Flujo ilustrativo del módulo</p>
+        <p class="flow-note" data-t="flowNote">Flujo ilustrativo del módulo</p>
       </div>
     </section>
     <section class="archive content" id="projects" aria-labelledby="projects-title">
-      <header class="section-title">
+      <header class="section-title" data-reveal>
         <h2 id="projects-title" data-t="selected">Proyectos seleccionados</h2>
         <a href="https://github.com/Diego200509?tab=repositories" class="text-link" target="_blank" rel="noopener noreferrer" data-t="allRepos">Todos en GitHub ↗</a>
       </header>
-      <div class="project-grid" id="project-grid"></div>
+      <div class="project-grid" id="project-grid" data-reveal></div>
       <noscript>
         <ul>
           <li><a href="https://github.com/Diego200509/asotema">ASOTEMA</a></li>
@@ -88,7 +107,7 @@
       </noscript>
     </section>
     <section class="profile content" id="profile" aria-labelledby="profile-title">
-      <div class="profile-story">
+      <div class="profile-story" data-reveal>
         <h2 id="profile-title" data-t="profile">Sobre mí</h2>
         <p class="profile-copy" data-t="bio">Estudio Ingeniería en Software en la Universidad Técnica de Ambato. Me interesa desarrollar aplicaciones, trabajar con bases de datos y aplicar IA y automatización a problemas concretos.</p>
         <p class="profile-copy" data-t="personal">Me gustan los videojuegos como Valorant. Esa afición inspiró Distrito Cero, un barrio que puedes recorrer para descubrir lo que he construido.</p>
@@ -97,15 +116,15 @@
           <a class="text-link" href="#experience" data-t="experience">Experiencia</a>
         </div>
       </div>
-      <dl class="profile-facts">
+      <dl class="profile-facts" data-reveal>
         <div><dt data-t="education">Formación</dt><dd data-t="degree">Ingeniería en Software · Universidad Técnica de Ambato</dd></div>
         <div><dt data-t="skills">Habilidades</dt><dd>.NET · TypeScript · Python · SQL</dd></div>
         <div><dt data-t="languages">Idiomas</dt><dd data-t="languageLevels">Español nativo · Inglés B1</dd></div>
       </dl>
     </section>
     <section class="experience content" id="experience" aria-labelledby="experience-title">
-      <header class="section-title"><h2 id="experience-title" data-t="experience">Experiencia</h2></header>
-      <div class="experience-list" id="experience-list"></div>
+      <header class="section-title" data-reveal><h2 id="experience-title" data-t="experience">Experiencia</h2></header>
+      <div class="experience-list" id="experience-list" data-reveal></div>
     </section>
     <footer class="footer content" id="contact">
       <div>

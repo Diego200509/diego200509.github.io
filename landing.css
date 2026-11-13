@@ -1,0 +1,261 @@
+#top {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #171b20f2;
+}
+
+#top::after {
+  position: absolute;
+  inset: auto 0 -1px;
+  height: 2px;
+  content: "";
+  pointer-events: none;
+  transform: scaleX(var(--read-progress, 0));
+  transform-origin: left;
+  background: linear-gradient(90deg, #e49459, #f8c787);
+}
+
+#top nav a {
+  position: relative;
+  color: #d4d3ce;
+  text-decoration: none;
+}
+
+#top nav a::after {
+  position: absolute;
+  inset: auto 0 -7px;
+  height: 1px;
+  content: "";
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .25s ease;
+}
+
+#top nav a:is(:hover, :focus-visible, [aria-current]) {
+  color: var(--gold);
+}
+
+#top nav a:is(:hover, :focus-visible, [aria-current])::after {
+  transform: scaleX(1);
+}
+
+#main > [id] {
+  scroll-margin-top: 100px;
+}
+
+#inicio {
+  background:
+    radial-gradient(ellipse at 80% 44%, #4f382b9c, transparent 57%),
+    linear-gradient(154deg, #192027, #171b20 64%);
+}
+
+.hero-layout {
+  position: relative;
+}
+
+.hero-content > .eyebrow {
+  letter-spacing: .18em;
+}
+
+.hero-content .hero-role {
+  color: #f1e6d7;
+}
+
+.hero-actions .button {
+  transition: transform .2s ease, border-color .2s ease, background-color .2s ease;
+}
+
+.hero-actions .button:is(:hover, :focus-visible) {
+  transform: translateY(-2px);
+}
+
+.hero-actions .secondary:is(:hover, :focus-visible) {
+  border-color: var(--gold);
+}
+
+.hero-preview {
+  position: relative;
+  background: #22272a;
+  box-shadow: 0 22px 60px #0a0c1190;
+}
+
+.portrait-frame {
+  position: relative;
+  overflow: hidden;
+  background: #423027;
+}
+
+.hero-preview .portrait-frame img {
+  transform: translate(calc(var(--portrait-x, 0) * -14px), calc(var(--portrait-y, 0) * -12px)) scale(1.025);
+  transition: transform .34s cubic-bezier(.21,.72,.32,1);
+}
+
+.portrait-frame::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  background: radial-gradient(ellipse at calc(50% + var(--portrait-x, 0) * 65%) calc(50% + var(--portrait-y, 0) * 65%), #ffe6c449, transparent 58%);
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+
+.portrait-frame.portrait-active::after {
+  opacity: .72;
+}
+
+.preview-project {
+  transition: color .2s ease, background-color .2s ease;
+  border-radius: 4px;
+}
+
+.preview-project:is(:hover, :focus-visible) {
+  background: #f8c78718;
+  color: #ffdfa9;
+  text-decoration: none;
+}
+
+.featured-flow {
+  background: linear-gradient(135deg, #283038, #20262d 62%);
+}
+
+.featured-flow .flow-steps {
+  padding: 0;
+  list-style: none;
+  counter-reset: steps;
+  gap: 0;
+}
+
+.flow-steps li {
+  padding: 0;
+  counter-increment: steps;
+  border-bottom: 1px solid var(--line);
+}
+
+.flow-steps summary {
+  display: grid;
+  grid-template-columns: 1.35rem 1fr 1rem;
+  gap: 6px;
+  align-items: center;
+  min-height: 42px;
+  padding: 6px 0;
+  list-style: none;
+  cursor: pointer;
+  transition: color .2s ease;
+}
+
+.flow-steps summary::-webkit-details-marker {
+  display: none;
+}
+
+.flow-steps summary::before {
+  content: counter(steps, decimal-leading-zero);
+  font: 500 .67rem var(--mono);
+  color: var(--gold);
+}
+
+.flow-steps summary::after {
+  content: "+";
+  color: var(--gold);
+  text-align: center;
+}
+
+.flow-steps details[open] summary::after {
+  content: "−";
+}
+
+.flow-steps summary:is(:hover, :focus-visible), .flow-steps details[open] summary {
+  color: var(--gold);
+}
+
+.featured-flow .flow-steps p {
+  margin: 0 1.3rem 10px 1.75rem;
+  font: .86rem/1.5 var(--body);
+}
+
+.featured-flow .flow-note {
+  margin-top: 12px;
+}
+
+.project-card .project-icon {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.project-card .project-icon::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  content: "";
+  opacity: .4;
+  background:
+    linear-gradient(#ffffff18 1px, transparent 1px),
+    linear-gradient(90deg, #ffffff18 1px, transparent 1px);
+  background-size: 19px 19px;
+  mask-image: radial-gradient(ellipse, #000 5%, transparent 81%);
+  transition: opacity .28s ease;
+}
+
+.project-card .project-icon svg {
+  transition: transform .3s cubic-bezier(.21,.72,.32,1), filter .3s ease;
+}
+
+.project-card:is(:hover, :focus-visible) .project-icon::before {
+  opacity: 1;
+}
+
+.project-card:is(:hover, :focus-visible) .project-icon svg {
+  transform: translateY(-3px) scale(1.12);
+  filter: drop-shadow(0 0 12px var(--accent));
+}
+
+.profile-facts {
+  border-top: 1px solid #f8c78743;
+}
+
+.profile-facts div {
+  padding-inline: 12px;
+  transition: background-color .2s ease;
+}
+
+.profile-facts div:hover {
+  background: #f8c7870a;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-content > :is(.eyebrow, h1, .hero-role, .lead, .hero-actions),
+  .hero-preview {
+    animation: landing-enter .64s cubic-bezier(.21,.72,.32,1) both;
+  }
+
+  .hero-content h1 { animation-delay: .05s; }
+  .hero-content :is(.hero-role, .lead) { animation-delay: .1s; }
+  .hero-content .hero-actions { animation-delay: .16s; }
+  .hero-preview { animation-delay: .1s; }
+  .flow-steps details[open] p { animation: landing-enter .24s ease-out both; }
+  body:not(.playing) #project-dialog[open] { animation: landing-enter .27s ease-out both; }
+}
+
+@keyframes landing-enter {
+  from { opacity: .35; translate: 0 11px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+@media (max-width: 600px) {
+  #main > [id] { scroll-margin-top: 118px; }
+  #top nav a::after { bottom: 0; }
+  .featured-flow { padding-inline: 15px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-actions .button:is(:hover, :focus-visible),
+  .project-card:is(:hover, :focus-visible),
+  .project-card:is(:hover, :focus-visible) .project-icon svg {
+    transform: none;
+  }
+  .hero-preview .portrait-frame img { transform: none; }
+  .portrait-frame::after { display: none; }
+}
