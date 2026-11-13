@@ -1,18 +1,26 @@
 export const experience = [
   {
     id: "ambacar",
-    organization: "Ambacar S.A. · Matriz Indoamérica",
+    organization: "Ambacar S.A.",
     es: {
-      title: "Prácticas en auditoría de sistemas",
-      context: "Área Comercial",
-      summary: "Participé en una auditoría física e informática para evaluar recursos tecnológicos, controles internos y gestión de activos.",
-      details: ["Verificación de equipos y validación del inventario.", "Revisión de software, licencias y controles de acceso.", "Evaluación del cumplimiento de políticas informáticas."]
+      title: "Prácticas de desarrollo de software y soporte TI",
+      context: "22 de junio al 31 de julio de 2026",
+      summary: "Trabajé en el módulo Usuarios ZEUS de AMBYSOFT, desde el diseño de pantallas hasta la integración del frontend con los servicios del backend.",
+      details: [
+        "Implementé el listado, la creación y la edición de usuarios, el restablecimiento de contraseñas y validaciones para cambios de estado.",
+        "Desarrollé APIs y catálogos de agencias, divisiones y roles. Incorporé filtros y paginación del lado del servidor y ajusté el listado para evitar duplicados.",
+        "Configuré y verifiqué microservicios en IIS. Realicé mantenimiento preventivo y validé inventarios y custodios de equipos en agencias de Guayaquil y Quito."
+      ]
     },
     en: {
-      title: "Systems audit internship",
-      context: "Commercial department",
-      summary: "I took part in a physical and IT audit covering technology resources, internal controls, and asset management.",
-      details: ["Checked equipment and validated inventory records.", "Reviewed software, licensing, and access controls.", "Assessed compliance with IT policies."]
+      title: "Software development and IT support internship",
+      context: "June 22 to July 31, 2026",
+      summary: "I worked on the ZEUS user management module in AMBYSOFT, from designing screens to integrating the frontend with backend services.",
+      details: [
+        "Implemented user listing, creation, and editing, password resets, and validation for account status changes.",
+        "Built APIs and reference lists for branches, divisions, and roles. Added filters and server-side pagination and adjusted the user list to prevent duplicate entries.",
+        "Configured and verified microservices in IIS. Performed preventive maintenance and checked equipment inventories and asset assignments at branches in Guayaquil and Quito."
+      ]
     }
   },
   {
