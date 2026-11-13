@@ -17,15 +17,15 @@ export function createPlayerCamera(camera, positionAllowed) {
       thirdPerson = !thirdPerson;
       return thirdPerson;
     },
-    update(yaw, pitch) {
+    update(yaw, pitch, indoors) {
       if (!thirdPerson) {
         camera.position.copy(position).y = EYE_HEIGHT;
         camera.rotation.set(pitch, yaw, 0);
       } else {
         forward.set(-Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), -Math.cos(yaw) * Math.cos(pitch));
         shoulder.set(Math.cos(yaw), 0, -Math.sin(yaw));
-        arm.copy(forward).multiplyScalar(-4.15).addScaledVector(shoulder, 0.98);
-        arm.y = THREE.MathUtils.clamp(arm.y + 0.82, 0.35, 3.2);
+        arm.copy(forward).multiplyScalar(indoors ? -2.6 : -4.15).addScaledVector(shoulder, indoors ? 0.59 : 0.98);
+        arm.y = THREE.MathUtils.clamp(arm.y + 0.82, 0.35, indoors ? 1.28 : 3.2);
         let available = 1;
         for (let step = 1; step <= 14; step++) {
           const t = step / 14;

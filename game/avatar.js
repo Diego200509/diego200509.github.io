@@ -67,25 +67,37 @@ export function createAvatar(scene) {
     shape(arm, 0, -0.46, 0, 0.08, 0.105, 0.086, skin);
     const leg = new THREE.Group();
     leg.position.set(side * 0.143, 0.87, 0);
-    torso.add(leg);
-    block(leg, 0, -0.375, 0, 0.216, 0.71, 0.231, "#364453");
-    block(leg, 0, -0.755, -0.058, 0.23, 0.15, 0.335, shoes);
-    return { arm, leg };
+    body.add(leg);
+    block(leg, 0, -.2, 0, .216, .42, .231, "#364453");
+    const knee = new THREE.Group();
+    knee.position.y = -.38;
+    leg.add(knee);
+    block(knee, 0, -.19, 0, .20, .41, .22, "#364453");
+    block(knee, 0, -.39, -.055, .23, .15, .335, shoes);
+    return { arm, leg, knee, side };
   });
 
   let phase = 0;
   let stride = 0;
+  let idle = 0;
   return {
     body,
     update(dt, moving, reduceMotion) {
-      if (reduceMotion) return;
-      phase += dt * 11;
+      idle += dt;
       stride = THREE.MathUtils.damp(stride, moving ? 1 : 0, 13, dt);
-      torso.position.y = Math.abs(Math.sin(phase)) * 0.035 * stride;
-      for (const [i, { arm, leg }] of limbs.entries()) {
-        const swing = Math.sin(phase + i * Math.PI) * stride;
-        arm.rotation.x = swing * -0.43;
-        leg.rotation.x = swing * 0.54;
+      phase += dt * (6 + 5 * stride);
+      const amount = reduceMotion ? .43 : 1;
+      const breath = reduceMotion ? 0 : Math.sin(idle * 2.2) * .013 * (1 - stride);
+      torso.position.y = breath + Math.abs(Math.sin(phase)) * .065 * stride * amount;
+      torso.rotation.set(-.085 * stride, Math.sin(phase) * .15 * stride * amount, Math.cos(phase) * .047 * stride * amount);
+      head.rotation.y = -torso.rotation.y * .54;
+      head.rotation.z = breath * 1.5;
+      for (const { arm, leg, knee, side } of limbs) {
+        const cycle = Math.sin(phase) * side;
+        const swing = cycle * stride * amount;
+        arm.rotation.set(-.68 * swing + breath, 0, side * (.10 + .055 * stride));
+        leg.rotation.x = .68 * swing;
+        knee.rotation.x = -.82 * Math.max(0, -cycle) * stride * amount;
       }
     }
   };

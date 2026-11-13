@@ -1,4 +1,5 @@
 import * as THREE from "../vendor/three.module.min.js";
+import { buildWorkshop, workshopPoint } from "./workshop.js";
 
 const LAND = "#d1ad83";
 const CREAM = "#e9c8a0";
@@ -168,6 +169,24 @@ function terrain(scene) {
   }
   paving.receiveShadow = true;
   scene.add(paving);
+  const pathStart = workshopPoint(0, 3.5);
+  const pathEnd = { x: -2.8, z: 11.4 };
+  const pathLength = Math.hypot(pathEnd.x - pathStart.x, pathEnd.z - pathStart.z);
+  const path = block(scene, 2.75, .05, pathLength, (pathStart.x + pathEnd.x) / 2, .025, (pathStart.z + pathEnd.z) / 2, "#a08f83", false);
+  path.rotation.y = Math.atan2(pathEnd.x - pathStart.x, pathEnd.z - pathStart.z);
+  for (const side of [-1, 1]) {
+    for (let i = 0; i < 7; i++) {
+      const offset = (i - 3) * pathLength / 7;
+      const x = path.position.x + Math.sin(path.rotation.y) * offset + Math.cos(path.rotation.y) * side * 1.21;
+      const z = path.position.z + Math.cos(path.rotation.y) * offset - Math.sin(path.rotation.y) * side * 1.21;
+      block(scene, .15, .09, .21, x, .066, z, "#ecd0a0", false).rotation.y = path.rotation.y;
+    }
+  }
+  const plaza = new THREE.Mesh(new THREE.RingGeometry(2.95, 3.22, 48), new THREE.MeshStandardMaterial({ color: "#f0c18b", roughness: .91 }));
+  plaza.rotation.x = -Math.PI / 2;
+  plaza.position.set(0, .046, 1.2);
+  plaza.receiveShadow = true;
+  scene.add(plaza);
   block(scene, 36, 0.84, 0.4, 0, 0.42, -16.2, CREAM);
   block(scene, 36, 0.13, 0.55, 0, 0.89, -16.2, CLAY);
   for (const x of [-18.2, 18.2]) {
@@ -194,7 +213,7 @@ function terrain(scene) {
     }
   }
 
-  for (const [x, z, scale] of [[-7, -11, 1.1], [7, -12, 1.3], [-7.8, 9, 1.1], [13.6, 12.6, 1], [-14, -10, 1], [13, -9, 0.8], [-12, 13, 1.05], [4, 17, 0.86]]) {
+  for (const [x, z, scale] of [[-7, -11, 1.1], [7, -12, 1.3], [-7.8, 9, 1.1], [13.6, 12.6, 1], [-14, -10, 1], [13, -9, 0.8], [-16.1, 16.7, 1.05], [4, 17, 0.86]]) {
     tree(scene, x, z, scale);
   }
   for (const [i, [x, z]] of [[-4.6, -7.5], [4.6, -7.5], [-10.3, -4.4], [-10.4, 4.4], [10.4, -4.4], [10.4, 4.4], [-4.8, 11.5], [1.1, 12.4], [-6, -5], [6, -5]].entries()) {
@@ -205,10 +224,11 @@ function terrain(scene) {
     block(scene, 2.2, 0.29, 0.09, x, 0.78, z - 0.2, WOOD);
     for (const dx of [-0.76, 0.76]) block(scene, 0.18, 0.48, 0.46, x + dx, 0.25, z, CREAM);
   }
+  const lantern = new THREE.MeshStandardMaterial({ color: "#ffe5af", emissive: "#ffc276", emissiveIntensity: .74 });
   for (const [x, z] of [[-6.5, -6], [6.5, -6], [-7.3, 7], [-3.4, 13.6]]) {
     block(scene, 0.1, 2.75, 0.1, x, 1.38, z, INK);
     block(scene, 0.34, 0.18, 0.34, x, 2.73, z, INK);
-    block(scene, 0.24, 0.25, 0.24, x, 2.57, z, WHITE);
+    block(scene, 0.24, 0.25, 0.24, x, 2.57, z, lantern, false);
   }
 }
 
@@ -269,16 +289,19 @@ function sceneLighting(scene) {
       void main() {
         vec3 dir = normalize(skyDirection);
         float height = smoothstep(-0.07, 0.48, dir.y);
-        float glow = pow(max(0.0, dot(dir, normalize(vec3(-0.72, 0.2, 0.45)))), 8.0);
-        gl_FragColor = vec4(mix(horizon, zenith, height) + vec3(0.18, 0.09, 0.03) * glow, 1.0);
+        vec3 sunDir = normalize(vec3(-0.64, 0.24, -0.76));
+        float alignment = max(0.0, dot(dir, sunDir));
+        float glow = pow(alignment, 8.0);
+        float sun = smoothstep(0.99926, 0.99965, alignment);
+        gl_FragColor = vec4(mix(horizon, zenith, height) + vec3(0.29, 0.13, 0.045) * glow + sun * vec3(0.59, 0.41, 0.22), 1.0);
         #include <colorspace_fragment>
       }`
   }));
   skyDome.frustumCulled = false;
   scene.add(skyDome);
-  const sky = new THREE.HemisphereLight("#e3edff", "#8a6857", 1.95);
-  const sun = new THREE.DirectionalLight("#ffd3a1", 2.5);
-  sun.position.set(-12, 14, 10);
+  const sky = new THREE.HemisphereLight("#deebff", "#9a735e", 1.86);
+  const sun = new THREE.DirectionalLight("#ffd0a0", 2.66);
+  sun.position.set(-18, 15, -9);
   sun.castShadow = true;
   Object.assign(sun.shadow.camera, { left: -22, right: 22, top: 21, bottom: -21, near: 0.5, far: 63 });
   sun.shadow.mapSize.set(1024, 1024);
@@ -298,24 +321,19 @@ export function buildDistrict(scene) {
   schoolBell(school);
   const lab = makeLab(scene, rgbHouse);
   const traffic = crossing(scene);
-  const garage = building(scene, -11, 13.6, Math.PI / 4, 7.5, "#8fadb0", "#4a6773", false);
-  for (const x of [-1.55, 1.55]) {
-    block(garage, 0.16, 2.35, 0.32, x, 1.36, 3.13, INK);
-    block(garage, 0.28, 0.19, 0.47, x, 2.58, 3.13, "#e5bb72");
-  }
-  block(garage, 3.22, 0.16, 0.6, 0, 2.65, 3.17, "#e5bb72");
-  for (let i = 0; i < 4; i++) block(garage, 1.48, 0.04, 0.05, 0, 0.62 + i * 0.39, 3.03, INK);
+  const workshop = buildWorkshop(scene, block, piece, sign);
   const signs = {
     rgb: sign(rgbHouse, 0, 3.12, 2.94, 3.8),
     asotema: sign(association, 0, 3.12, 2.94, 3.55),
     edurural: sign(school, 0, 3.12, 2.94, 3.55),
     traffic: traffic.sign,
-    ambacar: sign(garage, 0, 3.12, 2.94, 3.55)
+    ambacar: workshop.sign
   };
   let previous = {};
   return {
     lab,
     traffic,
+    workshop,
     color: (index) => material(PALETTE[index]),
     setLabels(labels) {
       for (const [id, mesh] of Object.entries(signs)) {

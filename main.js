@@ -1,5 +1,6 @@
 import { loadLanguage, projects, saveLanguage, translatePage, translations } from "./content.js";
 import { experience, experienceMarkup } from "./experience.js";
+import { setupMission } from "./game/mission.js";
 
 const get = (id) => document.getElementById(id);
 const projectById = new Map(projects.map((project) => [project.id, project]));
@@ -11,8 +12,10 @@ const entry = get("enter");
 const loading = get("loading");
 const cameraButton = get("camera-button");
 const mapButton = get("map-button");
+const helpButton = get("help-button");
 const mapDialog = get("map-dialog");
 const projectDialog = get("project-dialog");
+const missionDialog = get("mission-dialog");
 const mobile = matchMedia("(pointer: coarse)");
 const moveKeys = new Set(["KeyW", "KeyA", "KeyS", "KeyD"]);
 const arrows = { ArrowUp: "KeyW", ArrowDown: "KeyS" };
@@ -26,26 +29,39 @@ let target = { stop: null, prism: null, restored: false };
 let soundContext;
 let loadStage = 0;
 let thirdPerson = false;
+let showControls = false;
 
 function loadProgress() {
   try {
     const value = JSON.parse(localStorage.getItem("district-progress"));
     return {
       visited: new Set(Array.isArray(value?.visited) ? value.visited.filter(id => destinations.includes(id)) : []),
-      prisms: new Set(Array.isArray(value?.prisms) ? value.prisms.filter(index => [0, 1, 2].includes(index)) : [])
+      prisms: new Set(Array.isArray(value?.prisms) ? value.prisms.filter(index => [0, 1, 2].includes(index)) : []),
+      workshop: value?.workshop === true
     };
-  } catch { return { visited: new Set(), prisms: new Set() }; }
+  } catch { return { visited: new Set(), prisms: new Set(), workshop: false }; }
 }
 
 const progress = loadProgress();
 
 function storeProgress() {
   try {
-    localStorage.setItem("district-progress", JSON.stringify({ visited: [...progress.visited], prisms: [...progress.prisms] }));
+    localStorage.setItem("district-progress", JSON.stringify({
+      visited: [...progress.visited], prisms: [...progress.prisms], workshop: progress.workshop
+    }));
   } catch {}
 }
 
 function words() { return translations[language]; }
+
+const workshopMission = setupMission(missionDialog, () => language, () => {
+  progress.workshop = true;
+  progress.visited.add(ambacar.id);
+  storeProgress();
+  world.completeMission();
+  renderProgress();
+  renderTarget();
+}, () => openProject(ambacar.id));
 
 function renderCards() {
   const template = (project) => {
@@ -132,18 +148,22 @@ function renderMap() {
 }
 
 function renderTarget() {
-  const { stop, prism, restored } = target;
+  const { stop, prism, restored, interaction } = target;
   const action = get("interact");
   const objective = get("objective");
   action.hidden = !stop;
+  objective.hidden = !stop;
   action.textContent = words().interact;
   if (!stop) {
-    objective.textContent = words().explore;
+    objective.textContent = "";
     return;
   }
   if (stop === ambacar.id) {
-    objective.textContent = `${words().garage} · Ambacar`;
-    action.textContent = words().readExperience;
+    objective.textContent = interaction === "inside" ? words().workshopInside :
+      progress.workshop ? words().workshopDone : `${words().garage} · Ambacar`;
+    const prompts = { door: "workshopDoor", "door-open": "workshopEnter", terminal: "workshopTerminal" };
+    action.hidden = interaction === "inside";
+    if (!action.hidden) action.textContent = words()[prompts[interaction]];
     return;
   }
   const name = projectById.get(stop).name[language];
@@ -171,6 +191,14 @@ function renderCamera() {
   game.dataset.camera = thirdPerson ? "third" : "first";
 }
 
+function renderControls() {
+  helpButton.setAttribute("aria-expanded", String(showControls));
+  get("controls-text").textContent = mobile.matches ? words().touchControls : words().controls;
+  get("controls-text").hidden = !showControls;
+  get("touch-controls").hidden = !mobile.matches || !showControls;
+  game.dataset.touch = String(mobile.matches && showControls);
+}
+
 function setLoadStage(stage) {
   loadStage = stage;
   loading.dataset.phase = stage;
@@ -196,7 +224,7 @@ function render() {
   get("game-language").textContent = language === "es" ? "EN" : "ES";
   get("game-language").setAttribute("aria-label", words().switchLanguage);
   viewport.setAttribute("aria-label", words().focusGame);
-  get("controls-text").textContent = mobile.matches ? words().touchControls : words().controls;
+  renderControls();
   get("game-error").textContent = words().gameError;
   renderCards();
   renderExperience();
@@ -253,6 +281,9 @@ async function enterGame() {
   setLoadStage(0);
   mapButton.disabled = true;
   cameraButton.disabled = true;
+  helpButton.disabled = true;
+  showControls = mobile.matches;
+  renderControls();
   get("game-bottom").hidden = true;
   get("main").inert = true;
   get("top").inert = true;
@@ -273,6 +304,10 @@ async function enterGame() {
           renderTarget();
         },
         onProject: openProject,
+        onMission() {
+          world.pause(true);
+          workshopMission.open(progress.workshop);
+        },
         onCamera(enabled) {
           thirdPerson = enabled;
           renderCamera();
@@ -291,7 +326,7 @@ async function enterGame() {
     updateDistrictLabels();
     await world.prepare();
     if (request !== openingRequest) return;
-    world.start(progress.prisms);
+    world.start(progress.prisms, progress.workshop);
     setLoadStage(3);
     await nextPaint();
     if (request !== openingRequest) return;
@@ -301,6 +336,7 @@ async function enterGame() {
     game.removeAttribute("aria-busy");
     cameraButton.disabled = false;
     mapButton.disabled = false;
+    helpButton.disabled = false;
     focusWorld();
   } catch (error) {
     if (request !== openingRequest) return;
@@ -325,7 +361,7 @@ function exitGame() {
   entry.focus({ preventScroll: true });
 }
 
-function anyDialogOpen() { return mapDialog.open || projectDialog.open; }
+function anyDialogOpen() { return mapDialog.open || projectDialog.open || missionDialog.open; }
 
 for (const button of document.querySelectorAll("[data-lang]")) {
   button.addEventListener("click", () => changeLanguage(button.dataset.lang));
@@ -337,6 +373,11 @@ get("exit").addEventListener("click", exitGame);
 get("game-language").addEventListener("click", () => changeLanguage(language === "es" ? "en" : "es"));
 cameraButton.addEventListener("click", () => {
   world?.toggleCamera();
+});
+helpButton.addEventListener("click", () => {
+  showControls = !showControls;
+  if (!showControls) for (const key of moveKeys) world?.setMove(key, false);
+  renderControls();
 });
 game.addEventListener("wheel", (event) => {
   if (!inGame || anyDialogOpen() || !event.ctrlKey || !event.deltaY) return;
@@ -354,9 +395,9 @@ get("interact").addEventListener("click", () => {
   world?.interact();
   if (!anyDialogOpen()) focusWorld();
 });
-for (const dialog of [mapDialog, projectDialog]) {
+for (const dialog of [mapDialog, projectDialog, missionDialog]) {
   dialog.addEventListener("close", () => {
-    if (!inGame) return;
+    if (!inGame || anyDialogOpen()) return;
     world.pause(false);
     focusWorld();
   });
@@ -396,9 +437,7 @@ for (const control of document.querySelectorAll("[data-move]")) {
     control.addEventListener(type, () => world?.setMove(control.dataset.move, false));
   }
 }
-mobile.addEventListener("change", () => {
-  get("controls-text").textContent = mobile.matches ? words().touchControls : words().controls;
-});
+mobile.addEventListener("change", renderControls);
 
 viewport.tabIndex = 0;
 render();

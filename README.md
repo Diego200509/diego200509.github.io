@@ -7,6 +7,9 @@ Portafolio bilingüe de Diego Jijón. El barrio se construye con geometría de T
 - **WASD** para caminar, arrastrar para mirar y **E** para interactuar.
 - **Ctrl + rueda hacia abajo** para pasar a tercera persona, **Ctrl + rueda hacia arriba** para volver. **V** y el botón **Cámara** también alternan la vista.
 - En un dispositivo táctil, usa las flechas, arrastra sobre la escena y toca **Cámara** o el botón de acción.
+- Pulsa **?** para mostrar u ocultar los controles. En pantallas táctiles se muestran al entrar.
+
+En el mapa, el **Taller de TI** lleva a Ambacar. Abre la puerta, acércate al banco de trabajo y usa la terminal para jugar **Primer día en la agencia**. La misión usa datos ficticios y guarda el avance en el navegador.
 
 ## Código
 
@@ -15,6 +18,7 @@ Portafolio bilingüe de Diego Jijón. El barrio se construye con geometría de T
 - `main.js` conecta la interfaz del portafolio con el juego y guarda el progreso local.
 - `game/world.js` coordina el recorrido, los destinos y la misión RGB.
 - `game/scene.js`, `game/camera.js` y `game/avatar.js` contienen la construcción del barrio, las vistas y el personaje animado.
+- `game/workshop.js` construye el interior de Ambacar y `game/mission.js` define su terminal bilingüe.
 
 ## Vista local
 

@@ -117,7 +117,20 @@ h2{font:700 clamp(2.2rem,5vw,3.65rem)/.98 var(--display);letter-spacing:-.016em}
 .game-bottom button{pointer-events:auto}
 .objective,.game-controls{padding:6px 10px;border-radius:5px;background:#17232ded;color:#fff6e7}
 .objective{font-weight:600}
-.game-controls{font:500 .72rem/1.4 var(--mono)}
+.game-controls{font:500 .72rem/1.5 var(--mono);padding:10px 14px;border:1px solid #f8c78742}
+#help-button{min-width:38px}
+#help-button[aria-expanded=true]{color:#261d15;background:var(--gold)}
+.game-bottom .primary{box-shadow:0 4px 17px #11151c50}
+.mission-sheet{background:linear-gradient(160deg,#253338,#1c252c 65%);border-color:#a1cbb478}
+.mission-request{padding:12px 14px;margin:17px 0;border-left:2px solid #9bdac0;background:#121c2380}
+.mission-note{font:.74rem var(--mono);color:var(--muted);margin-top:8px}
+#mission-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:end}
+#mission-form label{display:grid;gap:5px;min-width:0}
+#mission-form select{width:100%;min-height:44px;padding:6px 9px;background:#131e26;border:1px solid #7fa99b80;border-radius:5px;color:var(--ink);font:inherit}
+#mission-form select[aria-invalid=true]{border-color:#ffbd9c}
+#mission-form button{grid-column:1/-1;justify-self:start;margin-top:4px}
+.mission-feedback:not(:empty){color:#ffc5a8;margin:12px 0}
+.mission-feedback.success{color:#b0f4d2}
 .loading{position:absolute;inset:0;z-index:1;display:grid;place-content:center;justify-items:center;gap:24px;color:var(--ink);background:radial-gradient(ellipse at 50% 40%,#294555,#13212a 74%);font:500 .87rem var(--mono)}
 .loading-plan{position:relative;width:min(76vw,344px);aspect-ratio:1.7;border:1px solid #f8c78755;border-radius:7px;overflow:hidden;background:repeating-linear-gradient(0deg,#f8c7871a 0 1px,transparent 1px 16px),repeating-linear-gradient(90deg,#f8c7871a 0 1px,transparent 1px 16px)}
 .loading-plan span{position:absolute;border:1px solid #f8c787ad;transition:background .24s,box-shadow .24s}
@@ -145,12 +158,13 @@ h2{font:700 clamp(2.2rem,5vw,3.65rem)/.98 var(--display);letter-spacing:-.016em}
  .game-top .button{padding:8px;min-height:42px}.game-progress{font-size:.61rem;padding:6px 5px}.game-menu{gap:4px}.game-bottom{font-size:.85rem}.sheet{padding:18px}
  .game-top{flex-wrap:wrap}.game-progress{order:3;flex-basis:100%;justify-items:center;background:transparent}
  .map-list{gap:4px;padding:4px}.map-list button{padding:7px;line-height:1.2;overflow-wrap:anywhere}.map-list small{font-size:.6rem}
+ #mission-form{grid-template-columns:1fr;gap:8px}
 }
 @media(pointer:coarse){
  .touch-ui{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 18px);left:14px;display:grid;grid-template-columns:repeat(3,42px);gap:3px;touch-action:none}
  .touch-ui button{height:42px;border:1px solid #ffffff75;border-radius:6px;background:#17232de0;font-weight:700;font-size:19px;user-select:none}
  .touch-ui button:first-child{grid-column:2}.touch-ui button:nth-child(2){grid-column:1}
- .game-bottom{bottom:calc(env(safe-area-inset-bottom) + 112px)}
+ .game[data-touch=true] .game-bottom{bottom:calc(env(safe-area-inset-bottom) + 112px)}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 .cv{max-width:760px;padding:32px 0 64px}

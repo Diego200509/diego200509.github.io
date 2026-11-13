@@ -126,6 +126,7 @@
       <div class="game-menu">
         <button class="button game-button" id="camera-button" type="button" aria-pressed="false" disabled data-t="camera">Cámara</button>
         <button class="button game-button" id="map-button" type="button" disabled data-t="map">Mapa</button>
+        <button class="button game-button" id="help-button" type="button" aria-controls="controls-text touch-controls" aria-expanded="false" disabled data-aria="help">?</button>
         <button class="button game-button game-language" id="game-language" type="button" aria-label="Switch to English">EN</button>
       </div>
     </header>
@@ -146,10 +147,10 @@
     <div class="game-bottom" id="game-bottom">
       <p id="objective" class="objective" aria-live="polite"></p>
       <button type="button" id="interact" class="button primary" data-t="interact">Interactuar</button>
-      <p class="game-controls" id="controls-text"></p>
+      <p class="game-controls" id="controls-text" hidden></p>
       <p class="sr-only" id="camera-status" role="status"></p>
     </div>
-    <div class="touch-ui" aria-label="Movimiento" data-aria="movement">
+    <div class="touch-ui" id="touch-controls" aria-label="Movimiento" data-aria="movement" hidden>
       <button data-move="KeyW" type="button" aria-label="Avanzar" data-aria="forward">↑</button>
       <button data-move="KeyA" type="button" aria-label="Izquierda" data-aria="left">←</button>
       <button data-move="KeyS" type="button" aria-label="Atrás" data-aria="back">↓</button>
@@ -171,6 +172,25 @@
       <form method="dialog"><button class="close" data-aria="close" aria-label="Cerrar" type="submit">×</button></form>
     </div>
     <div id="map-list" class="map-list"></div>
+  </dialog>
+  <dialog class="sheet mission-sheet" id="mission-dialog" aria-labelledby="mission-title">
+    <div class="sheet-top">
+      <p class="eyebrow" data-mission="label"></p>
+      <form method="dialog"><button class="close" data-aria="close" aria-label="Cerrar" type="submit">×</button></form>
+    </div>
+    <h2 id="mission-title" data-mission="title"></h2>
+    <div class="mission-request">
+      <p data-mission="request"></p>
+      <p class="mission-note" data-mission="note"></p>
+    </div>
+    <form id="mission-form">
+      <label><span data-mission="branch"></span><select name="branch"></select></label>
+      <label><span data-mission="division"></span><select name="division"></select></label>
+      <label><span data-mission="role"></span><select name="role"></select></label>
+      <button class="button primary" type="submit" data-mission="submit"></button>
+    </form>
+    <p class="mission-feedback" role="status" data-mission="feedback"></p>
+    <button class="button primary" type="button" data-mission="result" hidden></button>
   </dialog>
 </body>
 </html>

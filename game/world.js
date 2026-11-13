@@ -2,6 +2,7 @@ import * as THREE from "../vendor/three.module.min.js";
 import { createAvatar } from "./avatar.js";
 import { createPlayerCamera } from "./camera.js";
 import { buildDistrict } from "./scene.js";
+import { workshopClear, workshopLocal, workshopPoint, workshopTerminal, workshopYaw } from "./workshop.js";
 
 const Y_AXIS = new THREE.Vector3(0, 1, 0);
 const RANGE = 4.6;
@@ -11,17 +12,15 @@ const stops = {
   asotema: { x: -10, z: 0, yaw: Math.PI / 2 },
   edurural: { x: 10, z: 0, yaw: -Math.PI / 2 },
   traffic: { x: 7.5, z: 11, yaw: 0 },
-  ambacar: { x: -7.4, z: 16.8, yaw: Math.PI / 4 }
+  ambacar: { ...workshopPoint(0, 5.2), yaw: workshopYaw, pitch: .08 }
 };
 
-function positionAllowed(x, z) {
+function positionAllowed(x, z, doorOpen) {
   const within = x > -17.55 && x < 17.55 && z > -15.7 && z < 19.4;
   const inLab = Math.abs(x) < 5.1 && z > -14.15 && z < -8;
   const sideWall = Math.abs(x) > 10.75 && Math.abs(x) < 16.8 && Math.abs(z) < 4.1;
-  const garageX = (x + 11) * Math.SQRT1_2 - (z - 13.6) * Math.SQRT1_2;
-  const garageZ = (x + 11) * Math.SQRT1_2 + (z - 13.6) * Math.SQRT1_2;
-  const inGarage = Math.abs(garageX) < 4.06 && Math.abs(garageZ) < 3.12;
-  return within && !inLab && !sideWall && !inGarage;
+  const local = workshopLocal(x, z);
+  return within && !inLab && !sideWall && workshopClear(local.x, local.z, doorOpen);
 }
 
 export function createWorld(viewport, callbacks) {
@@ -36,8 +35,11 @@ export function createWorld(viewport, callbacks) {
   renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.18;
-  const { lab, traffic, color, setLabels } = buildDistrict(scene);
-  const player = createPlayerCamera(camera, positionAllowed);
+  const { lab, traffic, workshop, color, setLabels } = buildDistrict(scene);
+  let doorOpen = false;
+  let missionComplete = false;
+  const canMove = (x, z) => positionAllowed(x, z, doorOpen);
+  const player = createPlayerCamera(camera, canMove);
   const avatar = createAvatar(scene);
   viewport.append(renderer.domElement);
   const ray = new THREE.Raycaster();
@@ -59,18 +61,20 @@ export function createWorld(viewport, callbacks) {
   let preparing;
 
   function updateRotation() {
-    player.update(yaw, pitch);
+    const local = workshopLocal(player.position.x, player.position.z);
+    const indoors = Math.abs(local.x) < 3.7 && local.z > -2.9 && local.z < 2.86;
+    player.update(yaw, pitch, indoors);
     avatar.body.position.copy(player.position);
-    avatar.body.rotation.y = yaw;
-    avatar.body.visible = player.thirdPerson && camera.position.distanceTo(player.position) > 2.15;
+    avatar.body.visible = player.thirdPerson && camera.position.distanceTo(player.position) > 1.98;
   }
 
   function moveTo(id) {
     const point = stops[id];
     player.position.set(point?.x ?? 0, 0, point?.z ?? 10.6);
     yaw = point?.yaw ?? 0;
-    pitch = -0.045;
+    pitch = point?.pitch ?? -0.045;
     if (!id) yaw = -0.055;
+    avatar.body.rotation.y = yaw;
     updateRotation();
     reportTarget();
   }
@@ -79,6 +83,7 @@ export function createWorld(viewport, callbacks) {
     let best = null;
     let distance = RANGE;
     for (const [id, point] of Object.entries(stops)) {
+      if (id === "ambacar") continue;
       const next = Math.hypot(player.position.x - point.x, player.position.z - point.z);
       if (next < distance) {
         best = id;
@@ -88,6 +93,13 @@ export function createWorld(viewport, callbacks) {
     return best;
   }
 
+  function workshopTarget() {
+    const local = workshopLocal(player.position.x, player.position.z);
+    if (Math.abs(local.x) < 2.05 && local.z >= 2.36 && local.z < 5.38) return doorOpen ? "door-open" : "door";
+    if (Math.abs(local.x) >= 3.4 || local.z <= -2.35 || local.z >= 2.36) return null;
+    return Math.hypot(local.x - workshopTerminal.x, local.z - workshopTerminal.z) < 2.12 ? "terminal" : "inside";
+  }
+
   function aimedPrism() {
     ray.setFromCamera(center, camera);
     const hit = ray.intersectObjects(lab.prisms).find(({ object, distance }) => distance < 7.6 && !activePrisms.has(object.userData.prism));
@@ -95,9 +107,10 @@ export function createWorld(viewport, callbacks) {
   }
 
   function reportTarget() {
-    const stop = closestStop();
+    const interaction = workshopTarget();
+    const stop = interaction ? "ambacar" : closestStop();
     const prism = stop === "rgb" ? aimedPrism() : null;
-    const state = { stop, prism, restored: activePrisms.size === lab.prisms.length };
+    const state = { stop, prism, restored: activePrisms.size === lab.prisms.length, interaction };
     const key = JSON.stringify(state);
     if (key === targetKey) return;
     targetKey = key;
@@ -112,6 +125,26 @@ export function createWorld(viewport, callbacks) {
 
   function interact() {
     if (!running || paused) return;
+    const interaction = workshopTarget();
+    if (interaction === "door") {
+      doorOpen = true;
+      reportTarget();
+      return;
+    }
+    if (interaction === "door-open") {
+      const inside = workshopPoint(0, 1.68);
+      player.position.set(inside.x, 0, inside.z);
+      yaw = workshopYaw - .29;
+      pitch = -.045;
+      avatar.body.rotation.y = yaw;
+      updateRotation();
+      reportTarget();
+      return;
+    }
+    if (interaction === "terminal") {
+      callbacks.onMission();
+      return;
+    }
     const stop = closestStop();
     if (!stop) return;
     if (stop === "rgb" && activePrisms.size < lab.prisms.length) {
@@ -142,8 +175,8 @@ export function createWorld(viewport, callbacks) {
     const pos = player.position;
     const x = pos.x;
     const z = pos.z;
-    if (positionAllowed(pos.x + motion.x, pos.z)) pos.x += motion.x;
-    if (positionAllowed(pos.x, pos.z + motion.z)) pos.z += motion.z;
+    if (canMove(pos.x + motion.x, pos.z)) pos.x += motion.x;
+    if (canMove(pos.x, pos.z + motion.z)) pos.z += motion.z;
     if (x === pos.x && z === pos.z) return false;
     updateRotation();
     return true;
@@ -154,7 +187,14 @@ export function createWorld(viewport, callbacks) {
     const dt = Math.min((time - last) / 1000 || 0, 0.05);
     last = time;
     const moving = !paused && updateMovement(dt);
-    if (player.thirdPerson) avatar.update(dt, moving, reduceMotion);
+    if (player.thirdPerson) {
+      const angle = moving ? Math.atan2(-motion.x, -motion.z) : yaw;
+      const current = avatar.body.rotation.y;
+      const difference = Math.atan2(Math.sin(angle - current), Math.cos(angle - current));
+      avatar.body.rotation.y = current + difference * (reduceMotion ? 1 : 1 - Math.exp(-13 * dt));
+      avatar.update(dt, moving, reduceMotion);
+    }
+    workshop.update(dt, time, doorOpen, missionComplete, reduceMotion);
     for (const [i, crystal] of lab.prisms.entries()) {
       const active = activePrisms.has(i);
       target.set(crystal.position.x, active ? 1.9 : 1.96 + (reduceMotion ? 0 : Math.sin(time / 600 + i) * 0.12), active ? 3.22 : 3.77);
@@ -189,7 +229,7 @@ export function createWorld(viewport, callbacks) {
     if (pointer?.id !== event.pointerId) return;
     const click = pointer.motion < 7;
     pointer = null;
-    if (click && aimedPrism() !== null) interact();
+    if (click && closestStop() === "rgb" && aimedPrism() !== null) interact();
   });
   viewport.addEventListener("lostpointercapture", () => { pointer = null; });
   window.addEventListener("resize", resize);
@@ -211,8 +251,10 @@ export function createWorld(viewport, callbacks) {
       return preparing;
     },
     toggleCamera,
-    start(saved) {
+    start(saved, completed) {
       activePrisms = new Set(saved);
+      missionComplete = completed;
+      doorOpen = completed;
       running = true;
       paused = false;
       last = performance.now();
@@ -243,6 +285,7 @@ export function createWorld(viewport, callbacks) {
       updateRotation();
     },
     interact,
+    completeMission() { missionComplete = true; },
     moveTo,
     setLabels
   };
