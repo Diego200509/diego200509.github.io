@@ -59,7 +59,8 @@
         </figure>
       </div>
     </section>
-    <section class="featured content" id="featured" aria-labelledby="featured-title">
+    <section class="featured content landing-chapter" id="featured" aria-labelledby="featured-title">
+      <span class="chapter-seam" aria-hidden="true"></span>
       <div data-reveal>
         <p class="eyebrow" data-t="featured">CASO DESTACADO · AMBACAR</p>
         <h2 id="featured-title" data-t="featuredTitle">Gestión de usuarios ZEUS</h2>
@@ -91,12 +92,13 @@
         <p class="flow-note" data-t="flowNote">Flujo ilustrativo del módulo</p>
       </div>
     </section>
-    <section class="archive content" id="projects" aria-labelledby="projects-title">
+    <section class="archive content landing-chapter" id="projects" aria-labelledby="projects-title">
+      <span class="chapter-seam" aria-hidden="true"></span>
       <header class="section-title" data-reveal>
         <h2 id="projects-title" data-t="selected">Proyectos seleccionados</h2>
         <a href="https://github.com/Diego200509?tab=repositories" class="text-link" target="_blank" rel="noopener noreferrer" data-t="allRepos">Todos en GitHub ↗</a>
       </header>
-      <div class="project-grid" id="project-grid" data-reveal></div>
+      <div class="project-grid" id="project-grid" data-reveal="sequence"></div>
       <noscript>
         <ul>
           <li><a href="https://github.com/Diego200509/asotema">ASOTEMA</a></li>
@@ -106,7 +108,8 @@
         </ul>
       </noscript>
     </section>
-    <section class="profile content" id="profile" aria-labelledby="profile-title">
+    <section class="profile content landing-chapter" id="profile" aria-labelledby="profile-title">
+      <span class="chapter-seam" aria-hidden="true"></span>
       <div class="profile-story" data-reveal>
         <h2 id="profile-title" data-t="profile">Sobre mí</h2>
         <p class="profile-copy" data-t="bio">Estudio Ingeniería en Software en la Universidad Técnica de Ambato. Me interesa desarrollar aplicaciones, trabajar con bases de datos y aplicar IA y automatización a problemas concretos.</p>
@@ -116,22 +119,24 @@
           <a class="text-link" href="#experience" data-t="experience">Experiencia</a>
         </div>
       </div>
-      <dl class="profile-facts" data-reveal>
+      <dl class="profile-facts" data-reveal="sequence">
         <div><dt data-t="education">Formación</dt><dd data-t="degree">Ingeniería en Software · Universidad Técnica de Ambato</dd></div>
         <div><dt data-t="skills">Habilidades</dt><dd>.NET · TypeScript · Python · SQL</dd></div>
         <div><dt data-t="languages">Idiomas</dt><dd data-t="languageLevels">Español nativo · Inglés B1</dd></div>
       </dl>
     </section>
-    <section class="experience content" id="experience" aria-labelledby="experience-title">
+    <section class="experience content landing-chapter" id="experience" aria-labelledby="experience-title">
+      <span class="chapter-seam" aria-hidden="true"></span>
       <header class="section-title" data-reveal><h2 id="experience-title" data-t="experience">Experiencia</h2></header>
-      <div class="experience-list" id="experience-list" data-reveal></div>
+      <div class="experience-list" id="experience-list" data-reveal="sequence"></div>
     </section>
-    <footer class="footer content" id="contact">
-      <div>
+    <footer class="footer content landing-chapter" id="contact">
+      <span class="chapter-seam" aria-hidden="true"></span>
+      <div data-reveal>
         <p class="eyebrow" data-t="contactLabel">CONTACTO</p>
         <h2 data-t="talk">Hablemos de software.</h2>
       </div>
-      <a class="button primary" href="https://github.com/Diego200509" target="_blank" rel="noopener noreferrer" data-t="githubProfile">Mi perfil de GitHub ↗</a>
+      <a class="button primary" href="https://github.com/Diego200509" target="_blank" rel="noopener noreferrer" data-t="githubProfile" data-reveal>Mi perfil de GitHub ↗</a>
     </footer>
   </main>
   <section id="game" class="game" hidden aria-label="Distrito Cero 3D">

@@ -45,6 +45,113 @@
   scroll-margin-top: 100px;
 }
 
+.landing-chapter {
+  --chapter-ink: #f8c787;
+  --chapter-glow: #f8c78714;
+  --chapter-arrival: 1;
+  position: relative;
+  isolation: isolate;
+  padding-block: clamp(54px, 7vw, 104px);
+  border-top: 0;
+  border-bottom: 0;
+}
+
+.landing-chapter::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  background: radial-gradient(ellipse at var(--glow-origin, 0%) 0%, var(--chapter-glow), transparent 72%);
+  opacity: var(--chapter-arrival);
+}
+
+.chapter-seam {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: var(--line);
+  pointer-events: none;
+}
+
+.chapter-seam::before,
+.chapter-seam::after {
+  position: absolute;
+  content: "";
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .chapter-linked .chapter-seam::before {
+    animation: linked-chapter 1.5s ease-out both;
+  }
+}
+
+@keyframes linked-chapter {
+  0%, 100% { box-shadow: none; }
+  45% { box-shadow: 0 0 17px 1px var(--chapter-glow); }
+}
+
+.chapter-seam::before {
+  inset: 0;
+  background: linear-gradient(90deg, var(--chapter-ink), transparent 90%);
+  transform: scaleX(var(--chapter-arrival));
+  transform-origin: left;
+}
+
+.chapter-seam::after {
+  inset: -3px auto auto calc(var(--chapter-arrival) * (100% - 7px));
+  width: 7px;
+  height: 7px;
+  background: var(--chapter-ink);
+  border-radius: 50%;
+  box-shadow: 0 0 15px var(--chapter-ink);
+  opacity: var(--chapter-arrival);
+}
+
+#projects {
+  --chapter-ink: #98bcff;
+  --chapter-glow: #77a3fa14;
+  --glow-origin: 96%;
+}
+
+#profile {
+  --chapter-ink: #97d6be;
+  --chapter-glow: #74c9a915;
+}
+
+#experience {
+  --chapter-ink: #ddb4f2;
+  --chapter-glow: #ca8cec13;
+  --glow-origin: 96%;
+}
+
+#contact {
+  --chapter-glow: #f8c7871a;
+}
+
+#projects .section-title,
+#experience .section-title {
+  margin-bottom: clamp(24px, 3.3vw, 46px);
+}
+
+#projects .project-grid,
+#experience .experience-list {
+  margin-top: 0;
+}
+
+#projects .project-icon {
+  height: clamp(98px, 11vw, 157px);
+}
+
+#projects .project-icon svg {
+  width: clamp(40px, 5vw, 68px);
+  height: clamp(40px, 5vw, 68px);
+}
+
+#contact h2 {
+  font-size: clamp(2.45rem, 6vw, 5.1rem);
+}
+
 #inicio {
   background:
     radial-gradient(ellipse at 80% 44%, #4f382b9c, transparent 57%),
@@ -248,6 +355,7 @@
   #main > [id] { scroll-margin-top: 118px; }
   #top nav a::after { bottom: 0; }
   .featured-flow { padding-inline: 15px; }
+  .landing-chapter { padding-block: 42px 52px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -4,25 +4,49 @@ const navigation = [...header.querySelectorAll("nav a[href^='#']")]
   .map(link => ({ link, section: document.querySelector(link.hash) }));
 const portrait = document.querySelector(".portrait-frame");
 const revealItems = [...document.querySelectorAll("#main [data-reveal]")];
+const chapters = [...document.querySelectorAll(".landing-chapter")];
+const chapterAnimations = new Set();
+const easing = "cubic-bezier(.22,1,.36,1)";
+let highlightedChapter = null;
 
-if ("IntersectionObserver" in window) {
+function reveal(target) {
+  if (reducedMotion.matches || target.contains(document.activeElement)) return;
+  const sequence = target.dataset.reveal === "sequence";
+  const items = sequence ? [...target.children] : [target];
+  items.forEach((item, index) => {
+    const animation = item.animate(
+      [
+        { opacity: .24, translate: "0 30px" },
+        { opacity: 1, translate: "0 0" }
+      ],
+      { duration: 740, delay: Math.min(index, 3) * 105, easing, fill: "backwards" }
+    );
+    chapterAnimations.add(animation);
+    const forget = () => chapterAnimations.delete(animation);
+    animation.addEventListener("finish", forget, { once: true });
+    animation.addEventListener("cancel", forget, { once: true });
+  });
+}
+
+if ("IntersectionObserver" in window && "animate" in Element.prototype) {
   const observer = new IntersectionObserver((entries) => {
     for (const { target, isIntersecting } of entries) {
       if (!isIntersecting) continue;
       observer.unobserve(target);
-      if (!reducedMotion.matches && !target.contains(document.activeElement)) {
-        target.animate(
-          [{ opacity: .48, transform: "translateY(16px)" }, { opacity: 1, transform: "translateY(0)" }],
-          { duration: 520, easing: "cubic-bezier(.21,.72,.32,1)" }
-        );
-      }
+      reveal(target);
     }
-  }, { rootMargin: "0px 0px -7% 0px", threshold: .08 });
+  }, { rootMargin: "0px 0px -11% 0px" });
 
   for (const item of revealItems) {
     if (item.getBoundingClientRect().top > innerHeight * .83) observer.observe(item);
   }
 }
+
+document.querySelector("#main").addEventListener("focusin", (event) => {
+  for (const animation of chapterAnimations) {
+    if (animation.effect.target.contains(event.target)) animation.finish();
+  }
+});
 
 let pointerFrame = 0;
 let offsetX = 0;
@@ -51,20 +75,48 @@ portrait.addEventListener("pointermove", (event) => {
 });
 
 portrait.addEventListener("pointerleave", resetPortrait);
-reducedMotion.addEventListener("change", resetPortrait);
+reducedMotion.addEventListener("change", () => {
+  resetPortrait();
+  if (reducedMotion.matches) {
+    for (const animation of chapterAnimations) animation.cancel();
+  }
+  queueNavigationUpdate();
+});
 
 let scrollFrame = 0;
 let activeLink = null;
+
+function showDestination() {
+  const destination = chapters.find(chapter => "#" + chapter.id === location.hash);
+  if (highlightedChapter === destination) return;
+  highlightedChapter?.classList.remove("chapter-linked");
+  highlightedChapter = destination;
+  destination?.classList.add("chapter-linked");
+}
 
 function updateNavigation() {
   scrollFrame = 0;
   if (document.body.classList.contains("playing")) return;
   const scrollRange = Math.max(1, document.documentElement.scrollHeight - innerHeight);
-  header.style.setProperty("--read-progress", Math.min(1, Math.max(0, scrollY / scrollRange)));
-  const marker = header.getBoundingClientRect().bottom + Math.min(180, innerHeight * .28);
+  const progress = Math.min(1, Math.max(0, scrollY / scrollRange));
+  const headerBottom = header.getBoundingClientRect().bottom;
+  const marker = headerBottom + Math.min(180, innerHeight * .28);
+  const start = innerHeight * .94;
   let next = null;
   for (const { link, section } of navigation) {
     if (section.getBoundingClientRect().top <= marker) next = link;
+  }
+  const arrivals = chapters.map((chapter) => {
+    const pageTop = chapter.getBoundingClientRect().top + scrollY;
+    const beginsAt = pageTop - start;
+    const endsAt = Math.min(scrollRange, pageTop - marker);
+    const fraction = (scrollY - beginsAt) / Math.max(1, endsAt - beginsAt);
+    const arrival = reducedMotion.matches ? 1 : Math.min(1, Math.max(0, fraction));
+    return { chapter, arrival };
+  });
+  header.style.setProperty("--read-progress", progress);
+  for (const { chapter, arrival } of arrivals) {
+    chapter.style.setProperty("--chapter-arrival", arrival.toFixed(3));
   }
   if (scrollRange - scrollY < 3 && scrollY > 0) next = navigation.at(-1).link;
   if (next === activeLink) return;
@@ -79,6 +131,13 @@ function queueNavigationUpdate() {
 
 window.addEventListener("scroll", queueNavigationUpdate, { passive: true });
 window.addEventListener("resize", queueNavigationUpdate);
-window.addEventListener("hashchange", queueNavigationUpdate);
+window.addEventListener("hashchange", () => {
+  showDestination();
+  queueNavigationUpdate();
+});
+showDestination();
+if ("ResizeObserver" in window) {
+  new ResizeObserver(queueNavigationUpdate).observe(document.querySelector("#main"));
+}
 document.fonts?.ready.then(queueNavigationUpdate);
 queueNavigationUpdate();
