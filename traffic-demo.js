@@ -92,6 +92,7 @@ function render(passing = null) {
   }
 
   const key = running ? "trafficPause" : simulation.tick ? "trafficResume" : "trafficPlay";
+  play.dataset.running = String(running);
   playLabel.dataset.t = key;
   playLabel.textContent = translations[document.documentElement.lang][key];
 }
