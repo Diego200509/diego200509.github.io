@@ -1,6 +1,6 @@
 import { loadLanguage, projectPage, projects, saveLanguage, translatePage, translations } from "./content.js";
 import { mountContactFooter } from "./site-footer.js";
-import { caseDetails, caseLabels } from "./case-content.js";
+import { caseDetails, caseLabels } from "./case-content.js?v=sections";
 import { caseDemos } from "./case-demos.js";
 
 const study = document.querySelector("#case-study");
@@ -8,9 +8,32 @@ const currentPage = location.pathname.split("/").at(-1);
 const project = projects.find(item => item.page === currentPage);
 const detail = caseDetails[project.id];
 const demoState = {};
+const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+const sectionObserver = "IntersectionObserver" in window && "animate" in Element.prototype
+  ? new IntersectionObserver(entries => {
+    for (const { target, isIntersecting } of entries) {
+      if (!isIntersecting) continue;
+      sectionObserver.unobserve(target);
+      if (reducedMotion.matches || target.matches(":target") || target.contains(document.activeElement)) continue;
+      target.animate([{ opacity: .65, translate: "0 14px" }, { opacity: 1, translate: "0 0" }], {
+        duration: 480,
+        easing: "cubic-bezier(.22, 1, .36, 1)"
+      });
+    }
+  }, { rootMargin: "0px 0px -7% 0px" }) : null;
 
 function icon(name) {
   return `<svg aria-hidden="true" focusable="false"><use href="./assets/landing-icons.svg#${name}"></use></svg>`;
+}
+
+function sectionHeading(id, name, label) {
+  return `<header class="case-section-heading"><span>${icon(name)}</span><h2 id="${id}">${label}</h2></header>`;
+}
+
+function evidenceLink(href, name, label) {
+  return `<li><a href="${href}" target="_blank" rel="noopener noreferrer">
+    <span class="case-evidence-icon">${icon(name)}</span><span>${label}</span><span class="case-external" aria-hidden="true">↗</span>
+  </a></li>`;
 }
 
 function render(language) {
@@ -21,12 +44,15 @@ function render(language) {
   const name = project.name[language];
   const stack = language === "en" && project.stackEn ? project.stackEn : project.stack;
   const returnPath = "./index.html?lang=" + language + "#projects";
-  const sections = [["contexto", labels.context], ["contribucion", labels.contribution], ["sistema", labels.architecture], ["evidencia", labels.evidence]];
+  const sections = [
+    ["contexto", "document", labels.context], ["contribucion", "briefcase", labels.contribution],
+    ["sistema", "uml", labels.architecture], ["evidencia", "github", labels.evidence]
+  ];
 
   document.title = `${name} · Diego Jijón`;
   document.querySelector('meta[name="description"]').content = overview.short;
   document.querySelector("#case-return").href = returnPath;
-  document.querySelector("#case-return").setAttribute("aria-label", labels.back);
+  sectionObserver?.disconnect();
 
   study.innerHTML = `
     <div class="case-hero">
@@ -48,29 +74,29 @@ function render(language) {
       </section>
     </div>
     <nav class="case-index" aria-label="${labels.sections}">
-      ${sections.map(([id, label]) => `<a href="#${id}">${label}</a>`).join("")}
+      ${sections.map(([id, name, label]) => `<a href="#${id}">${icon(name)}<span>${label}</span></a>`).join("")}
     </nav>
     <section class="case-section" id="contexto" aria-labelledby="case-context-title">
-      <h2 id="case-context-title">${labels.context}</h2>
+      ${sectionHeading("case-context-title", "document", labels.context)}
       <div class="case-context">
-        <div><h3>${labels.problem}</h3><p>${overview.problem}</p></div>
-        <div><h3>${labels.solution}</h3><p>${overview.solution}</p></div>
+        <div class="case-problem"><h3>${labels.problem}</h3><p>${overview.problem}</p></div>
+        <div class="case-solution"><h3>${labels.solution}</h3><p>${overview.solution}</p></div>
       </div>
     </section>
     <section class="case-section" id="contribucion" aria-labelledby="case-contribution-title">
-      <h2 id="case-contribution-title">${labels.contribution}</h2>
+      ${sectionHeading("case-contribution-title", "briefcase", labels.contribution)}
       <ul class="case-contributions">${copy.contributions.map(text => `<li>${text}</li>`).join("")}</ul>
     </section>
     <section class="case-section" id="sistema" aria-labelledby="case-system-title">
-      <h2 id="case-system-title">${labels.architecture}</h2>
+      ${sectionHeading("case-system-title", "uml", labels.architecture)}
       <ol class="case-system">${copy.flow.map(([title, text], index) => `<li><span aria-hidden="true">0${index + 1}</span><h3>${title}</h3><p>${text}</p></li>`).join("")}</ol>
     </section>
     <section class="case-section" id="evidencia" aria-labelledby="case-evidence-title">
-      <h2 id="case-evidence-title">${labels.evidence}</h2>
+      ${sectionHeading("case-evidence-title", "github", labels.evidence)}
       <div>
         <ul class="case-evidence">
-          <li><a class="text-link" href="${project.repo}/commits/main/?author=Diego200509" target="_blank" rel="noopener noreferrer">${labels.commits} <span aria-hidden="true">↗</span></a></li>
-          ${copy.evidence.map(([label, path]) => `<li><a class="text-link" href="${project.repo}/blob/main/${path}" target="_blank" rel="noopener noreferrer">${label} <span aria-hidden="true">↗</span></a></li>`).join("")}
+          ${evidenceLink(project.repo + "/commits/main/?author=Diego200509", "github", labels.commits)}
+          ${copy.evidence.map(([label, path]) => evidenceLink(project.repo + "/blob/main/" + path, "document", label)).join("")}
         </ul>
         ${copy.capture ? `<figure class="case-capture"><a href="./assets/rgb-aplicacion.webp" target="_blank" rel="noopener noreferrer"><img src="./assets/rgb-aplicacion.webp" width="1480" height="760" loading="lazy" alt="${copy.capture}"></a><figcaption>${copy.capture}</figcaption></figure>` : ""}
       </div>
@@ -84,6 +110,11 @@ function render(language) {
 
   translatePage(language);
   caseDemos[project.id](document.querySelector("#case-demo"), language, demoState);
+  if (!reducedMotion.matches) {
+    for (const section of study.querySelectorAll(".case-section, .case-related")) {
+      if (section.getBoundingClientRect().top >= innerHeight) sectionObserver?.observe(section);
+    }
+  }
 }
 
 mountContactFooter();

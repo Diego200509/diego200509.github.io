@@ -1,12 +1,12 @@
 export const caseLabels = {
   es: {
-    back: "Volver a proyectos", demo: "Ver demostración ↓", sections: "En esta ficha", context: "Contexto", contribution: "Mi contribución",
+    demo: "Ver demostración ↓", sections: "En esta ficha", context: "Contexto", contribution: "Mi contribución",
     architecture: "Cómo funciona", evidence: "Código y evidencia", problem: "El problema", solution: "La solución",
     technologies: "Tecnologías", commits: "Ver mis contribuciones en GitHub", other: "Explorar otros proyectos",
     more: "Ver los proyectos seleccionados →"
   },
   en: {
-    back: "Back to projects", demo: "See the demo ↓", sections: "On this page", context: "Context", contribution: "My contribution",
+    demo: "See the demo ↓", sections: "On this page", context: "Context", contribution: "My contribution",
     architecture: "How it works", evidence: "Code and evidence", problem: "The problem", solution: "The solution",
     technologies: "Technologies", commits: "See my contributions on GitHub", other: "Explore other projects",
     more: "See selected projects →"
