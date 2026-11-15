@@ -1,5 +1,4 @@
 #rgb-demo {
-  --accent: #a9baf6;
   min-width: 0;
   scroll-margin-top: 105px;
 }
@@ -9,7 +8,7 @@
 }
 
 #rgb-demo:focus-within {
-  border-color: var(--accent);
+  border-color: var(--gold);
 }
 
 .rgb-preview {
@@ -21,7 +20,7 @@
   height: clamp(98px, 11vw, 157px);
   overflow: hidden;
   border-bottom: 1px solid var(--line);
-  background: #10161e;
+  background: var(--surface-inset);
 }
 
 .rgb-preview:focus-within {
@@ -52,8 +51,8 @@
   top: 7px;
   padding: 3px 5px;
   border-radius: 4px;
-  background: #10161ef2;
-  color: #fff;
+  background: var(--surface-inset);
+  color: var(--ink);
   font: 500 .64rem/1.35 var(--mono);
 }
 
@@ -69,8 +68,8 @@
   position: absolute;
   inset: 0 auto 0 var(--rgb-split);
   width: 2px;
-  background: #fff4d8;
-  box-shadow: 0 0 8px #151a20b0;
+  background: var(--ink-soft);
+  box-shadow: 0 0 8px var(--shadow);
   pointer-events: none;
 }
 
@@ -83,10 +82,10 @@
   width: 30px;
   height: 30px;
   transform: translate(-50%, -50%);
-  border: 1px solid #fff4d8;
+  border: 1px solid var(--ink-soft);
   border-radius: 50%;
-  background: #18202bef;
-  color: #fff4d8;
+  background: var(--surface-raised);
+  color: var(--ink-soft);
   font: 700 .8rem var(--mono);
   white-space: nowrap;
 }
@@ -160,9 +159,9 @@
   place-items: center;
   width: 31px;
   height: 27px;
-  border: 1px solid #ffffff36;
+  border: 1px solid var(--line-strong);
   border-radius: 4px;
-  background: #161d25;
+  background: var(--surface-inset);
   color: var(--muted);
   font: 600 .75rem var(--mono);
   pointer-events: none;
@@ -170,7 +169,7 @@
 
 .rgb-toggle input:checked + span {
   border-color: var(--channel-color);
-  background: color-mix(in srgb, var(--channel-color) 18%, #161d25);
+  background: color-mix(in srgb, var(--channel-color) 18%, var(--surface-inset));
   color: var(--channel-color);
 }
 
@@ -184,7 +183,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  color: var(--accent);
+  color: var(--gold);
   font: 500 .72rem/1.35 var(--mono);
   text-align: left;
 }
@@ -201,8 +200,6 @@
 
 .rgb-settings {
   width: min(calc(100% - 30px), 680px);
-  border-color: #a9baf677;
-  background: radial-gradient(ellipse at 100% 0%, #303d55, transparent 65%), #1b222b;
 }
 
 .rgb-settings-grid {
@@ -252,7 +249,7 @@
   border-block: 1px solid var(--line);
 }
 
-.rgb-app summary { cursor: pointer; }
+.rgb-app summary { color: var(--gold); cursor: pointer; }
 .rgb-app p { color: var(--muted); font-size: .92rem; margin: 8px 0; }
 
 .rgb-capture {

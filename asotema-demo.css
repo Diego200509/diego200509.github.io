@@ -1,11 +1,10 @@
 #asotema-demo {
-  --accent: #f0b769;
   min-width: 0;
   scroll-margin-top: 105px;
 }
 
 #asotema-demo:hover { transform: none; }
-#asotema-demo:focus-within { border-color: var(--accent); }
+#asotema-demo:focus-within { border-color: var(--gold); }
 
 .asotema-preview {
   display: flex;
@@ -18,8 +17,8 @@
   padding: 6px clamp(8px, 1.1vw, 16px);
   border-bottom: 1px solid var(--line);
   background:
-    radial-gradient(ellipse at 64% 115%, #76502b66, transparent 76%),
-    #292625;
+    radial-gradient(ellipse at 64% 115%, var(--gold-wash), transparent 76%),
+    var(--surface-inset);
 }
 
 .asotema-preview-header {
@@ -27,7 +26,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 4px;
-  color: var(--accent);
+  color: var(--gold);
   font: 500 .66rem/1.2 var(--mono);
 }
 
@@ -40,8 +39,8 @@
   padding: 0;
   border: 1px solid var(--line);
   border-radius: 4px;
-  background: #201e1c;
-  color: var(--accent);
+  background: var(--surface-raised);
+  color: var(--gold);
   font: 1.05rem/1 var(--body);
 }
 
@@ -56,10 +55,10 @@
   position: relative;
   min-width: 0;
   padding-bottom: 7px;
-  color: var(--accent);
+  color: var(--gold);
 }
 
-.asotema-balances > .asotema-principal { color: #efae9f; }
+.asotema-balances > .asotema-principal { color: var(--ink-soft); }
 
 .asotema-balances > div::before,
 .asotema-balances > div::after {
@@ -107,16 +106,16 @@
   padding: 4px 3px;
   border: 1px solid var(--line);
   border-radius: 4px;
-  background: #192129;
+  background: var(--surface-inset);
   color: var(--ink);
   font: 600 .71rem/1.16 var(--body);
 }
 
 .asotema-actions :is(span, strong) { color: inherit; font: inherit; }
-.asotema-actions strong { color: var(--accent); }
+.asotema-actions strong { color: var(--gold); }
 
 #asotema-demo button[aria-disabled="true"] { cursor: default; opacity: .64; }
-#asotema-demo button[aria-disabled="false"]:hover { border-color: var(--accent); }
+#asotema-demo button[aria-disabled="false"]:hover { border-color: var(--gold); }
 
 @media (max-width: 600px) {
   #asotema-demo { scroll-margin-top: 118px; }

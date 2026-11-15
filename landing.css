@@ -1,14 +1,8 @@
-:is(#top, #main) {
-  --gold: #e3ccaa;
-  --panel: #202328;
-  --line: #e5e0d426;
-}
-
 #top {
   position: sticky;
   top: 0;
   z-index: 2;
-  background: #17191cf2;
+  background: color-mix(in srgb, var(--bg) 95%, transparent);
   column-gap: clamp(12px, 2.2vw, 32px);
 }
 
@@ -25,7 +19,7 @@
 
 #top nav a {
   position: relative;
-  color: #d4d3ce;
+  color: var(--ink-soft);
   text-decoration: none;
 }
 
@@ -57,7 +51,7 @@
 
 .landing-chapter {
   --chapter-ink: var(--gold);
-  --chapter-glow: #e3ccaa0d;
+  --chapter-glow: var(--gold-tint);
   --chapter-arrival: 1;
   position: relative;
   isolation: isolate;
@@ -132,13 +126,12 @@
 #projects .project-copy small { color: var(--gold); }
 
 #talkapp {
-  --accent: #a5e4d7;
   min-width: 0;
   scroll-margin-top: 105px;
 }
 
 #talkapp:hover { transform: none; }
-#talkapp:focus-within { border-color: var(--accent); }
+#talkapp:focus-within { border-color: var(--gold); }
 
 .talkapp-preview {
   flex: none;
@@ -151,11 +144,11 @@
   gap: 5px;
   padding: 8px clamp(8px, 1.1vw, 16px);
   border-bottom: 1px solid var(--line);
-  background: radial-gradient(ellipse at 65% 115%, #326b665e, transparent 75%), #18272e;
+  background: radial-gradient(ellipse at 65% 115%, var(--gold-wash), transparent 75%), var(--surface-inset);
 }
 
 .talkapp-preview-label {
-  color: var(--accent);
+  color: var(--gold);
   font: 500 .66rem/1.2 var(--mono);
 }
 
@@ -171,7 +164,7 @@
   margin: 0;
   padding: 4px 8px;
   border-radius: 8px 8px 8px 2px;
-  background: #293a43;
+  background: var(--surface-raised);
   color: var(--ink);
   font-size: .72rem;
   line-height: 1.25;
@@ -180,8 +173,8 @@
 .talkapp-conversation p + p {
   align-self: end;
   border-radius: 8px 8px 2px 8px;
-  background: #a5e4d7;
-  color: #142e2c;
+  background: var(--gold);
+  color: var(--on-gold);
 }
 
 #talkapp h3 { font: 700 1.65rem/1 var(--display); }
@@ -197,14 +190,14 @@
   padding: 3px 7px;
   border: 1px solid var(--line);
   border-radius: 4px;
-  background: #192129;
+  background: var(--surface-inset);
   font: 600 .71rem/1.16 var(--body);
 }
 
 .talkapp-modes button[aria-pressed="true"] {
-  border-color: var(--accent);
-  background: #a5e4d71c;
-  color: var(--accent);
+  border-color: var(--gold);
+  background: var(--gold-wash);
+  color: var(--gold);
 }
 
 .project-details-button {
@@ -214,7 +207,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  color: var(--accent);
+  color: var(--gold);
   font: 500 .72rem/1.35 var(--mono);
   text-align: left;
 }
@@ -232,8 +225,8 @@
   position: relative;
   isolation: isolate;
   background:
-    radial-gradient(ellipse at 80% 45%, #cdb08d26, transparent 58%),
-    linear-gradient(154deg, #212326, #17191c 66%);
+    radial-gradient(ellipse at 80% 45%, var(--gold-wash), transparent 58%),
+    linear-gradient(154deg, var(--panel), var(--bg) 66%);
 }
 
 #inicio::before {
@@ -242,8 +235,8 @@
   inset: 0;
   content: "";
   background:
-    linear-gradient(#e7dbcb0d 1px, transparent 1px),
-    linear-gradient(90deg, #e7dbcb0d 1px, transparent 1px);
+    linear-gradient(var(--gold-tint) 1px, transparent 1px),
+    linear-gradient(90deg, var(--gold-tint) 1px, transparent 1px);
   background-size: 38px 38px;
   mask-image: radial-gradient(ellipse at 30% 45%, #000, transparent 76%);
   pointer-events: none;
@@ -258,7 +251,7 @@
 }
 
 .hero-content .hero-role {
-  color: #f1e6d7;
+  color: var(--ink-soft);
 }
 
 .hero .lead { color: var(--muted); }
@@ -280,13 +273,13 @@
   height: 42px;
   border: 1px solid var(--line);
   border-radius: 50%;
-  background: #e3ccaa08;
+  background: var(--gold-tint);
   transition: background-color .2s ease, border-color .2s ease, color .2s ease;
 }
 
 .icon-link:is(:hover, :focus-visible) {
   border-color: var(--gold);
-  background: #e3ccaa1a;
+  background: var(--gold-wash);
   color: var(--gold);
 }
 
@@ -314,7 +307,7 @@
   position: relative;
   border-color: var(--line);
   background: var(--panel);
-  box-shadow: 0 18px 46px #0b0c106b;
+  box-shadow: 0 18px 46px color-mix(in srgb, var(--shadow) 42%, transparent);
 }
 
 .hero-preview figcaption { border-color: var(--line); background: var(--panel); }
@@ -322,7 +315,7 @@
 .portrait-frame {
   position: relative;
   overflow: hidden;
-  background: #423027;
+  background: var(--surface-raised);
 }
 
 .hero-preview .portrait-frame img {
@@ -335,7 +328,7 @@
   inset: 0;
   content: "";
   pointer-events: none;
-  background: radial-gradient(ellipse at calc(50% + var(--portrait-x, 0) * 65%) calc(50% + var(--portrait-y, 0) * 65%), #ffe6c449, transparent 58%);
+  background: radial-gradient(ellipse at calc(50% + var(--portrait-x, 0) * 65%) calc(50% + var(--portrait-y, 0) * 65%), var(--gold-line), transparent 58%);
   opacity: 0;
   transition: opacity .25s ease;
 }
@@ -350,8 +343,8 @@
 }
 
 .preview-project:is(:hover, :focus-visible) {
-  background: #f8c78718;
-  color: #ffdfa9;
+  background: var(--gold-wash);
+  color: var(--gold);
   text-decoration: none;
 }
 
@@ -378,7 +371,7 @@
 
 .featured-preview figcaption {
   padding: 8px 10px;
-  background: #181a1e;
+  background: var(--surface-inset);
   color: var(--muted);
   font: 500 .72rem/1.4 var(--mono);
 }
@@ -463,7 +456,7 @@
   border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--panel);
-  box-shadow: 0 18px 36px #0a111737;
+  box-shadow: 0 18px 36px color-mix(in srgb, var(--shadow) 26%, transparent);
 }
 
 .profile-portrait img {
@@ -523,7 +516,7 @@
   padding: 5px 10px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: #e3ccaa0d;
+  background: var(--gold-tint);
   color: var(--gold);
   font: 500 .74rem/1.35 var(--mono);
 }
@@ -588,7 +581,7 @@
 .technology-card:hover,
 .certificate-card:is(:hover, :focus-within) {
   border-color: var(--chapter-ink);
-  background-color: #242c34;
+  background-color: var(--surface-raised);
 }
 
 .technology-card h3,
@@ -612,7 +605,7 @@
   padding: 5px 8px;
   border: 1px solid var(--line);
   border-radius: 5px;
-  background: #181a1e;
+  background: var(--surface-inset);
   color: var(--ink);
   font: 600 .8rem/1.35 var(--body);
 }
@@ -621,7 +614,7 @@
   width: 17px;
   height: 17px;
   flex: none;
-  color: #d8c9b6;
+  color: var(--ink-soft);
 }
 
 .certificate-card {
@@ -693,7 +686,7 @@
 
 .achievement-card:is(:hover, :focus-visible) {
   border-color: var(--gold);
-  background: #2a2929;
+  background: var(--surface-raised);
   text-decoration: none;
 }
 
@@ -711,7 +704,7 @@
   margin-bottom: 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #e3ccaa0d;
+  background: var(--gold-tint);
   color: var(--gold);
 }
 

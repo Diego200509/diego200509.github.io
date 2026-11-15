@@ -7,7 +7,7 @@
   padding: 24px max(24px, 7vw) max(34px, 10vh);
   isolation: isolate;
   overflow: hidden;
-  background: #171b20;
+  background: var(--bg);
   color: var(--ink);
   transition: opacity .3s ease;
 }
@@ -17,7 +17,7 @@
   inset: 0;
   z-index: -1;
   content: "";
-  background: linear-gradient(0deg, #11171ded, #15171935 48%, #15171912 74%);
+  background: linear-gradient(0deg, color-mix(in srgb, var(--shadow) 93%, transparent), color-mix(in srgb, var(--shadow) 21%, transparent) 48%, color-mix(in srgb, var(--shadow) 7%, transparent) 74%);
   pointer-events: none;
 }
 
@@ -50,9 +50,9 @@
   right: max(16px, env(safe-area-inset-right));
   min-height: 44px;
   padding: 8px 15px;
-  border: 1px solid #ffe1b78a;
+  border: 1px solid var(--gold-line);
   border-radius: 5px;
-  background: #171b20f2;
+  background: var(--surface-inset);
   color: var(--ink);
   font: 500 .78rem/1.2 var(--mono);
 }
@@ -75,7 +75,7 @@
 .district-opening-line {
   height: 2px;
   width: min(100%, 280px);
-  background: #f8c78755;
+  background: var(--gold-line);
 }
 
 .district-opening-line::after {
@@ -103,7 +103,7 @@
   z-index: 1;
   width: 100%;
   height: 100%;
-  background: #10151c;
+  background: var(--surface-inset);
 }
 
 #district-trailer { object-fit: contain; }

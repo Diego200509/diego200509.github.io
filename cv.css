@@ -3,7 +3,7 @@
   --cv-muted: #59564f;
   --cv-accent: #775938;
   --cv-line: #dfd9ce;
-  background: radial-gradient(ellipse at 45% 4%, #302b26, transparent 44%), #17191c;
+  background: radial-gradient(ellipse at 45% 4%, var(--gold-wash), transparent 44%), var(--bg);
 }
 
 .cv { width: min(100% - 36px, 950px); padding-block: 22px 64px; }
@@ -27,7 +27,7 @@
   border-radius: 12px;
   background: #fffdf8;
   color: var(--cv-ink);
-  box-shadow: 0 22px 58px #08090972;
+  box-shadow: 0 22px 58px color-mix(in srgb, var(--shadow) 45%, transparent);
   font-size: .91rem;
   line-height: 1.52;
 }
