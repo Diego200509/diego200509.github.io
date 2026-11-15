@@ -1,6 +1,6 @@
 import { loadLanguage, projectPage, projects, saveLanguage, translatePage, translations } from "./content.js";
 import { experience, experienceMarkup } from "./experience.js";
-import { setupMission } from "./game/mission.js?v=workstation";
+import { setupMission } from "./game/mission.js?v=desktop";
 import { createLookInput } from "./game/look-input.js";
 import { archiveProjects, renderArchiveCards } from "./project-archive.js";
 import { mountContactFooter } from "./site-footer.js";

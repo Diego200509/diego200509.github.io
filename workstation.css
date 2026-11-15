@@ -7,18 +7,32 @@
 }
 
 .mission-sheet {
-  width: min(960px, calc(100% - 26px));
-  max-height: min(90dvh, 820px);
-  padding: 0;
+  width: min(1180px, calc(100% - 26px));
+  height: min(760px, calc(100dvh - 28px));
+  max-height: none;
+  padding: clamp(4px, 1vw, 10px);
+  overflow: hidden;
   border: 1px solid var(--line-strong);
-  border-radius: 15px;
-  background: var(--bg);
+  border-radius: 18px;
+  background: var(--shadow);
   box-shadow: 0 26px 84px color-mix(in srgb, var(--shadow) 76%, transparent);
+  cursor: default;
 }
 
 .mission-sheet::backdrop { backdrop-filter: blur(3px); }
 
+.mission-desktop {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: linear-gradient(155deg, #15171962, transparent 56%, #15171949), url("./assets/distrito-concepto.webp") center / cover var(--panel);
+}
+
 .mission-desktop-bar,
+.mission-window-bar,
 .mission-app-bar {
   display: flex;
   align-items: center;
@@ -27,22 +41,110 @@
 }
 
 .mission-desktop-bar {
-  position: sticky;
-  z-index: 1;
-  top: 0;
-  padding: 8px clamp(9px, 2vw, 18px);
+  padding: 5px clamp(8px, 1.7vw, 15px);
   border-bottom: 1px solid var(--line);
-  background: var(--panel);
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(14px);
 }
 
+.mission-desktop-actions,
 .mission-desktop-name,
 .mission-identity,
 .mission-address { display: flex; align-items: center; gap: 8px; }
-.mission-desktop-name { color: var(--gold); font: 500 .75rem/1.4 var(--mono); }
-.mission-desktop-name svg,.mission-address svg { flex: none; width: 15px; height: 15px; }
-.mission-desktop-bar .close { width: 38px; height: 38px; font-size: 24px; }
+.mission-desktop-name { color: var(--ink); font: 500 .74rem/1.3 var(--mono); }
+.mission-desktop-name img { flex: none; }
+.mission-clock { color: var(--ink-soft); font: 500 .72rem/1 var(--mono); white-space: nowrap; }
+.mission-leave {
+  min-height: 36px;
+  padding: 4px 9px;
+  border: 1px solid var(--line-strong);
+  border-radius: 5px;
+  background: var(--surface-inset);
+  font-size: .8rem;
+  white-space: nowrap;
+}
 
-.mission-browser { padding: clamp(8px, 2vw, 16px); }
+.mission-leave:hover { border-color: var(--gold); color: var(--gold); }
+.mission-desktop-space { position: relative; min-height: 0; }
+
+.mission-zeus-icon {
+  display: grid;
+  width: 34px;
+  aspect-ratio: 1;
+  flex: none;
+  place-items: center;
+  border-radius: 8px;
+  background: linear-gradient(155deg, var(--ink-soft), var(--gold));
+  color: var(--on-gold);
+  font: 700 1.04rem/1 var(--mono);
+}
+
+.mission-shortcut {
+  position: absolute;
+  top: clamp(14px, 3vw, 37px);
+  left: clamp(10px, 2.4vw, 31px);
+  display: grid;
+  min-width: 72px;
+  justify-items: center;
+  gap: 7px;
+  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  font: 700 .76rem/1.25 var(--mono);
+  text-shadow: 0 1px 5px var(--shadow), 0 0 10px var(--shadow);
+}
+
+.mission-shortcut .mission-zeus-icon { width: 48px; font-size: 1.43rem; text-shadow: none; box-shadow: 0 4px 11px #17191c68; }
+.mission-shortcut:hover { border-color: var(--line-strong); background: #17191c45; }
+.mission-shortcut:focus-visible { outline-offset: 1px; }
+
+.mission-window {
+  position: absolute;
+  top: var(--window-y, 50%);
+  left: var(--window-x, 50%);
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  width: min(880px, calc(100% - 34px));
+  max-height: calc(100% - 18px);
+  overflow: hidden;
+  transform: translate(-50%, -50%);
+  transition-property: none;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--bg);
+  box-shadow: 0 14px 44px #101012b0;
+}
+
+.mission-window[data-maximized] { inset: 7px; width: auto; max-height: none; transform: none; }
+.mission-window-bar { min-height: 42px; padding: 0 0 0 10px; border-bottom: 1px solid var(--line); background: var(--panel); }
+.mission-window-name { display: flex; align-items: center; gap: 7px; font-size: .8rem; }
+.mission-window-name:focus-visible { outline-offset: 2px; }
+.mission-window-name .mission-zeus-icon { width: 23px; border-radius: 5px; font-size: .75rem; }
+.mission-window-actions { display: flex; align-self: stretch; }
+.mission-window-actions button { min-width: 39px; min-height: 40px; padding: 0 5px; border: 0; background: transparent; color: var(--ink-soft); font-size: 1.07rem; }
+.mission-window-actions button:hover { background: var(--gold-wash); color: var(--gold); }
+.mission-window-actions button:focus-visible { outline-offset: -4px; }
+.mission-window-actions [data-desktop="close"]:hover { color: var(--status-danger); }
+
+.mission-dock {
+  justify-self: center;
+  margin: 4px 0 9px;
+  padding: 5px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--bg) 76%, transparent);
+  box-shadow: 0 5px 18px #1010128c;
+  backdrop-filter: blur(14px);
+}
+
+.mission-dock-app { display: flex; align-items: center; gap: 7px; min-height: 39px; padding: 4px 10px 4px 5px; border: 1px solid transparent; border-radius: 7px; background: transparent; font: 600 .72rem/1 var(--mono); }
+.mission-dock-app:is(:hover, [aria-expanded="true"]) { border-color: var(--gold-line); background: var(--gold-wash); }
+.mission-dock-app .mission-zeus-icon { width: 26px; border-radius: 5px; font-size: .82rem; }
+
+.mission-browser { min-height: 0; padding: clamp(7px, 1.6vw, 12px); overflow: auto; overscroll-behavior: contain; }
 .mission-tab {
   display: inline-flex;
   gap: 6px;
@@ -66,19 +168,11 @@
 }
 
 .mission-address svg { color: var(--gold); }
+.mission-address svg { flex: none; width: 15px; height: 15px; }
 .mission-app { margin-top: 9px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); }
 .mission-app-bar { padding: 10px clamp(10px, 2vw, 20px); border-bottom: 1px solid var(--line); }
 .mission-identity { font-size: .84rem; }
-.mission-identity > :first-child {
-  display: grid;
-  place-items: center;
-  width: 27px;
-  height: 27px;
-  border-radius: 5px;
-  background: var(--gold);
-  color: var(--on-gold);
-  font: 700 .9rem var(--mono);
-}
+.mission-identity .mission-zeus-icon { width: 27px; border-radius: 5px; font-size: .9rem; }
 .mission-identity > :last-child { padding-left: 7px; border-left: 1px solid var(--line); color: var(--muted); }
 .mission-status {
   padding: 4px 7px;
@@ -140,7 +234,16 @@
 .mission-record dt { color: var(--muted); }
 .mission-record dd { margin: 0; font-weight: 600; }
 
-@media (max-width: 640px) {
+@media (min-width: 681px) and (pointer: fine) {
+  .mission-window:not([data-maximized]) .mission-window-bar { cursor: grab; user-select: none; }
+  .mission-window[data-dragging] .mission-window-bar { cursor: grabbing; }
+}
+
+@media (max-width: 680px) {
+  .mission-sheet { width: calc(100% - 12px); height: calc(100dvh - 14px); border-radius: 12px; }
+  .mission-clock { display: none; }
+  .mission-window { inset: 4px; width: auto; max-height: none; transform: none; }
+  .mission-window-actions [data-desktop="maximize"] { display: none; }
   .mission-workspace { grid-template-columns: minmax(0, 1fr); }
 }
 
@@ -150,9 +253,15 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .mission-sheet[open] { animation: workstation-on .26s cubic-bezier(.22, 1, .36, 1) both; }
+  .mission-window:not([hidden]) { animation: zeus-open .2s ease-out both; }
 }
 
 @keyframes workstation-on {
   from { opacity: .3; transform: scale(.97); }
   to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes zeus-open {
+  from { opacity: .3; scale: .98; }
+  to { opacity: 1; scale: 1; }
 }

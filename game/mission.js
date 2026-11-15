@@ -1,3 +1,5 @@
+import { createDesktop } from "./desktop.js";
+
 const fields = ["branch", "division", "role"];
 const solution = { branch: "quito", division: "service", role: "support" };
 
@@ -53,6 +55,7 @@ const translations = {
 };
 
 export function setupMission(dialog, getLanguage, onComplete, onProject) {
+  const desktop = createDesktop(dialog, getLanguage);
   const get = (name) => dialog.querySelector("[data-mission=" + name + "]");
   const form = dialog.querySelector("#mission-form");
   const record = get("record");
@@ -124,7 +127,7 @@ export function setupMission(dialog, getLanguage, onComplete, onProject) {
     open(completed) {
       complete = completed;
       render();
-      dialog.showModal();
+      desktop.open();
     }
   };
 }
