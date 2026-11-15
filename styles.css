@@ -92,6 +92,7 @@ h2{font:700 clamp(2.2rem,5vw,3.65rem)/.98 var(--display);letter-spacing:-.016em}
 .close{display:grid;place-items:center;background:#131a23;color:var(--ink);width:42px;height:42px;border:1px solid var(--line);border-radius:5px;font:28px/1 var(--body)}
 #detail-content{display:grid;gap:14px;margin:17px 0 23px;color:var(--muted)}
 #detail-content h3{color:var(--ink);font-size:1rem;margin-bottom:4px}
+#detail-content ul{margin:0;padding-inline-start:1.2em}
 #detail-content .stack{font:500 .77rem/1.6 var(--mono);color:var(--gold)}
 .map-sheet{width:min(94vw,640px)}
 .map-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:". rgb ." "asotema plaza talkapp" "ambacar . traffic";gap:9px;margin-top:18px;padding:8px;background:repeating-linear-gradient(0deg,#ffffff0e 0 1px,transparent 1px 16px),repeating-linear-gradient(90deg,#ffffff0e 0 1px,transparent 1px 16px)}

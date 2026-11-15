@@ -20,18 +20,28 @@ export const projects = [
   },
   {
     id: "talkapp", name: { es: "TalkApp", en: "TalkApp" },
-    stack: "Next.js · Express · MongoDB · Socket.IO · WebRTC",
+    repo: repo + "talk-app", stack: "Next.js · TypeScript · Express · MongoDB · Socket.IO · WebRTC",
     es: {
       kind: "Mensajería web", location: "Estación de radio",
       short: "Chats individuales y grupales en tiempo real, con videollamadas.",
       problem: "Cuando un equipo coordina por chat y se reúne por videollamada en otra aplicación, la conversación queda repartida entre herramientas.",
-      solution: "TalkApp reúne conversaciones individuales, grupos y videollamadas en una aplicación web. Usa Socket.IO para entregar mensajes en tiempo real, MongoDB para conservar el historial y WebRTC para las llamadas."
+      solution: "TalkApp reúne conversaciones individuales, grupos y videollamadas en una aplicación web. Usa Socket.IO para entregar mensajes en tiempo real, MongoDB para conservar el historial y WebRTC para las llamadas.",
+      features: [
+        "Adjuntos, notas de voz e indicadores de entrega y lectura.",
+        "Gestión de miembros y permisos de administrador en grupos.",
+        "Controles de cámara y micrófono durante las videollamadas."
+      ]
     },
     en: {
       kind: "Web messaging", location: "Radio station",
       short: "Real-time direct and group chats with video calls.",
       problem: "When a team coordinates by chat and meets by video in another app, the conversation gets split across tools.",
-      solution: "TalkApp brings direct messages, group chats, and video calls into one web app. It uses Socket.IO for real-time messaging, MongoDB for conversation history, and WebRTC for calls."
+      solution: "TalkApp brings direct messages, group chats, and video calls into one web app. It uses Socket.IO for real-time messaging, MongoDB for conversation history, and WebRTC for calls.",
+      features: [
+        "Attachments, voice messages, and delivery and read receipts.",
+        "Group member management and admin permissions.",
+        "Camera and microphone controls during video calls."
+      ]
     }
   },
   {
@@ -82,6 +92,7 @@ export const translations = {
     enter: "Explorar en 3D", viewProjects: "Ver proyectos ↓",
     avatarAlt: "Retrato 3D del rostro de Diego Jijón", previewProject: "Laboratorio RGB ↗",
     talkPreview: "Chat de ejemplo", talkDirect: "Directo", talkGroup: "Grupo",
+    talkDetails: "Ver ficha ↗", talkRepository: "Repositorio de TalkApp en GitHub",
     talkDirectFirst: "¿Listo para la llamada?", talkDirectReply: "Sí, ya me conecto.",
     talkGroupFirst: "¿Probamos la demo?", talkGroupReply: "Equipo listo.",
     trafficMode: "Modo del semáforo", trafficFixed: "Fijo", trafficAdaptive: "Adaptativo",
@@ -123,6 +134,7 @@ export const translations = {
     interact: "Interactuar", close: "Cerrar", movement: "Movimiento",
     forward: "Avanzar", left: "Izquierda", right: "Derecha", back: "Atrás",
     source: "Ver repositorio ↗", detail: "Ver ficha ↗", problem: "El problema", solution: "La solución",
+    projectFeatures: "Funciones principales",
     gameError: "No se pudo iniciar el 3D en este navegador. Las fichas de los proyectos siguen disponibles.",
     controls: "WASD · Arrastra para mirar · E para interactuar · Ctrl + rueda o V para cambiar de cámara",
     touchControls: "Usa las flechas · Arrastra para mirar",
@@ -146,6 +158,7 @@ export const translations = {
     enter: "Explore in 3D", viewProjects: "View projects ↓",
     avatarAlt: "3D portrait of Diego Jijón", previewProject: "RGB Lab ↗",
     talkPreview: "Sample chat", talkDirect: "Direct", talkGroup: "Group",
+    talkDetails: "Details ↗", talkRepository: "TalkApp repository on GitHub",
     talkDirectFirst: "Ready for the call?", talkDirectReply: "Yes, joining now.",
     talkGroupFirst: "Shall we test the demo?", talkGroupReply: "The team is ready.",
     trafficMode: "Signal mode", trafficFixed: "Fixed", trafficAdaptive: "Adaptive",
@@ -187,6 +200,7 @@ export const translations = {
     interact: "Interact", close: "Close", movement: "Movement",
     forward: "Move forward", left: "Move left", right: "Move right", back: "Move backward",
     source: "View repository ↗", detail: "View project ↗", problem: "The problem", solution: "The solution",
+    projectFeatures: "Key features",
     gameError: "The 3D world could not start in this browser. You can still browse the projects.",
     controls: "WASD · Drag to look · E to interact · Ctrl + wheel or V to switch cameras",
     touchControls: "Use the arrows · Drag to look",

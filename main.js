@@ -70,6 +70,7 @@ function renderCards() {
   const rgb = projectById.get("rgb")[language];
   get("talkapp-kind").textContent = talkApp[language].kind;
   get("talkapp-description").textContent = talkApp[language].short;
+  get("talkapp-repository").href = talkApp.repo;
   get("traffic-kind").textContent = traffic[language].kind;
   get("traffic-description").textContent = traffic[language].short;
   get("traffic-title").textContent = traffic.name[language];
@@ -107,10 +108,15 @@ function renderDetail() {
   }
   const project = projectById.get(detailId);
   const copy = project[language];
+  const features = copy.features ? `<section>
+      <h3>${words().projectFeatures}</h3>
+      <ul>${copy.features.map(feature => `<li>${feature}</li>`).join("")}</ul>
+    </section>` : "";
   get("detail-type").textContent = copy.kind;
   get("detail-title").textContent = project.name[language];
   get("detail-content").innerHTML = `<section><h3>${words().problem}</h3><p>${copy.problem}</p></section>
     <section><h3>${words().solution}</h3><p>${copy.solution}</p></section>
+    ${features}
     ${detailId === "traffic" && !inGame ? `<p>${words().trafficDemoNote}</p>` : ""}
     <p class="stack">${(language === "en" && project.stackEn) || project.stack}</p>`;
   link.hidden = !project.repo;
