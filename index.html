@@ -100,7 +100,40 @@
         <h2 id="projects-title" data-t="selected">Proyectos seleccionados</h2>
         <a href="https://github.com/Diego200509?tab=repositories" class="text-link" target="_blank" rel="noopener noreferrer" data-t="allRepos">Todos en GitHub ↗</a>
       </header>
-      <div class="project-grid" id="project-grid" data-reveal="sequence"></div>
+      <div class="project-grid" id="project-grid" data-reveal="sequence">
+        <article class="project-card rgb-card" id="rgb-demo" aria-labelledby="rgb-title">
+          <div class="rgb-preview">
+            <img id="rgb-original" src="./assets/rgb-frutas.webp" width="880" height="660" loading="lazy" alt="Frutas de varios colores en cestas" data-alt="rgbSampleAlt">
+            <canvas id="rgb-result" width="880" height="660" aria-hidden="true"></canvas>
+            <span class="rgb-side rgb-before" data-t="rgbBefore">Original</span>
+            <span class="rgb-side rgb-after" data-t="rgbAfter">Resultado</span>
+            <span class="rgb-divider" aria-hidden="true"><span>‹ ›</span></span>
+            <input id="rgb-split" type="range" min="0" max="100" value="50" aria-label="Porcentaje visible de la imagen original" data-aria="rgbCompare" aria-describedby="rgb-instructions" disabled>
+          </div>
+          <p id="rgb-instructions" class="sr-only" data-t="rgbInstructions">Arrastra la línea o usa las flechas del teclado para comparar.</p>
+          <div class="project-copy">
+            <small id="rgb-kind">Procesamiento de imágenes</small>
+            <h3 id="rgb-title" data-t="rgbTitle">Laboratorio RGB</h3>
+            <span id="rgb-description">Una aplicación de escritorio para ajustar y recombinar canales de color.</span>
+            <p class="rgb-error" id="rgb-error" role="status" hidden data-t="rgbError">La comparación no pudo cargar.</p>
+            <div class="rgb-actions">
+              <fieldset id="rgb-channels" disabled>
+                <legend class="sr-only" data-t="rgbChannels">Canales de color</legend>
+                <label class="rgb-toggle" data-channel="red">
+                  <input type="checkbox" data-aria="rgbRed" aria-label="Rojo" checked><span aria-hidden="true">R</span>
+                </label>
+                <label class="rgb-toggle" data-channel="green">
+                  <input type="checkbox" data-aria="rgbGreen" aria-label="Verde" checked><span aria-hidden="true">G</span>
+                </label>
+                <label class="rgb-toggle" data-channel="blue">
+                  <input type="checkbox" data-aria="rgbBlue" aria-label="Azul"><span aria-hidden="true">B</span>
+                </label>
+              </fieldset>
+              <button class="rgb-settings-button" id="rgb-settings-button" type="button" aria-haspopup="dialog" aria-label="Ajustes y captura" data-aria="rgbSettingsLabel" data-t="rgbSettings">Ajustes ↗</button>
+            </div>
+          </div>
+        </article>
+      </div>
       <noscript>
         <ul>
           <li><a href="https://github.com/Diego200509/asotema">ASOTEMA</a></li>
@@ -109,79 +142,6 @@
           <li><a href="https://github.com/Diego200509/Lab_imagenes_rgb">Laboratorio RGB</a></li>
         </ul>
       </noscript>
-      <article class="rgb-demo" id="rgb-demo" aria-labelledby="rgb-title">
-        <header class="rgb-header" data-reveal>
-          <div>
-            <p class="eyebrow" data-t="rgbDemo">Demo interactiva</p>
-            <h3 id="rgb-title" data-t="rgbTitle">Laboratorio RGB</h3>
-          </div>
-          <a class="text-link" href="https://github.com/Diego200509/Lab_imagenes_rgb" target="_blank" rel="noopener noreferrer" data-t="source">Ver repositorio ↗</a>
-        </header>
-        <div class="rgb-workspace" data-reveal>
-          <div>
-            <div class="rgb-preview">
-              <img id="rgb-original" src="./assets/rgb-frutas.webp" width="880" height="660" loading="lazy" alt="Frutas de varios colores en cestas" data-alt="rgbSampleAlt">
-              <canvas id="rgb-result" width="880" height="660" aria-hidden="true"></canvas>
-              <span class="rgb-side rgb-before" data-t="rgbBefore">Original</span>
-              <span class="rgb-side rgb-after" data-t="rgbAfter">Resultado</span>
-              <span class="rgb-divider" aria-hidden="true"><span>‹ ›</span></span>
-              <input id="rgb-split" type="range" min="0" max="100" value="50" aria-label="Porcentaje visible de la imagen original" data-aria="rgbCompare" aria-describedby="rgb-instructions" disabled>
-            </div>
-            <p id="rgb-instructions" class="rgb-tip" data-t="rgbInstructions">Arrastra la línea o usa las flechas del teclado para comparar.</p>
-          </div>
-          <div class="rgb-controls">
-            <fieldset id="rgb-channels" disabled>
-              <legend data-t="rgbChannels">Canales de color</legend>
-              <p data-t="rgbControlsHelp">Activa o desactiva cada canal y ajusta su contraste tonal.</p>
-              <div class="rgb-channel" data-channel="red">
-                <label class="rgb-switch">
-                  <input type="checkbox" checked>
-                  <span class="rgb-swatch" aria-hidden="true">R</span>
-                  <span data-t="rgbRed">Rojo</span>
-                </label>
-                <div class="rgb-adjust">
-                  <input id="rgb-red-tone" type="range" min="0" max="200" value="100" aria-label="Contraste del canal rojo" data-aria="rgbRedTone">
-                  <output for="rgb-red-tone">100%</output>
-                </div>
-              </div>
-              <div class="rgb-channel" data-channel="green">
-                <label class="rgb-switch">
-                  <input type="checkbox" checked>
-                  <span class="rgb-swatch" aria-hidden="true">G</span>
-                  <span data-t="rgbGreen">Verde</span>
-                </label>
-                <div class="rgb-adjust">
-                  <input id="rgb-green-tone" type="range" min="0" max="200" value="100" aria-label="Contraste del canal verde" data-aria="rgbGreenTone">
-                  <output for="rgb-green-tone">100%</output>
-                </div>
-              </div>
-              <div class="rgb-channel" data-channel="blue">
-                <label class="rgb-switch">
-                  <input type="checkbox">
-                  <span class="rgb-swatch" aria-hidden="true">B</span>
-                  <span data-t="rgbBlue">Azul</span>
-                </label>
-                <div class="rgb-adjust">
-                  <input id="rgb-blue-tone" type="range" min="0" max="200" value="100" aria-label="Contraste del canal azul" data-aria="rgbBlueTone" disabled>
-                  <output for="rgb-blue-tone">100%</output>
-                </div>
-              </div>
-              <button class="button secondary" id="rgb-reset" type="button" data-t="rgbReset">Restaurar imagen</button>
-            </fieldset>
-            <p class="rgb-error" id="rgb-error" role="status" hidden data-t="rgbError">La vista interactiva no pudo cargar. Abajo puedes ver la aplicación de escritorio.</p>
-          </div>
-        </div>
-        <div class="rgb-desktop" data-reveal>
-          <a class="rgb-capture" href="./assets/rgb-aplicacion.webp" target="_blank" rel="noopener noreferrer">
-            <img src="./assets/rgb-aplicacion.webp" width="1480" height="760" loading="lazy" alt="Captura de Laboratorio RGB en Python con matrices e histogramas" data-alt="rgbDesktopAlt">
-            <span class="rgb-capture-label" data-t="rgbViewCapture">Ampliar captura ↗</span>
-          </a>
-          <div>
-            <h4 data-t="rgbDesktop">La aplicación en Python</h4>
-            <p data-t="rgbDesktopCopy">El programa separa la imagen en tres matrices, aplica una transformación tonal a cada una y las vuelve a unir. En la pestaña Canales puedes comparar las matrices y sus histogramas antes y después del ajuste.</p>
-          </div>
-        </div>
-      </article>
     </section>
     <section class="profile content landing-chapter" id="profile" aria-labelledby="profile-title">
       <span class="chapter-seam" aria-hidden="true"></span>
@@ -256,6 +216,44 @@
       <button data-move="KeyD" type="button" aria-label="Derecha" data-aria="right">→</button>
     </div>
   </section>
+  <dialog class="sheet rgb-settings" id="rgb-settings" aria-labelledby="rgb-settings-title">
+    <div class="sheet-top">
+      <p class="eyebrow" data-t="rgbTitle">Laboratorio RGB</p>
+      <form method="dialog"><button class="close" data-aria="close" aria-label="Cerrar" type="submit">×</button></form>
+    </div>
+    <h2 id="rgb-settings-title" data-t="rgbAdvanced">Ajustes de contraste</h2>
+    <div class="rgb-settings-grid">
+      <canvas id="rgb-settings-result" width="880" height="660" role="img" data-aria="rgbAfter" aria-label="Resultado" hidden></canvas>
+      <fieldset id="rgb-tones" disabled>
+        <legend class="sr-only" data-t="rgbAdvanced">Ajustes de contraste</legend>
+        <div class="rgb-tone" data-channel="red">
+          <label for="rgb-red-tone" data-t="rgbRed">Rojo</label>
+          <input id="rgb-red-tone" type="range" min="0" max="200" value="100" data-aria="rgbRedTone" aria-label="Contraste del canal rojo">
+          <output for="rgb-red-tone">100%</output>
+        </div>
+        <div class="rgb-tone" data-channel="green">
+          <label for="rgb-green-tone" data-t="rgbGreen">Verde</label>
+          <input id="rgb-green-tone" type="range" min="0" max="200" value="100" data-aria="rgbGreenTone" aria-label="Contraste del canal verde">
+          <output for="rgb-green-tone">100%</output>
+        </div>
+        <div class="rgb-tone" data-channel="blue">
+          <label for="rgb-blue-tone" data-t="rgbBlue">Azul</label>
+          <input id="rgb-blue-tone" type="range" min="0" max="200" value="100" data-aria="rgbBlueTone" aria-label="Contraste del canal azul" disabled>
+          <output for="rgb-blue-tone">100%</output>
+        </div>
+        <button class="button secondary" id="rgb-reset" type="button" data-t="rgbReset">Restaurar imagen</button>
+      </fieldset>
+    </div>
+    <details class="rgb-app">
+      <summary data-t="rgbDesktop">La aplicación en Python</summary>
+      <p data-t="rgbDesktopCopy">El programa separa la imagen en tres matrices, aplica una transformación tonal a cada una y las vuelve a unir. En la pestaña Canales puedes comparar las matrices y sus histogramas antes y después del ajuste.</p>
+      <a class="rgb-capture" href="./assets/rgb-aplicacion.webp" target="_blank" rel="noopener noreferrer">
+        <img src="./assets/rgb-aplicacion.webp" width="1480" height="760" loading="lazy" alt="Captura de Laboratorio RGB en Python con matrices e histogramas" data-alt="rgbDesktopAlt">
+        <span class="rgb-capture-label" data-t="rgbViewCapture">Ampliar captura ↗</span>
+      </a>
+    </details>
+    <a class="text-link" href="https://github.com/Diego200509/Lab_imagenes_rgb" target="_blank" rel="noopener noreferrer" data-t="source">Ver repositorio ↗</a>
+  </dialog>
   <dialog class="sheet" id="project-dialog" aria-labelledby="detail-title">
     <div class="sheet-top">
       <p class="eyebrow" id="detail-type"></p>

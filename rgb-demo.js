@@ -3,11 +3,21 @@ const result = document.querySelector("#rgb-result");
 const preview = original.parentElement;
 const split = document.querySelector("#rgb-split");
 const controls = document.querySelector("#rgb-channels");
-const channels = [...controls.querySelectorAll(".rgb-channel")].map((row) => ({
-  toggle: row.querySelector('input[type="checkbox"]'),
+const settings = document.querySelector("#rgb-settings");
+const tones = document.querySelector("#rgb-tones");
+const settingsResult = document.querySelector("#rgb-settings-result");
+const channels = [...tones.querySelectorAll(".rgb-tone")].map((row) => ({
+  toggle: controls.querySelector(`[data-channel="${row.dataset.channel}"] input`),
   tone: row.querySelector('input[type="range"]'),
   output: row.querySelector("output")
 }));
+
+document.querySelector("#rgb-settings-button").addEventListener("click", () => {
+  settings.showModal();
+  if (preview.classList.contains("rgb-ready")) {
+    settingsResult.getContext("2d")?.drawImage(result, 0, 0);
+  }
+});
 
 function tonalTable(enabled, percentage) {
   const values = new Uint8Array(256);
@@ -47,6 +57,7 @@ function initialize() {
     context.drawImage(original, 0, 0, result.width, result.height);
     const { data: source } = context.getImageData(0, 0, result.width, result.height);
     const reconstruction = context.createImageData(result.width, result.height);
+    const settingsContext = settingsResult.getContext("2d");
     let pendingFrame = 0;
 
     function render() {
@@ -60,6 +71,7 @@ function initialize() {
         pixels[i + 3] = source[i + 3];
       }
       context.putImageData(reconstruction, 0, 0);
+      if (settings.open) settingsContext?.putImageData(reconstruction, 0, 0);
     }
 
     function updateChannels() {
@@ -71,6 +83,7 @@ function initialize() {
     }
 
     controls.addEventListener("input", updateChannels);
+    tones.addEventListener("input", updateChannels);
     split.addEventListener("input", setComparison);
     document.querySelector("#rgb-reset").addEventListener("click", () => {
       for (const { toggle, tone } of channels) {
@@ -85,7 +98,9 @@ function initialize() {
     render();
     setComparison();
     preview.classList.add("rgb-ready");
+    settingsResult.hidden = false;
     controls.disabled = false;
+    tones.disabled = false;
     split.disabled = false;
   } catch {
     showError();

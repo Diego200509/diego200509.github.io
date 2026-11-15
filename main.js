@@ -64,24 +64,26 @@ const workshopMission = setupMission(missionDialog, () => language, () => {
 }, () => openProject(ambacar.id));
 
 function renderCards() {
+  const grid = get("project-grid");
+  const rgbDemo = get("rgb-demo");
+  const rgb = projectById.get("rgb")[language];
+  get("rgb-kind").textContent = rgb.kind;
+  get("rgb-description").textContent = rgb.short;
+
   const template = (project) => {
-    const hasDemo = project.id === "rgb";
-    const card = document.createElement(hasDemo ? "a" : "button");
+    const card = document.createElement("button");
     const copy = project[language];
-    if (hasDemo) {
-      card.href = "#rgb-demo";
-    } else {
-      card.type = "button";
-      card.addEventListener("click", () => openProject(project.id));
-    }
+    card.type = "button";
+    card.addEventListener("click", () => openProject(project.id));
     card.className = "project-card";
     card.dataset.project = project.id;
     card.style.setProperty("--accent", project.accent);
     card.innerHTML = `<span class="project-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${project.icon}</svg></span>
-      <span class="project-copy"><small>${copy.kind}</small><strong>${project.name[language]}</strong><span>${copy.short}</span><span class="project-link">${hasDemo ? words().rgbTry : words().detail}</span></span>`;
+      <span class="project-copy"><small>${copy.kind}</small><strong>${project.name[language]}</strong><span>${copy.short}</span><span class="project-link">${words().detail}</span></span>`;
     return card;
   };
-  get("project-grid").replaceChildren(...projects.map(template));
+  for (const card of grid.querySelectorAll("button.project-card")) card.remove();
+  rgbDemo.before(...projects.filter(project => project.id !== "rgb").map(template));
 }
 
 function renderDetail() {
