@@ -177,6 +177,7 @@
 .traffic-controls {
   container-type: inline-size;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 4px;
   margin-top: 3px;
 }
@@ -300,12 +301,24 @@
   .traffic-toolbar,
   .traffic-modes,
   .traffic-actions { gap: 3px; }
-  .traffic-toolbar button { padding-inline: 3px; }
+  .traffic-controls .traffic-toolbar button { padding-inline: 3px; }
   .traffic-mode-full { display: none; }
   .traffic-mode-short { display: inline; }
 
   #traffic-demand,
   #traffic-play { min-width: 24px; }
+}
+
+@container (max-width: 126px) {
+  .traffic-toolbar,
+  .traffic-modes,
+  .traffic-actions { gap: 2px; }
+
+  .traffic-controls .traffic-toolbar button {
+    min-width: 24px;
+    padding-inline: 0;
+    font-size: .64rem;
+  }
 }
 
 .traffic-details {

@@ -64,33 +64,12 @@ const workshopMission = setupMission(missionDialog, () => language, () => {
 }, () => openProject(ambacar.id));
 
 function renderCards() {
-  const grid = get("project-grid");
-  const talkApp = projectById.get("talkapp");
-  const traffic = projectById.get("traffic");
-  const rgb = projectById.get("rgb")[language];
-  get("talkapp-kind").textContent = talkApp[language].kind;
-  get("talkapp-description").textContent = talkApp[language].short;
-  get("talkapp-repository").href = talkApp.repo;
-  get("traffic-kind").textContent = traffic[language].kind;
-  get("traffic-description").textContent = traffic[language].short;
-  get("traffic-title").textContent = traffic.name[language];
-  get("rgb-kind").textContent = rgb.kind;
-  get("rgb-description").textContent = rgb.short;
-
-  const template = (project) => {
-    const card = document.createElement("button");
+  for (const project of projects) {
     const copy = project[language];
-    card.type = "button";
-    card.addEventListener("click", () => openProject(project.id));
-    card.className = "project-card";
-    card.dataset.project = project.id;
-    card.style.setProperty("--accent", project.accent);
-    card.innerHTML = `<span class="project-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${project.icon}</svg></span>
-      <span class="project-copy"><small>${copy.kind}</small><strong>${project.name[language]}</strong><span>${copy.short}</span><span class="project-link">${words().detail}</span></span>`;
-    return card;
-  };
-  for (const card of grid.querySelectorAll("button.project-card")) card.remove();
-  get("talkapp").before(...projects.filter(project => !["talkapp", "rgb", "traffic"].includes(project.id)).map(template));
+    get(project.id + "-title").textContent = project.name[language];
+    get(project.id + "-kind").textContent = copy.kind;
+    get(project.id + "-description").textContent = copy.short;
+  }
 }
 
 function renderDetail() {
@@ -108,6 +87,7 @@ function renderDetail() {
   }
   const project = projectById.get(detailId);
   const copy = project[language];
+  const demoNote = !inGame && words()[project.demoNote];
   const features = copy.features ? `<section>
       <h3>${words().projectFeatures}</h3>
       <ul>${copy.features.map(feature => `<li>${feature}</li>`).join("")}</ul>
@@ -117,7 +97,7 @@ function renderDetail() {
   get("detail-content").innerHTML = `<section><h3>${words().problem}</h3><p>${copy.problem}</p></section>
     <section><h3>${words().solution}</h3><p>${copy.solution}</p></section>
     ${features}
-    ${detailId === "traffic" && !inGame ? `<p>${words().trafficDemoNote}</p>` : ""}
+    ${demoNote ? `<p>${demoNote}</p>` : ""}
     <p class="stack">${(language === "en" && project.stackEn) || project.stack}</p>`;
   link.hidden = !project.repo;
   if (project.repo) {
@@ -404,10 +384,11 @@ for (const button of talkModes) {
     for (const chat of talkChats) chat.hidden = chat.dataset.talkChat !== button.dataset.talkMode;
   });
 }
-const talkDetails = get("talkapp-details");
-talkDetails.disabled = false;
-talkDetails.addEventListener("click", () => openProject("talkapp"));
-get("traffic-details").addEventListener("click", () => openProject("traffic"));
+for (const id of ["asotema", "talkapp", "traffic"]) {
+  const details = get(id + "-details");
+  details.disabled = false;
+  details.addEventListener("click", () => openProject(id));
+}
 get("exit").addEventListener("click", exitGame);
 get("game-language").addEventListener("click", () => changeLanguage(language === "es" ? "en" : "es"));
 cameraButton.addEventListener("click", () => {

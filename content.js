@@ -2,9 +2,9 @@ const repo = "https://github.com/Diego200509/";
 
 export const projects = [
   {
-    id: "asotema", name: { es: "ASOTEMA", en: "ASOTEMA" }, accent: "#f0b769",
+    id: "asotema", name: { es: "ASOTEMA", en: "ASOTEMA" },
     repo: repo + "asotema", stack: "Laravel · React · MySQL",
-    icon: '<path d="M5 17 24 7l19 10M8 20h32M10 38h28M6 42h36M13 21v17m11-17v17m11-17v17"/>',
+    demoNote: "asotemaDemoNote",
     es: {
       kind: "Gestión asociativa", location: "Casa de socios",
       short: "Ahorros, préstamos y movimientos contables de una asociación.",
@@ -45,10 +45,10 @@ export const projects = [
     }
   },
   {
-    id: "traffic", name: { es: "Semáforo IA", en: "AI Traffic Light" }, accent: "#f0a38e",
+    id: "traffic", name: { es: "Semáforo IA", en: "AI Traffic Light" },
     repo: repo + "Semaforo_IA", stack: "Python · Pygame · Lógica difusa · Algoritmos genéticos",
     stackEn: "Python · Pygame · Fuzzy logic · Genetic algorithms",
-    icon: '<rect x="15" y="4" width="18" height="40" rx="5"/><circle cx="24" cy="13" r="3"/><circle cx="24" cy="24" r="3"/><circle cx="24" cy="35" r="3"/>',
+    demoNote: "trafficDemoNote",
     es: {
       kind: "Simulación de tráfico", location: "Cruce inteligente",
       short: "Comparación de control adaptativo y tiempos fijos en cruces simulados.",
@@ -63,10 +63,9 @@ export const projects = [
     }
   },
   {
-    id: "rgb", name: { es: "Laboratorio RGB", en: "RGB Lab" }, accent: "#a9baf6",
+    id: "rgb", name: { es: "Laboratorio RGB", en: "RGB Lab" },
     repo: repo + "Lab_imagenes_rgb", stack: "Python · Procesamiento de imágenes",
     stackEn: "Python · Image processing",
-    icon: '<circle cx="18" cy="18" r="10"/><circle cx="30" cy="18" r="10"/><circle cx="24" cy="30" r="10"/>',
     es: {
       kind: "Procesamiento de imágenes", location: "Laboratorio de color",
       short: "Una aplicación de escritorio para ajustar y recombinar canales de color.",
@@ -91,11 +90,15 @@ export const translations = {
     lead: "Desarrollo aplicaciones para resolver problemas de gestión, comunicación y automatización.",
     enter: "Explorar en 3D", viewProjects: "Ver proyectos ↓",
     avatarAlt: "Retrato 3D del rostro de Diego Jijón", previewProject: "Laboratorio RGB ↗",
+    asotemaSimulation: "Simulación", asotemaReset: "Reiniciar simulación",
+    asotemaSavings: "Ahorros", asotemaPrincipal: "Capital",
+    asotemaActions: "Operaciones de ejemplo", asotemaDeposit: "Aportar", asotemaPay: "Pagar cuota",
+    asotemaDemoNote: "La tarjeta usa datos ficticios. Puedes registrar un aporte de $20 y pagar hasta tres cuotas. De cada cuota de $21, $20 reducen el capital pendiente y $1 corresponde a intereses.",
     talkPreview: "Chat de ejemplo", talkDirect: "Directo", talkGroup: "Grupo",
-    talkDetails: "Ver ficha ↗", talkRepository: "Repositorio de TalkApp en GitHub",
     talkDirectFirst: "¿Listo para la llamada?", talkDirectReply: "Sí, ya me conecto.",
     talkGroupFirst: "¿Probamos la demo?", talkGroupReply: "Equipo listo.",
     trafficMode: "Modo del semáforo", trafficFixed: "Fijo", trafficAdaptive: "Adaptativo",
+    trafficAdaptiveLabel: "Adaptativo (Auto)",
     trafficDemand: "+ Tráfico N–S", trafficDemandLabel: "Más tráfico norte-sur",
     trafficPlay: "Iniciar", trafficPause: "Pausar", trafficResume: "Continuar",
     trafficQueues: "Vehículos en espera", trafficWaiting: "Colas", trafficEastWest: "E–O",
@@ -157,11 +160,15 @@ export const translations = {
     lead: "I build applications for operations, communication, and automation.",
     enter: "Explore in 3D", viewProjects: "View projects ↓",
     avatarAlt: "3D portrait of Diego Jijón", previewProject: "RGB Lab ↗",
+    asotemaSimulation: "Simulation", asotemaReset: "Reset simulation",
+    asotemaSavings: "Savings", asotemaPrincipal: "Principal",
+    asotemaActions: "Sample transactions", asotemaDeposit: "Deposit", asotemaPay: "Pay installment",
+    asotemaDemoNote: "The card uses sample data. You can make a $20 deposit and pay up to three installments. Of each $21 installment, $20 goes toward the outstanding principal and $1 goes toward interest.",
     talkPreview: "Sample chat", talkDirect: "Direct", talkGroup: "Group",
-    talkDetails: "Details ↗", talkRepository: "TalkApp repository on GitHub",
     talkDirectFirst: "Ready for the call?", talkDirectReply: "Yes, joining now.",
     talkGroupFirst: "Shall we test the demo?", talkGroupReply: "The team is ready.",
     trafficMode: "Signal mode", trafficFixed: "Fixed", trafficAdaptive: "Adaptive",
+    trafficAdaptiveLabel: "Adaptive (Auto)",
     trafficDemand: "+ N–S traffic", trafficDemandLabel: "More north–south traffic",
     trafficPlay: "Start", trafficPause: "Pause", trafficResume: "Resume",
     trafficQueues: "Vehicles waiting", trafficWaiting: "Queues", trafficEastWest: "E–W",

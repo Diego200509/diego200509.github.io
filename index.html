@@ -9,10 +9,12 @@
   <link rel="icon" href="./assets/mark.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./landing.css">
+  <link rel="stylesheet" href="./asotema-demo.css">
   <link rel="stylesheet" href="./rgb-demo.css">
   <link rel="stylesheet" href="./traffic-demo.css">
   <script type="module" src="./main.js"></script>
   <script type="module" src="./landing.js"></script>
+  <script type="module" src="./asotema-demo.js"></script>
   <script type="module" src="./rgb-demo.js"></script>
   <script type="module" src="./traffic-demo.js"></script>
 </head>
@@ -103,6 +105,34 @@
         <a href="https://github.com/Diego200509?tab=repositories" class="text-link" target="_blank" rel="noopener noreferrer" data-t="allRepos">Todos en GitHub ↗</a>
       </header>
       <div class="project-grid" id="project-grid" data-reveal="sequence">
+        <article class="project-card" id="asotema-demo" aria-labelledby="asotema-title">
+          <div class="asotema-preview">
+            <div class="asotema-preview-header">
+              <span data-t="asotemaSimulation">Simulación</span>
+              <button id="asotema-reset" type="button" aria-label="Reiniciar simulación" data-aria="asotemaReset" aria-disabled="true" disabled>↺</button>
+            </div>
+            <dl class="asotema-balances" aria-live="polite" aria-atomic="true">
+              <div class="asotema-savings">
+                <dt data-t="asotemaSavings">Ahorros</dt>
+                <dd id="asotema-savings">$100</dd>
+              </div>
+              <div class="asotema-principal">
+                <dt data-t="asotemaPrincipal">Capital</dt>
+                <dd id="asotema-principal">$60</dd>
+              </div>
+            </dl>
+          </div>
+          <div class="project-copy">
+            <small id="asotema-kind">Gestión asociativa</small>
+            <h3 id="asotema-title">ASOTEMA</h3>
+            <span id="asotema-description">Ahorros, préstamos y movimientos contables de una asociación.</span>
+            <div class="asotema-actions" role="group" aria-label="Operaciones de ejemplo" data-aria="asotemaActions">
+              <button id="asotema-deposit" type="button" disabled><span data-t="asotemaDeposit">Aportar</span><strong>$20</strong></button>
+              <button id="asotema-pay" type="button" disabled><span data-t="asotemaPay">Pagar cuota</span><strong>$21</strong></button>
+            </div>
+            <button class="project-details-button" id="asotema-details" type="button" aria-haspopup="dialog" data-t="detail" disabled>Ver ficha ↗</button>
+          </div>
+        </article>
         <article class="project-card" id="talkapp" aria-labelledby="talkapp-title">
           <div class="talkapp-preview">
             <div class="talkapp-preview-label" data-t="talkPreview">Chat de ejemplo</div>
@@ -125,10 +155,7 @@
               <button type="button" data-talk-mode="direct" data-t="talkDirect" aria-controls="talkapp-conversation" aria-pressed="true" disabled>Directo</button>
               <button type="button" data-talk-mode="group" data-t="talkGroup" aria-controls="talkapp-conversation" aria-pressed="false" disabled>Grupo</button>
             </div>
-            <div class="talkapp-links">
-              <button id="talkapp-details" type="button" aria-haspopup="dialog" data-t="talkDetails" disabled>Ver ficha ↗</button>
-              <a id="talkapp-repository" target="_blank" rel="noopener noreferrer" aria-label="Repositorio de TalkApp en GitHub" data-aria="talkRepository">GitHub</a>
-            </div>
+            <button class="project-details-button" id="talkapp-details" type="button" aria-haspopup="dialog" data-t="detail" disabled>Ver ficha ↗</button>
           </div>
         </article>
         <article class="project-card traffic-card" id="traffic-demo" aria-labelledby="traffic-title">
@@ -159,9 +186,9 @@
               <div class="traffic-toolbar">
                 <div class="traffic-modes" role="group" aria-label="Modo del semáforo" data-aria="trafficMode">
                   <button type="button" data-traffic-mode="fixed" aria-pressed="true" data-t="trafficFixed" disabled>Fijo</button>
-                  <button type="button" data-traffic-mode="adaptive" aria-pressed="false" aria-label="Adaptativo" data-aria="trafficAdaptive" disabled>
+                  <button type="button" data-traffic-mode="adaptive" aria-pressed="false" aria-label="Adaptativo (Auto)" data-aria="trafficAdaptiveLabel" disabled>
                     <span class="traffic-mode-full" data-t="trafficAdaptive">Adaptativo</span>
-                    <span class="traffic-mode-short" aria-hidden="true">Adapt.</span>
+                    <span class="traffic-mode-short" aria-hidden="true">Auto</span>
                   </button>
                 </div>
                 <div class="traffic-actions">

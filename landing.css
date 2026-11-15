@@ -139,15 +139,6 @@
   margin-top: 0;
 }
 
-#projects .project-icon {
-  height: clamp(98px, 11vw, 157px);
-}
-
-#projects .project-icon svg {
-  width: clamp(40px, 5vw, 68px);
-  height: clamp(40px, 5vw, 68px);
-}
-
 #talkapp {
   --accent: #a5e4d7;
   min-width: 0;
@@ -224,17 +215,9 @@
   color: var(--accent);
 }
 
-.talkapp-links {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0 4px;
+.project-details-button {
+  align-self: start;
   margin-top: auto;
-}
-
-.talkapp-links > * {
-  display: inline-flex;
-  align-items: center;
   min-height: 32px;
   padding: 0;
   border: 0;
@@ -244,18 +227,13 @@
   text-align: left;
 }
 
-.talkapp-links a { color: var(--muted); }
-.talkapp-links > :hover { color: var(--accent); text-decoration: underline; }
+.project-details-button:hover { text-decoration: underline; }
 
 @media (max-width: 600px) {
   #talkapp { scroll-margin-top: 118px; }
   #talkapp h3 { font-size: 1.45rem; }
   .talkapp-modes button,
-  .talkapp-links > * { min-height: 40px; }
-}
-
-@media (max-width: 380px) {
-  .talkapp-links > * { font-size: .64rem; }
+  .project-details-button { min-height: 40px; }
 }
 
 #contact h2 {
@@ -396,39 +374,6 @@
   margin-top: 12px;
 }
 
-.project-card .project-icon {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-}
-
-.project-card .project-icon::before {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  content: "";
-  opacity: .4;
-  background:
-    linear-gradient(#ffffff18 1px, transparent 1px),
-    linear-gradient(90deg, #ffffff18 1px, transparent 1px);
-  background-size: 19px 19px;
-  mask-image: radial-gradient(ellipse, #000 5%, transparent 81%);
-  transition: opacity .28s ease;
-}
-
-.project-card .project-icon svg {
-  transition: transform .3s cubic-bezier(.21,.72,.32,1), filter .3s ease;
-}
-
-.project-card:is(:hover, :focus-visible) .project-icon::before {
-  opacity: 1;
-}
-
-.project-card:is(:hover, :focus-visible) .project-icon svg {
-  transform: translateY(-3px) scale(1.12);
-  filter: drop-shadow(0 0 12px var(--accent));
-}
-
 .profile-facts {
   border-top: 1px solid #f8c78743;
 }
@@ -470,8 +415,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .hero-actions .button:is(:hover, :focus-visible),
-  .project-card:is(:hover, :focus-visible),
-  .project-card:is(:hover, :focus-visible) .project-icon svg {
+  .project-card:is(:hover, :focus-visible) {
     transform: none;
   }
   .hero-preview .portrait-frame img { transform: none; }
