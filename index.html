@@ -41,7 +41,7 @@
           <p class="eyebrow" data-t="intro">PORTAFOLIO · AMBATO, ECUADOR</p>
           <h1 id="title">Diego <em>Jijón</em></h1>
           <p class="hero-role" data-t="role">Estudiante de Ingeniería en Software</p>
-          <p class="lead" data-t="lead">Desarrollo aplicaciones para resolver problemas de gestión, educación y automatización.</p>
+          <p class="lead" data-t="lead">Desarrollo aplicaciones para resolver problemas de gestión, comunicación y automatización.</p>
           <div class="hero-actions">
             <a class="button primary" href="#projects" data-t="viewProjects">Ver proyectos ↓</a>
             <button class="button secondary" id="enter" type="button" disabled>
@@ -103,6 +103,31 @@
         <a href="https://github.com/Diego200509?tab=repositories" class="text-link" target="_blank" rel="noopener noreferrer" data-t="allRepos">Todos en GitHub ↗</a>
       </header>
       <div class="project-grid" id="project-grid" data-reveal="sequence">
+        <article class="project-card" id="talkapp" aria-labelledby="talkapp-title">
+          <div class="talkapp-preview">
+            <div class="talkapp-preview-label" data-t="talkPreview">Chat de ejemplo</div>
+            <div class="talkapp-conversation" id="talkapp-conversation" aria-live="polite">
+              <div data-talk-chat="direct">
+                <p data-t="talkDirectFirst">¿Listo para la llamada?</p>
+                <p data-t="talkDirectReply">Sí, ya me conecto.</p>
+              </div>
+              <div data-talk-chat="group" hidden>
+                <p data-t="talkGroupFirst">¿Probamos la demo?</p>
+                <p data-t="talkGroupReply">Equipo listo.</p>
+              </div>
+            </div>
+          </div>
+          <div class="project-copy">
+            <small id="talkapp-kind">Mensajería web</small>
+            <h3 id="talkapp-title">TalkApp</h3>
+            <span id="talkapp-description">Chats individuales y grupales en tiempo real, con videollamadas.</span>
+            <div class="talkapp-modes" role="group" aria-label="Chat de ejemplo" data-aria="talkPreview">
+              <button type="button" data-talk-mode="direct" data-t="talkDirect" aria-controls="talkapp-conversation" aria-pressed="true" disabled>Directo</button>
+              <button type="button" data-talk-mode="group" data-t="talkGroup" aria-controls="talkapp-conversation" aria-pressed="false" disabled>Grupo</button>
+            </div>
+            <button class="talkapp-details" id="talkapp-details" type="button" aria-haspopup="dialog" data-t="detail" disabled>Ver ficha ↗</button>
+          </div>
+        </article>
         <article class="project-card traffic-card" id="traffic-demo" aria-labelledby="traffic-title">
           <div class="traffic-scene" aria-hidden="true">
             <div class="traffic-road traffic-road-vertical"></div>
@@ -189,7 +214,6 @@
       <noscript>
         <ul>
           <li><a href="https://github.com/Diego200509/asotema">ASOTEMA</a></li>
-          <li><a href="https://github.com/Diego200509/EduRural">EduRural</a></li>
           <li><a href="https://github.com/Diego200509/Semaforo_IA">Semáforo IA</a></li>
           <li><a href="https://github.com/Diego200509/Lab_imagenes_rgb">Laboratorio RGB</a></li>
         </ul>
@@ -245,7 +269,7 @@
       <div class="loading-plan" aria-hidden="true">
         <span class="plan-road"></span>
         <span class="plan-block plan-lab"></span><span class="plan-block plan-hall"></span>
-        <span class="plan-block plan-school"></span><span class="plan-block plan-garage"></span>
+        <span class="plan-block plan-comms"></span><span class="plan-block plan-garage"></span>
         <span class="plan-block plan-crossing"></span><span class="plan-square"></span>
       </div>
       <div class="loading-copy">

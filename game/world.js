@@ -10,7 +10,7 @@ const RANGE = 4.6;
 const stops = {
   rgb: { x: 0, z: -3.3, yaw: -0.02 },
   asotema: { x: -10, z: 0, yaw: Math.PI / 2 },
-  edurural: { x: 10, z: 0, yaw: -Math.PI / 2 },
+  talkapp: { x: 6.7, z: 0, yaw: -Math.PI / 2, pitch: .085 },
   traffic: { x: 7.5, z: 11, yaw: 0 },
   ambacar: { ...workshopPoint(0, 5.2), yaw: workshopYaw, pitch: .08 }
 };

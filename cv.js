@@ -10,13 +10,15 @@ function render(language) {
     `<li><strong>${skill[language]}</strong> · ${skill.tools}</li>`).join("");
   document.querySelector("#cv-projects").replaceChildren(...projects.map((project) => {
     const item = document.createElement("li");
-    const link = document.createElement("a");
+    const name = document.createElement(project.repo ? "a" : "strong");
     const summary = document.createElement("p");
-    link.href = project.repo;
-    link.className = "text-link";
-    link.textContent = project.name[language];
+    if (project.repo) {
+      name.href = project.repo;
+      name.className = "text-link";
+    }
+    name.textContent = project.name[language];
     summary.textContent = project[language].short;
-    item.append(link, summary);
+    item.append(name, summary);
     return item;
   }));
 }

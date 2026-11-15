@@ -19,20 +19,19 @@ export const projects = [
     }
   },
   {
-    id: "edurural", name: { es: "EduRural", en: "EduRural" }, accent: "#9cd6ad",
-    repo: repo + "EduRural", stack: "Next.js · NestJS · TypeScript · MongoDB",
-    icon: '<path d="m6 23 18-13 18 13M9 21v18h30V21M20 39V28h8v11m-15-12h3m16 0h3M24 10V4h11l-3 3 3 3H24"/>',
+    id: "talkapp", name: { es: "TalkApp", en: "TalkApp" },
+    stack: "Next.js · Express · MongoDB · Socket.IO · WebRTC",
     es: {
-      kind: "Educación rural", location: "Escuela",
-      short: "Registro de estudiantes y seguimiento de asistencia en escuelas rurales.",
-      problem: "Sin un registro organizado de estudiantes y asistencia, es más difícil detectar a tiempo ausencias recurrentes en contextos rurales.",
-      solution: "Los hitos del proyecto documentan el registro de estudiantes y un módulo básico de asistencia. La detección de riesgo de deserción forma parte del objetivo del proyecto."
+      kind: "Mensajería web", location: "Estación de radio",
+      short: "Chats individuales y grupales en tiempo real, con videollamadas.",
+      problem: "Cuando un equipo coordina por chat y se reúne por videollamada en otra aplicación, la conversación queda repartida entre herramientas.",
+      solution: "TalkApp reúne conversaciones individuales, grupos y videollamadas en una aplicación web. Usa Socket.IO para entregar mensajes en tiempo real, MongoDB para conservar el historial y WebRTC para las llamadas."
     },
     en: {
-      kind: "Rural education", location: "School",
-      short: "Student records and attendance tracking for rural schools.",
-      problem: "Without organized student and attendance records, recurring absences are harder to identify early in rural communities.",
-      solution: "The project milestones document student registration and a basic attendance module. Identifying students at risk of dropping out is one of the project’s goals."
+      kind: "Web messaging", location: "Radio station",
+      short: "Real-time direct and group chats with video calls.",
+      problem: "When a team coordinates by chat and meets by video in another app, the conversation gets split across tools.",
+      solution: "TalkApp brings direct messages, group chats, and video calls into one web app. It uses Socket.IO for real-time messaging, MongoDB for conversation history, and WebRTC for calls."
     }
   },
   {
@@ -79,9 +78,12 @@ export const translations = {
     projects: "Proyectos", profile: "Sobre mí", contact: "Contacto",
     intro: "PORTAFOLIO · AMBATO, ECUADOR",
     role: "Estudiante de Ingeniería en Software",
-    lead: "Desarrollo aplicaciones para resolver problemas de gestión, educación y automatización.",
+    lead: "Desarrollo aplicaciones para resolver problemas de gestión, comunicación y automatización.",
     enter: "Explorar en 3D", viewProjects: "Ver proyectos ↓",
     avatarAlt: "Retrato 3D del rostro de Diego Jijón", previewProject: "Laboratorio RGB ↗",
+    talkPreview: "Chat de ejemplo", talkDirect: "Directo", talkGroup: "Grupo",
+    talkDirectFirst: "¿Listo para la llamada?", talkDirectReply: "Sí, ya me conecto.",
+    talkGroupFirst: "¿Probamos la demo?", talkGroupReply: "Equipo listo.",
     trafficMode: "Modo del semáforo", trafficFixed: "Fijo", trafficAdaptive: "Adaptativo",
     trafficDemand: "+ Tráfico N–S", trafficDemandLabel: "Más tráfico norte-sur",
     trafficPlay: "Iniciar", trafficPause: "Pausar", trafficResume: "Continuar",
@@ -140,9 +142,12 @@ export const translations = {
     projects: "Projects", profile: "About me", contact: "Contact",
     intro: "PORTFOLIO · AMBATO, ECUADOR",
     role: "Software Engineering student",
-    lead: "I build applications for operations, education, and automation.",
+    lead: "I build applications for operations, communication, and automation.",
     enter: "Explore in 3D", viewProjects: "View projects ↓",
     avatarAlt: "3D portrait of Diego Jijón", previewProject: "RGB Lab ↗",
+    talkPreview: "Sample chat", talkDirect: "Direct", talkGroup: "Group",
+    talkDirectFirst: "Ready for the call?", talkDirectReply: "Yes, joining now.",
+    talkGroupFirst: "Shall we test the demo?", talkGroupReply: "The team is ready.",
     trafficMode: "Signal mode", trafficFixed: "Fixed", trafficAdaptive: "Adaptive",
     trafficDemand: "+ N–S traffic", trafficDemandLabel: "More north–south traffic",
     trafficPlay: "Start", trafficPause: "Pause", trafficResume: "Resume",

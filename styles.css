@@ -94,12 +94,12 @@ h2{font:700 clamp(2.2rem,5vw,3.65rem)/.98 var(--display);letter-spacing:-.016em}
 #detail-content h3{color:var(--ink);font-size:1rem;margin-bottom:4px}
 #detail-content .stack{font:500 .77rem/1.6 var(--mono);color:var(--gold)}
 .map-sheet{width:min(94vw,640px)}
-.map-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:". rgb ." "asotema plaza edurural" "ambacar . traffic";gap:9px;margin-top:18px;padding:8px;background:repeating-linear-gradient(0deg,#ffffff0e 0 1px,transparent 1px 16px),repeating-linear-gradient(90deg,#ffffff0e 0 1px,transparent 1px 16px)}
+.map-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:". rgb ." "asotema plaza talkapp" "ambacar . traffic";gap:9px;margin-top:18px;padding:8px;background:repeating-linear-gradient(0deg,#ffffff0e 0 1px,transparent 1px 16px),repeating-linear-gradient(90deg,#ffffff0e 0 1px,transparent 1px 16px)}
 .map-list button{padding:12px;text-align:left;background:#151c24;border:1px solid var(--line);border-radius:5px}
 .map-list button:hover{border-color:var(--gold)}
 .map-list span,.map-list small{display:block}
 .map-list small{color:var(--muted);margin-top:3px;font:500 .69rem var(--mono)}
-.map-list [data-destination=rgb]{grid-area:rgb}.map-list [data-destination=asotema]{grid-area:asotema}.map-list [data-destination=edurural]{grid-area:edurural}.map-list [data-destination=traffic]{grid-area:traffic}
+.map-list [data-destination=rgb]{grid-area:rgb}.map-list [data-destination=asotema]{grid-area:asotema}.map-list [data-destination=talkapp]{grid-area:talkapp}.map-list [data-destination=traffic]{grid-area:traffic}
 .map-list [data-destination=ambacar]{grid-area:ambacar}
 .map-list .map-plaza{grid-area:plaza;display:grid;place-items:center;align-self:center;padding:6px 0;border:1px dashed #f8c78770;color:var(--gold);font:500 .75rem var(--mono)}
 .game{position:fixed;inset:0;z-index:3;background:#18262e;overflow:hidden;overscroll-behavior:none}
@@ -136,7 +136,7 @@ h2{font:700 clamp(2.2rem,5vw,3.65rem)/.98 var(--display);letter-spacing:-.016em}
 .loading-plan span{position:absolute;border:1px solid #f8c787ad;transition:background .24s,box-shadow .24s}
 .loading-plan .plan-road{left:10%;top:52%;width:80%;height:14%;border-width:1px 0}
 .plan-lab{left:39%;top:12%;width:22%;height:25%}.plan-hall{left:13%;top:33%;width:20%;height:22%}
-.plan-school{right:13%;top:33%;width:20%;height:22%}.plan-garage{left:17%;bottom:10%;width:17%;height:21%}
+.plan-comms{right:13%;top:33%;width:20%;height:22%}.plan-garage{left:17%;bottom:10%;width:17%;height:21%}
 .plan-crossing{right:14%;bottom:10%;width:17%;height:21%}.plan-square{left:40%;top:43%;width:20%;height:33%;border-radius:50%}
 .loading:is([data-phase="1"],[data-phase="2"],[data-phase="3"]) .plan-block{background:#f8c78738}
 .loading:is([data-phase="2"],[data-phase="3"]) .plan-square{background:#f8c78775;box-shadow:0 0 22px #f8c78750}

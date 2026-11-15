@@ -88,11 +88,14 @@ function roofTerrace(house) {
   for (let i = 0; i < 8; i++) block(house, 3.56, 0.12, 0.14, 0, 5.48, (i - 3.5) * 0.36, WOOD);
 }
 
-function schoolBell(house) {
-  block(house, 1.2, 0.2, 0.85, 0, 4.35, 1.5, WHITE);
-  for (const x of [-0.42, 0.42]) block(house, 0.19, 0.73, 0.37, x, 4.78, 1.5, WHITE);
-  block(house, 1.21, 0.19, 0.85, 0, 5.21, 1.5, CLAY);
-  piece(house, new THREE.CylinderGeometry(0.14, 0.29, 0.3, 12), "#bf8b4a", 0, 4.86, 1.55);
+function radioAntenna(house) {
+  const mastColor = "#344e5a";
+  block(house, 1.1, 0.23, 0.9, 0, 4.36, 1, WHITE);
+  block(house, 0.13, 1.58, 0.13, 0, 5.23, 1, mastColor);
+  for (let level = 0; level < 3; level++) {
+    block(house, 1.67 - level * 0.36, 0.085, 0.11, 0, 5.02 + level * 0.31, 1, mastColor);
+  }
+  block(house, 0.22, 0.17, 0.22, 0, 6.07, 1, "#a5e4d7");
 }
 
 function labelTexture(text) {
@@ -316,16 +319,16 @@ export function buildDistrict(scene) {
 
   const rgbHouse = building(scene, 0, -11, 0, 9.5, "#ce906c", "#a96451", false);
   const association = building(scene, -14, 0, Math.PI / 2, 7.65, "#d4aa78", "#ad7251");
-  const school = building(scene, 14, 0, -Math.PI / 2, 7.65, "#a5a97a", "#6b8167");
+  const station = building(scene, 14, 0, -Math.PI / 2, 7.65, "#83a9a6", "#476876");
   roofTerrace(association);
-  schoolBell(school);
+  radioAntenna(station);
   const lab = makeLab(scene, rgbHouse);
   const traffic = crossing(scene);
   const workshop = buildWorkshop(scene, block, piece, sign);
   const signs = {
     rgb: sign(rgbHouse, 0, 3.12, 2.94, 3.8),
     asotema: sign(association, 0, 3.12, 2.94, 3.55),
-    edurural: sign(school, 0, 3.12, 2.94, 3.55),
+    talkapp: sign(station, 0, 3.12, 2.94, 3.55),
     traffic: traffic.sign,
     ambacar: workshop.sign
   };

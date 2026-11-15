@@ -5,7 +5,7 @@ import { setupMission } from "./game/mission.js";
 const get = (id) => document.getElementById(id);
 const projectById = new Map(projects.map((project) => [project.id, project]));
 const ambacar = experience.find((entry) => entry.id === "ambacar");
-const destinations = ["rgb", "asotema", "edurural", "ambacar", "traffic"];
+const destinations = ["rgb", "asotema", "talkapp", "ambacar", "traffic"];
 const game = get("game");
 const viewport = get("viewport");
 const entry = get("enter");
@@ -65,9 +65,11 @@ const workshopMission = setupMission(missionDialog, () => language, () => {
 
 function renderCards() {
   const grid = get("project-grid");
+  const talkApp = projectById.get("talkapp");
   const traffic = projectById.get("traffic");
-  const trafficDemo = get("traffic-demo");
   const rgb = projectById.get("rgb")[language];
+  get("talkapp-kind").textContent = talkApp[language].kind;
+  get("talkapp-description").textContent = talkApp[language].short;
   get("traffic-kind").textContent = traffic[language].kind;
   get("traffic-description").textContent = traffic[language].short;
   get("traffic-title").textContent = traffic.name[language];
@@ -87,13 +89,14 @@ function renderCards() {
     return card;
   };
   for (const card of grid.querySelectorAll("button.project-card")) card.remove();
-  trafficDemo.before(...projects.filter(project => project.id !== "rgb" && project.id !== "traffic").map(template));
+  get("talkapp").before(...projects.filter(project => !["talkapp", "rgb", "traffic"].includes(project.id)).map(template));
 }
 
 function renderDetail() {
   if (!detailId) return;
   const link = get("detail-link");
   if (detailId === ambacar.id) {
+    link.hidden = false;
     get("detail-type").textContent = words().experience;
     get("detail-title").textContent = "Ambacar S.A.";
     get("detail-content").innerHTML = `<article class="experience-details">${experienceMarkup(ambacar, language)}</article>`;
@@ -110,9 +113,14 @@ function renderDetail() {
     <section><h3>${words().solution}</h3><p>${copy.solution}</p></section>
     ${detailId === "traffic" && !inGame ? `<p>${words().trafficDemoNote}</p>` : ""}
     <p class="stack">${(language === "en" && project.stackEn) || project.stack}</p>`;
-  link.href = project.repo;
-  link.target = "_blank";
-  link.textContent = words().source;
+  link.hidden = !project.repo;
+  if (project.repo) {
+    link.href = project.repo;
+    link.target = "_blank";
+    link.textContent = words().source;
+  } else {
+    link.removeAttribute("href");
+  }
 }
 
 function openProject(id) {
@@ -381,6 +389,18 @@ for (const button of document.querySelectorAll("[data-lang]")) {
 entry.addEventListener("click", enterGame);
 get("featured-detail").addEventListener("click", () => openProject(ambacar.id));
 get("preview-project").addEventListener("click", () => openProject("rgb"));
+const talkModes = document.querySelectorAll("[data-talk-mode]");
+const talkChats = document.querySelectorAll("[data-talk-chat]");
+for (const button of talkModes) {
+  button.disabled = false;
+  button.addEventListener("click", () => {
+    for (const mode of talkModes) mode.setAttribute("aria-pressed", String(mode === button));
+    for (const chat of talkChats) chat.hidden = chat.dataset.talkChat !== button.dataset.talkMode;
+  });
+}
+const talkDetails = get("talkapp-details");
+talkDetails.disabled = false;
+talkDetails.addEventListener("click", () => openProject("talkapp"));
 get("traffic-details").addEventListener("click", () => openProject("traffic"));
 get("exit").addEventListener("click", exitGame);
 get("game-language").addEventListener("click", () => changeLanguage(language === "es" ? "en" : "es"));
