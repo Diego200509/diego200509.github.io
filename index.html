@@ -7,21 +7,21 @@
   <meta name="theme-color" content="#17191c">
   <title>Distrito Cero · Diego Jijón</title>
   <link rel="icon" href="./assets/mark.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=palette">
-  <link rel="stylesheet" href="./landing.css?v=palette">
+  <link rel="stylesheet" href="./styles.css?v=case-studies">
+  <link rel="stylesheet" href="./landing.css?v=case-studies">
   <link rel="stylesheet" href="./archive.css?v=palette">
   <link rel="stylesheet" href="./site-footer.css?v=palette">
   <link rel="stylesheet" href="./district-preview.css?v=palette">
   <link rel="stylesheet" href="./asotema-demo.css?v=palette">
-  <link rel="stylesheet" href="./rgb-demo.css?v=palette">
-  <link rel="stylesheet" href="./traffic-demo.css?v=palette">
-  <script type="importmap">{"imports":{"./content.js":"./content.js?v=inline-footer","./experience.js":"./experience.js?v=visual","./project-archive.js":"./project-archive.js?v=sicop","./site-footer.js":"./site-footer.js?v=inline"}}</script>
-  <script type="module" src="./main.js?v=contact"></script>
+  <link rel="stylesheet" href="./rgb-demo.css?v=case-studies">
+  <link rel="stylesheet" href="./traffic-demo.css?v=case-studies">
+  <script type="importmap">{"imports":{"./content.js":"./content.js?v=case-studies","./experience.js":"./experience.js?v=visual","./project-archive.js":"./project-archive.js?v=sicop","./site-footer.js":"./site-footer.js?v=inline"}}</script>
+  <script type="module" src="./main.js?v=case-studies"></script>
   <script type="module" src="./landing.js?v=profile"></script>
   <script type="module" src="./district-preview.js?v=2"></script>
   <script type="module" src="./asotema-demo.js"></script>
-  <script type="module" src="./rgb-demo.js"></script>
-  <script type="module" src="./traffic-demo.js"></script>
+  <script type="module" src="./rgb-demo.js?v=case-studies"></script>
+  <script type="module" src="./traffic-demo.js?v=case-studies"></script>
 </head>
 <body>
   <div class="district-opening" id="district-opening" role="region" aria-label="Intro de Distrito Cero" data-aria="openingLabel" hidden>
@@ -159,7 +159,7 @@
               <button id="asotema-deposit" type="button" disabled><span data-t="asotemaDeposit">Aportar</span><strong>$20</strong></button>
               <button id="asotema-pay" type="button" disabled><span data-t="asotemaPay">Pagar cuota</span><strong>$21</strong></button>
             </div>
-            <button class="project-details-button" id="asotema-details" type="button" aria-haspopup="dialog" data-t="detail" disabled>Ver ficha ↗</button>
+            <a class="project-details-link" id="asotema-details" href="./asotema.html" data-t="caseView">Ver ficha →</a>
           </div>
         </article>
         <article class="project-card" id="talkapp" aria-labelledby="talkapp-title">
@@ -184,7 +184,7 @@
               <button type="button" data-talk-mode="direct" data-t="talkDirect" aria-controls="talkapp-conversation" aria-pressed="true" disabled>Directo</button>
               <button type="button" data-talk-mode="group" data-t="talkGroup" aria-controls="talkapp-conversation" aria-pressed="false" disabled>Grupo</button>
             </div>
-            <button class="project-details-button" id="talkapp-details" type="button" aria-haspopup="dialog" data-t="detail" disabled>Ver ficha ↗</button>
+            <a class="project-details-link" id="talkapp-details" href="./talkapp.html" data-t="caseView">Ver ficha →</a>
           </div>
         </article>
         <article class="project-card traffic-card" id="traffic-demo" aria-labelledby="traffic-title">
@@ -234,7 +234,7 @@
               </div>
               <p class="sr-only" id="traffic-phase"><span data-t="trafficGreenNorth">Verde norte–sur</span><span data-t="trafficGreenEast" hidden>Verde este–oeste</span><span data-t="trafficAllRed" hidden>Rojo en ambas vías</span></p>
             </div>
-            <button class="traffic-details" type="button" id="traffic-details" aria-haspopup="dialog" data-t="detail">Ver ficha ↗</button>
+            <a class="project-details-link" id="traffic-details" href="./semaforo-ia.html" data-t="caseView">Ver ficha →</a>
           </div>
         </article>
         <article class="project-card rgb-card" id="rgb-demo" aria-labelledby="rgb-title">
@@ -267,6 +267,7 @@
               </fieldset>
               <button class="rgb-settings-button" id="rgb-settings-button" type="button" aria-haspopup="dialog" aria-label="Ajustes y captura" data-aria="rgbSettingsLabel" data-t="rgbSettings">Ajustes ↗</button>
             </div>
+            <a class="project-details-link" id="rgb-details" href="./laboratorio-rgb.html" data-t="caseView">Ver ficha →</a>
           </div>
         </article>
       </div>

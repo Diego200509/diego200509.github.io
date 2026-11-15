@@ -115,7 +115,6 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0 8px;
-  margin-top: auto;
 }
 
 #rgb-channels,
@@ -131,9 +130,9 @@
   gap: 4px;
 }
 
-:is(.rgb-toggle, .rgb-tone)[data-channel="red"] { --channel-color: #ff9b9c; }
-:is(.rgb-toggle, .rgb-tone)[data-channel="green"] { --channel-color: #a3e2b9; }
-:is(.rgb-toggle, .rgb-tone)[data-channel="blue"] { --channel-color: #adc6ff; }
+:is(.rgb-toggle, .rgb-tone)[data-channel="red"] { --channel-color: var(--rgb-red); }
+:is(.rgb-toggle, .rgb-tone)[data-channel="green"] { --channel-color: var(--rgb-green); }
+:is(.rgb-toggle, .rgb-tone)[data-channel="blue"] { --channel-color: var(--rgb-blue); }
 
 .rgb-toggle {
   position: relative;

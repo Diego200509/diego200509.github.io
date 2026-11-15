@@ -200,7 +200,9 @@
   color: var(--gold);
 }
 
-.project-details-button {
+.project-details-link {
+  display: inline-flex;
+  align-items: center;
   align-self: start;
   margin-top: auto;
   min-height: 32px;
@@ -212,13 +214,12 @@
   text-align: left;
 }
 
-.project-details-button:hover { text-decoration: underline; }
 
 @media (max-width: 600px) {
   #talkapp { scroll-margin-top: 118px; }
   #talkapp h3 { font-size: 1.45rem; }
   .talkapp-modes button,
-  .project-details-button { min-height: 40px; }
+  .project-details-link { min-height: 40px; }
 }
 
 #inicio {

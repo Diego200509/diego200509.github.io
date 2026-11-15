@@ -2,7 +2,7 @@ const repo = "https://github.com/Diego200509/";
 
 export const projects = [
   {
-    id: "asotema", name: { es: "ASOTEMA", en: "ASOTEMA" },
+    id: "asotema", page: "asotema.html", name: { es: "ASOTEMA", en: "ASOTEMA" },
     repo: repo + "asotema", stack: "Laravel · React · MySQL",
     demoNote: "asotemaDemoNote",
     es: {
@@ -19,7 +19,7 @@ export const projects = [
     }
   },
   {
-    id: "talkapp", name: { es: "TalkApp", en: "TalkApp" },
+    id: "talkapp", page: "talkapp.html", name: { es: "TalkApp", en: "TalkApp" },
     repo: repo + "talk-app", stack: "Next.js · TypeScript · Express · MongoDB · Socket.IO · WebRTC",
     es: {
       kind: "Mensajería web", location: "Estación de radio",
@@ -45,7 +45,7 @@ export const projects = [
     }
   },
   {
-    id: "traffic", name: { es: "Semáforo IA", en: "AI Traffic Light" },
+    id: "traffic", page: "semaforo-ia.html", name: { es: "Semáforo IA", en: "AI Traffic Light" },
     repo: repo + "Semaforo_IA", stack: "Python · Pygame · Lógica difusa · Algoritmos genéticos",
     stackEn: "Python · Pygame · Fuzzy logic · Genetic algorithms",
     demoNote: "trafficDemoNote",
@@ -63,7 +63,7 @@ export const projects = [
     }
   },
   {
-    id: "rgb", name: { es: "Laboratorio RGB", en: "RGB Lab" },
+    id: "rgb", page: "laboratorio-rgb.html", name: { es: "Laboratorio RGB", en: "RGB Lab" },
     repo: repo + "Lab_imagenes_rgb", stack: "Python · Procesamiento de imágenes",
     stackEn: "Python · Image processing",
     es: {
@@ -81,10 +81,14 @@ export const projects = [
   }
 ];
 
+export function projectPage(project, language) {
+  return "./" + project.page + "?lang=" + language;
+}
+
 export const translations = {
   es: {
     skip: "Ir a proyectos", nav: "Principal", home: "Distrito Cero · Inicio",
-    projects: "Proyectos", profile: "Sobre mí", contact: "Contacto",
+    projects: "Proyectos", profile: "Sobre mí", contact: "Contacto", caseView: "Ver ficha →",
     technologies: "Tecnologías", certificates: "Certificados",
     intro: "PORTAFOLIO · AMBATO, ECUADOR",
     role: "Estudiante de Ingeniería en Software",
@@ -195,7 +199,7 @@ export const translations = {
   },
   en: {
     skip: "Skip to projects", nav: "Main navigation", home: "Distrito Cero · Home",
-    projects: "Projects", profile: "About me", contact: "Contact",
+    projects: "Projects", profile: "About me", contact: "Contact", caseView: "View case study →",
     technologies: "Technologies", certificates: "Certificates",
     intro: "PORTFOLIO · AMBATO, ECUADOR",
     role: "Software Engineering student",

@@ -1,4 +1,4 @@
-import { loadLanguage, projects, saveLanguage, translatePage, translations } from "./content.js";
+import { loadLanguage, projectPage, projects, saveLanguage, translatePage, translations } from "./content.js";
 import { experience, experienceMarkup } from "./experience.js";
 import { setupMission } from "./game/mission.js";
 import { archiveProjects, renderArchiveCards } from "./project-archive.js";
@@ -69,6 +69,7 @@ const workshopMission = setupMission(missionDialog, () => language, () => {
 function renderCards() {
   for (const project of projects) {
     const copy = project[language];
+    get(project.id + "-details").href = projectPage(project, language);
     get(project.id + "-title").textContent = project.name[language];
     get(project.id + "-kind").textContent = copy.kind;
     get(project.id + "-description").textContent = copy.short;
@@ -392,11 +393,6 @@ for (const button of talkModes) {
     for (const mode of talkModes) mode.setAttribute("aria-pressed", String(mode === button));
     for (const chat of talkChats) chat.hidden = chat.dataset.talkChat !== button.dataset.talkMode;
   });
-}
-for (const id of ["asotema", "talkapp", "traffic"]) {
-  const details = get(id + "-details");
-  details.disabled = false;
-  details.addEventListener("click", () => openProject(id));
 }
 get("exit").addEventListener("click", exitGame);
 get("game-language").addEventListener("click", () => changeLanguage(language === "es" ? "en" : "es"));

@@ -18,6 +18,9 @@
   --shadow: #101012;
   --status-success: #b6d9bf;
   --status-danger: #ffb6a9;
+  --rgb-red: #ff9b9c;
+  --rgb-green: #a3e2b9;
+  --rgb-blue: #adc6ff;
   --mono: "IBM Plex Mono", Consolas, monospace;
   --display: "Barlow Condensed", "Arial Narrow", Impact, sans-serif;
   --body: "Instrument Sans", system-ui, sans-serif;
