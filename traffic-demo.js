@@ -47,6 +47,7 @@ const card = document.querySelector("#traffic-demo");
 const modeButtons = [...card.querySelectorAll("[data-traffic-mode]")];
 const demand = document.querySelector("#traffic-demand");
 const play = document.querySelector("#traffic-play");
+const playLabel = document.querySelector("#traffic-play-label");
 const phaseText = [...document.querySelector("#traffic-phase").children];
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const lanes = directions.map((direction) => {
@@ -91,8 +92,8 @@ function render(passing = null) {
   }
 
   const key = running ? "trafficPause" : simulation.tick ? "trafficResume" : "trafficPlay";
-  play.dataset.t = key;
-  play.textContent = translations[document.documentElement.lang][key];
+  playLabel.dataset.t = key;
+  playLabel.textContent = translations[document.documentElement.lang][key];
 }
 
 function syncTimer() {

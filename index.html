@@ -134,7 +134,10 @@
               </div>
               <div class="traffic-actions">
                 <button type="button" id="traffic-demand" aria-pressed="false" data-aria="trafficDemandLabel" data-t="trafficDemand" disabled>+ Tráfico N–S</button>
-                <button type="button" id="traffic-play" data-t="trafficPlay" disabled>Iniciar</button>
+                <button type="button" id="traffic-play" disabled>
+                  <span class="traffic-play-size" aria-hidden="true" data-t="trafficResume">Continuar</span>
+                  <span id="traffic-play-label" data-t="trafficPlay">Iniciar</span>
+                </button>
               </div>
               <p class="sr-only" id="traffic-phase"><span data-t="trafficGreenNorth">Verde norte–sur</span><span data-t="trafficGreenEast" hidden>Verde este–oeste</span><span data-t="trafficAllRed" hidden>Rojo en ambas vías</span></p>
             </div>

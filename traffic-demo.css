@@ -197,8 +197,22 @@
   font: 500 .67rem/1.4 var(--mono);
 }
 
-.traffic-stat { white-space: nowrap; }
-.traffic-stat b { color: #ffdfc9; font-variant-numeric: tabular-nums; }
+.traffic-stats span { font-size: inherit; }
+
+.traffic-stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: .35em;
+  white-space: nowrap;
+}
+
+.traffic-stat b {
+  inline-size: 4ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #ffdfc9;
+  font-variant-numeric: tabular-nums;
+}
 
 .traffic-controls button {
   min-height: 36px;
@@ -221,6 +235,21 @@
   color: #ffd0be;
 }
 
+#traffic-play {
+  display: grid;
+  place-items: center;
+}
+
+#traffic-play > span {
+  grid-area: 1 / 1;
+  color: inherit;
+  font: inherit;
+}
+
+.traffic-play-size {
+  visibility: hidden;
+}
+
 .traffic-details {
   align-self: start;
   min-height: 32px;
@@ -241,6 +270,7 @@
 @media (max-width: 600px) {
   #traffic-demo { scroll-margin-top: 118px; }
   .traffic-card h3 { font-size: 1.45rem; }
+  .traffic-stats > span:first-child { display: none; }
   .traffic-controls button { min-height: 40px; padding-inline: 5px; }
   .traffic-details { min-height: 40px; }
 }
