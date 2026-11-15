@@ -87,7 +87,7 @@ export function projectPage(project, language) {
 
 export const translations = {
   es: {
-    skip: "Ir a proyectos", nav: "Principal", home: "Distrito Cero · Inicio",
+    skip: "Ir a proyectos", nav: "Principal", menu: "Menú", home: "Distrito Cero · Inicio",
     projects: "Proyectos", profile: "Sobre mí", contact: "Contacto", caseView: "Ver ficha →",
     technologies: "Tecnologías", certificates: "Certificados",
     intro: "PORTAFOLIO · AMBATO, ECUADOR",
@@ -198,7 +198,7 @@ export const translations = {
     nextPrism: "Siguiente prisma", plaza: "Plaza"
   },
   en: {
-    skip: "Skip to projects", nav: "Main navigation", home: "Distrito Cero · Home",
+    skip: "Skip to projects", nav: "Main navigation", menu: "Menu", home: "Distrito Cero · Home",
     projects: "Projects", profile: "About me", contact: "Contact", caseView: "View case study →",
     technologies: "Technologies", certificates: "Certificates",
     intro: "PORTFOLIO · AMBATO, ECUADOR",

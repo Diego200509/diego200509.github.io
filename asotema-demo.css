@@ -1,6 +1,5 @@
 #asotema-demo {
   min-width: 0;
-  scroll-margin-top: 105px;
 }
 
 #asotema-demo:hover { transform: none; }
@@ -118,7 +117,6 @@
 #asotema-demo button[aria-disabled="false"]:hover { border-color: var(--gold); }
 
 @media (max-width: 600px) {
-  #asotema-demo { scroll-margin-top: 118px; }
   #asotema-demo h3 { font-size: 1.45rem; }
 }
 

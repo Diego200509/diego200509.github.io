@@ -2,9 +2,8 @@
   background: radial-gradient(ellipse at 52% 0%, var(--gold-wash), transparent 40%), var(--bg);
 }
 
-.archive-layout { padding-block: 28px 72px; }
+.archive-layout { padding-bottom: 72px; }
 
-.archive-toolbar,
 .more-projects-heading,
 .archive-card-header,
 .archive-links,
@@ -15,7 +14,6 @@
   gap: 10px 14px;
 }
 
-.archive-toolbar,
 .more-projects-heading { justify-content: space-between; }
 
 .archive-intro {

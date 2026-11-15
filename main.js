@@ -3,8 +3,10 @@ import { experience, experienceMarkup } from "./experience.js";
 import { setupMission } from "./game/mission.js";
 import { archiveProjects, renderArchiveCards } from "./project-archive.js";
 import { mountContactFooter } from "./site-footer.js";
+import { mountSiteHeader } from "./site-header.js";
 
 mountContactFooter();
+const updateHeaderLinks = mountSiteHeader();
 const get = (id) => document.getElementById(id);
 const projectById = new Map(projects.map((project) => [project.id, project]));
 const ambacar = experience.find((entry) => entry.id === "ambacar");
@@ -235,6 +237,7 @@ function updateDistrictLabels() {
 
 function render() {
   translatePage(language);
+  updateHeaderLinks(language);
   document.querySelector(".brand").setAttribute("aria-label", words().home);
   get("cv-link").href = "./cv.html?lang=" + language;
   get("archive-link").href = "./archive.html?lang=" + language;

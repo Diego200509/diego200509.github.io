@@ -1,11 +1,14 @@
 import { loadLanguage, projects, saveLanguage, translatePage } from "./content.js";
 import { experience, experienceMarkup, skills } from "./experience.js";
 import { mountContactFooter } from "./site-footer.js";
+import { mountSiteHeader } from "./site-header.js";
 
 mountContactFooter();
+const updateHeaderLinks = mountSiteHeader();
 
 function render(language) {
   translatePage(language);
+  updateHeaderLinks(language);
   document.querySelector("#return").href = "./index.html?lang=" + language;
   document.querySelector("#cv-portfolio").href = "./index.html?lang=" + language + "#inicio";
   document.querySelector("#cv-download").href = "./assets/diego-jijon-cv-" + language + ".pdf";

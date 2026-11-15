@@ -1,6 +1,5 @@
 #rgb-demo {
   min-width: 0;
-  scroll-margin-top: 105px;
 }
 
 #rgb-demo:hover {
@@ -267,7 +266,6 @@
 }
 
 @media (max-width: 600px) {
-  #rgb-demo { scroll-margin-top: 118px; }
   .rgb-card h3 { font-size: 1.45rem; }
   .rgb-settings-grid { grid-template-columns: 1fr; gap: 12px; }
   #rgb-settings-result { max-height: 170px; object-fit: cover; }

@@ -7,17 +7,18 @@
   <meta name="theme-color" content="#17191c">
   <title>Distrito Cero · Diego Jijón</title>
   <link rel="icon" href="./assets/mark.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=case-studies">
-  <link rel="stylesheet" href="./landing.css?v=case-studies">
-  <link rel="stylesheet" href="./archive.css?v=palette">
-  <link rel="stylesheet" href="./site-footer.css?v=palette">
+  <link rel="stylesheet" href="./styles.css?v=header">
+  <link rel="stylesheet" href="./site-header.css">
+  <link rel="stylesheet" href="./landing.css?v=header">
+  <link rel="stylesheet" href="./archive.css?v=header">
+  <link rel="stylesheet" href="./site-footer.css?v=header">
   <link rel="stylesheet" href="./district-preview.css?v=palette">
-  <link rel="stylesheet" href="./asotema-demo.css?v=palette">
-  <link rel="stylesheet" href="./rgb-demo.css?v=case-studies">
-  <link rel="stylesheet" href="./traffic-demo.css?v=case-studies">
-  <script type="importmap">{"imports":{"./content.js":"./content.js?v=case-studies","./experience.js":"./experience.js?v=visual","./project-archive.js":"./project-archive.js?v=sicop","./site-footer.js":"./site-footer.js?v=inline"}}</script>
-  <script type="module" src="./main.js?v=case-studies"></script>
-  <script type="module" src="./landing.js?v=profile"></script>
+  <link rel="stylesheet" href="./asotema-demo.css?v=header">
+  <link rel="stylesheet" href="./rgb-demo.css?v=header">
+  <link rel="stylesheet" href="./traffic-demo.css?v=header">
+  <script type="importmap">{"imports":{"./content.js":"./content.js?v=header","./experience.js":"./experience.js?v=visual","./project-archive.js":"./project-archive.js?v=sicop","./site-footer.js":"./site-footer.js?v=inline"}}</script>
+  <script type="module" src="./main.js?v=header"></script>
+  <script type="module" src="./landing.js?v=header"></script>
   <script type="module" src="./district-preview.js?v=2"></script>
   <script type="module" src="./asotema-demo.js"></script>
   <script type="module" src="./rgb-demo.js?v=case-studies"></script>
@@ -34,22 +35,18 @@
     </div>
   </div>
   <a class="skip" href="#projects" data-t="skip">Ir a proyectos</a>
-  <header class="top" id="top">
-    <a class="brand" href="#inicio" aria-label="Distrito Cero · Inicio">
-      <img src="./assets/mark.svg" width="31" height="31" alt="">
-      <span>DISTRITO CERO</span>
-    </a>
-    <nav aria-label="Principal" data-aria="nav">
-      <a href="#projects" data-t="projects">Proyectos</a>
-      <a href="#profile" data-t="profile">Sobre mí</a>
-      <a href="#technologies" data-t="technologies">Tecnologías</a>
-      <a href="#experience" data-t="experience">Experiencia</a>
-      <a href="#certificates" data-t="certificates">Certificados</a>
-      <a href="#contact" data-t="contact">Contacto</a>
-    </nav>
-    <div class="languages" role="group" aria-label="Idioma / Language">
-      <button type="button" lang="es" aria-label="Español" data-lang="es" aria-pressed="true">ES</button>
-      <button type="button" lang="en" aria-label="English" data-lang="en" aria-pressed="false">EN</button>
+  <header class="site-header" id="top">
+    <div class="site-header-inner content">
+      <a class="brand" href="#inicio" aria-label="Distrito Cero · Inicio">
+        <img src="./assets/mark.svg" width="31" height="31" alt="">
+        <span>DISTRITO CERO</span>
+      </a>
+      <div class="site-header-actions">
+        <div class="languages" role="group" aria-label="Idioma / Language">
+          <button type="button" lang="es" data-lang="es" aria-label="Español" aria-pressed="true">ES</button>
+          <button type="button" lang="en" data-lang="en" aria-label="English" aria-pressed="false">EN</button>
+        </div>
+      </div>
     </div>
   </header>
   <main id="main">

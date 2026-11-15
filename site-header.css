@@ -1,0 +1,125 @@
+:root {
+  --site-header-height: 70px;
+  scroll-padding-top: calc(var(--site-header-height) + env(safe-area-inset-top, 0px) + 13px);
+}
+
+.site-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 2;
+  padding-top: env(safe-area-inset-top, 0px);
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 95%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.site-header-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: calc(var(--site-header-height) - 1px);
+}
+
+.site-header-actions { display: flex; align-items: center; gap: clamp(5px, 1.3vw, 13px); }
+.site-header .brand img { flex: none; }
+.site-header .text-link { display: inline-flex; align-items: center; min-height: 44px; }
+.site-header #cv-download { min-height: 44px; padding-inline: 11px; }
+
+.site-menu-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--surface-inset);
+  color: var(--ink);
+  font: 600 .79rem/1.2 var(--body);
+  transition: border-color .22s ease, color .22s ease, background-color .22s ease;
+}
+
+.site-menu-toggle:hover,.site-menu-toggle[aria-expanded="true"] { border-color: var(--gold); color: var(--gold); background: var(--surface-raised); }
+.site-menu-glyph { position: relative; display: block; width: 18px; height: 18px; }
+.site-menu-glyph span {
+  position: absolute;
+  inset: 8px 0 auto;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: transform .25s ease, opacity .2s ease;
+}
+
+.site-menu-glyph span:first-child { transform: translateY(-5px); }
+.site-menu-glyph span:last-child { transform: translateY(5px); }
+.site-menu-toggle[aria-expanded="true"] .site-menu-glyph span:first-child { transform: rotate(45deg); }
+.site-menu-toggle[aria-expanded="true"] .site-menu-glyph span:nth-child(2) { opacity: 0; transform: scaleX(.35); }
+.site-menu-toggle[aria-expanded="true"] .site-menu-glyph span:last-child { transform: rotate(-45deg); }
+
+.site-menu {
+  position: absolute;
+  inset: calc(100% + 9px) 0 auto auto;
+  width: min(100%, 460px);
+  max-height: calc(100dvh - var(--site-header-height) - env(safe-area-inset-top, 0px) - 24px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 9px;
+  border: 1px solid var(--gold-line);
+  border-radius: 11px;
+  background: radial-gradient(ellipse at 100% 0%, var(--gold-wash), transparent 69%), var(--panel);
+  box-shadow: 0 14px 48px color-mix(in srgb, var(--shadow) 64%, transparent);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px) scale(.985);
+  transform-origin: top right;
+  transition: opacity .23s ease, transform .27s cubic-bezier(.22, 1, .36, 1), visibility 0s .27s;
+}
+
+.site-menu:not([inert]) {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  transition-delay: 0s;
+}
+
+.site-menu-sections,.site-menu-pages { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; }
+.site-menu-pages { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line); }
+
+.site-menu a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  min-height: 45px;
+  padding: 6px 9px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  color: var(--ink-soft);
+  font-size: .88rem;
+  line-height: 1.3;
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+
+.site-menu-pages a { border-color: var(--line); background: var(--surface-inset); font-weight: 600; }
+.site-menu a:is(:hover, :focus-visible, [aria-current]) { border-color: var(--gold-line); background: var(--gold-wash); color: var(--gold); text-decoration: none; }
+
+@media (max-width: 590px) {
+  :root { --site-header-height: 62px; }
+  .site-menu-toggle { padding: 0; }
+  .site-header .brand { gap: 7px; font-size: .68rem; letter-spacing: .08em; }
+  .site-header .brand img { width: 28px; height: 28px; }
+  .site-header #cv-download { min-width: 44px; padding-inline: 0; }
+  .site-menu-label,.site-download-label { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-menu,.site-menu *,.site-menu-toggle,.site-menu-glyph span { transition: none !important; }
+}
+
+@media print {
+  .site-header { display: none; }
+}

@@ -1,8 +1,10 @@
 import { loadLanguage, saveLanguage, translatePage, translations } from "./content.js";
 import { archiveProjects, renderArchiveCards } from "./project-archive.js";
 import { mountContactFooter } from "./site-footer.js";
+import { mountSiteHeader } from "./site-header.js";
 
 mountContactFooter();
+const updateHeaderLinks = mountSiteHeader();
 const buttons = document.querySelectorAll("[data-category]");
 const container = document.querySelector("#archive-projects");
 const result = document.querySelector("#archive-count");
@@ -11,6 +13,7 @@ let category = "all";
 
 function render() {
   translatePage(language);
+  updateHeaderLinks(language);
   document.querySelector("#archive-return").href = "./index.html?lang=" + language + "#projects";
   document.title = "Diego Jijón · " + translations[language].archiveTitle;
   for (const button of buttons) {

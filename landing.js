@@ -86,7 +86,6 @@ reducedMotion.addEventListener("change", () => {
 
 let scrollFrame = 0;
 let activeLink = null;
-let headerSpace = 0;
 
 function showDestination() {
   const destination = chapters.find(chapter => "#" + chapter.id === location.hash);
@@ -120,16 +119,11 @@ function updateNavigation() {
     const arrival = reducedMotion.matches ? 1 : Math.min(1, Math.max(0, fraction));
     return { chapter, arrival };
   });
-  const nextHeaderSpace = Math.ceil(headerBox.height + 16);
-  if (nextHeaderSpace !== headerSpace) {
-    headerSpace = nextHeaderSpace;
-    main.style.setProperty("--landing-header-space", headerSpace + "px");
-  }
   header.style.setProperty("--read-progress", progress);
   for (const { chapter, arrival } of arrivals) {
     chapter.style.setProperty("--chapter-arrival", arrival.toFixed(3));
   }
-  if (atBottom) next = linkedAtBottom ?? navigation.at(-1).link;
+  if (atBottom) next = linkedAtBottom ?? navigation.at(-1)?.link;
   if (next === activeLink) return;
   activeLink?.removeAttribute("aria-current");
   next?.setAttribute("aria-current", "location");

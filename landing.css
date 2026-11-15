@@ -1,11 +1,3 @@
-#top {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  background: color-mix(in srgb, var(--bg) 95%, transparent);
-  column-gap: clamp(12px, 2.2vw, 32px);
-}
-
 #top::after {
   position: absolute;
   inset: auto 0 -1px;
@@ -16,38 +8,6 @@
   transform-origin: left;
   background: var(--gold);
 }
-
-#top nav a {
-  position: relative;
-  color: var(--ink-soft);
-  text-decoration: none;
-}
-
-#top nav { gap: clamp(10px, 1.5vw, 24px); }
-
-#top nav a::after {
-  position: absolute;
-  inset: auto 0 -7px;
-  height: 1px;
-  content: "";
-  background: var(--gold);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform .25s ease;
-}
-
-#top nav a:is(:hover, :focus-visible, [aria-current]) {
-  color: var(--gold);
-}
-
-#top nav a:is(:hover, :focus-visible, [aria-current])::after {
-  transform: scaleX(1);
-}
-
-#main { --landing-header-space: 100px; }
-
-#main > [id],
-#project-grid > [id] { scroll-margin-top: var(--landing-header-space); }
 
 .landing-chapter {
   --chapter-ink: var(--gold);
@@ -127,7 +87,6 @@
 
 #talkapp {
   min-width: 0;
-  scroll-margin-top: 105px;
 }
 
 #talkapp:hover { transform: none; }
@@ -216,7 +175,6 @@
 
 
 @media (max-width: 600px) {
-  #talkapp { scroll-margin-top: 118px; }
   #talkapp h3 { font-size: 1.45rem; }
   .talkapp-modes button,
   .project-details-link { min-height: 40px; }
@@ -718,14 +676,6 @@
   .certificate-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
-@media (max-width: 940px) {
-  #main { --landing-header-space: 125px; }
-  #top { flex-wrap: wrap; row-gap: 5px; padding-block: 10px; }
-  #top nav { order: 3; flex-basis: 100%; justify-content: space-between; }
-  #top nav a { padding-block: 5px; }
-  #top nav a::after { bottom: 0; }
-}
-
 @media (max-width: 760px) {
   #profile { grid-template-columns: minmax(0, 1fr); }
   .technology-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -734,9 +684,6 @@
 }
 
 @media (max-width: 560px) {
-  #main { --landing-header-space: 145px; }
-  #top nav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px 12px; }
-  #top nav a { justify-self: start; }
   .technology-grid { grid-template-columns: minmax(0, 1fr); }
 }
 

@@ -2,15 +2,6 @@
   background: radial-gradient(ellipse 65% 44rem at 30% 0%, var(--gold-wash), transparent), var(--bg);
 }
 
-.case-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding-block: 28px 18px;
-  border-bottom: 1px solid var(--line);
-}
-
 .case-hero {
   position: relative;
   isolation: isolate;
@@ -196,7 +187,6 @@
   gap: clamp(17px, 3.5vw, 48px);
   padding-block: clamp(25px, 4.2vw, 57px);
   border-top: 1px solid var(--line);
-  scroll-margin-top: 14px;
 }
 
 .case-section::before {
@@ -312,7 +302,6 @@
 }
 
 @media (max-width: 620px) {
-  .case-bar { padding-block: 17px 12px; }
   .case-index { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 

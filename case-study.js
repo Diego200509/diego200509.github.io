@@ -1,5 +1,6 @@
 import { loadLanguage, projectPage, projects, saveLanguage, translatePage, translations } from "./content.js";
 import { mountContactFooter } from "./site-footer.js";
+import { mountSiteHeader } from "./site-header.js";
 import { caseDetails, caseLabels } from "./case-content.js?v=sections";
 import { caseDemos } from "./case-demos.js";
 
@@ -8,6 +9,7 @@ const currentPage = location.pathname.split("/").at(-1);
 const project = projects.find(item => item.page === currentPage);
 const detail = caseDetails[project.id];
 const demoState = {};
+const updateHeaderLinks = mountSiteHeader();
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const sectionObserver = "IntersectionObserver" in window && "animate" in Element.prototype
   ? new IntersectionObserver(entries => {
@@ -109,6 +111,7 @@ function render(language) {
     </section>`;
 
   translatePage(language);
+  updateHeaderLinks(language);
   caseDemos[project.id](document.querySelector("#case-demo"), language, demoState);
   if (!reducedMotion.matches) {
     for (const section of study.querySelectorAll(".case-section, .case-related")) {

@@ -1,6 +1,5 @@
 #traffic-demo {
   min-width: 0;
-  scroll-margin-top: 105px;
 }
 
 #traffic-demo:hover {
@@ -321,7 +320,6 @@
 }
 
 @media (max-width: 600px) {
-  #traffic-demo { scroll-margin-top: 118px; }
   .traffic-card h3 { font-size: 1.45rem; }
   .traffic-stats > span:first-child { display: none; }
   .traffic-controls button { min-height: 40px; padding-inline: 5px; }

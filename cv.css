@@ -8,17 +8,6 @@
 
 .cv { width: min(100% - 36px, 950px); padding-block: 22px 64px; }
 
-.cv-nav {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 9px 12px;
-  padding-bottom: 20px;
-}
-
-.cv-nav .languages { margin-left: auto; }
-.cv-nav .button { min-height: 40px; }
-
 .cv-sheet {
   color-scheme: light;
   padding: clamp(24px, 5.2vw, 59px);
@@ -160,7 +149,6 @@
   :root { color-scheme: light; }
   html, .cv-page { background: white; }
   .cv { width: auto; padding: 0; }
-  .cv-nav { display: none; }
   .cv-sheet { padding: 11mm; border: 0; border-radius: 0; background: white; box-shadow: none; font-size: 10pt; line-height: 1.35; }
   .cv-header { grid-template-columns: 24mm minmax(0, 1fr); gap: 4.5mm; padding-bottom: 3.5mm; }
   .cv-photo { width: 24mm; }
