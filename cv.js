@@ -4,10 +4,12 @@ import { experience, experienceMarkup, skills } from "./experience.js";
 function render(language) {
   translatePage(language);
   document.querySelector("#return").href = "./index.html?lang=" + language;
+  document.querySelector("#cv-portfolio").href = "./index.html?lang=" + language + "#inicio";
+  document.title = "Diego Jijón · " + (language === "es" ? "CV" : "Résumé");
   document.querySelector("#cv-experience").innerHTML = experience.map((entry) =>
     `<article>${experienceMarkup(entry, language)}</article>`).join("");
   document.querySelector("#cv-skills").innerHTML = skills.map((skill) =>
-    `<li><strong>${skill[language]}</strong> · ${skill.tools}</li>`).join("");
+    `<li><strong>${skill[language]}</strong><span>${skill.tools}</span></li>`).join("");
   document.querySelector("#cv-projects").replaceChildren(...projects.map((project) => {
     const item = document.createElement("li");
     const name = document.createElement(project.repo ? "a" : "strong");

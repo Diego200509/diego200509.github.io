@@ -3,34 +3,63 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="CV breve de Diego Jijón, estudiante de Ingeniería en Software.">
+  <meta name="description" content="Currículum de Diego Jijón, estudiante de octavo semestre de Ingeniería en Software.">
   <title>Diego Jijón · CV</title>
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles.css?v=cv-archive">
+  <link rel="stylesheet" href="./cv.css">
   <link rel="icon" href="./assets/mark.svg" type="image/svg+xml">
-  <script type="module" src="./cv.js"></script>
+  <script type="importmap">{"imports":{"./content.js":"./content.js?v=cv-archive","./experience.js":"./experience.js?v=cv"}}</script>
+  <script type="module" src="./cv.js?v=cv-archive"></script>
 </head>
-<body>
+<body class="cv-page">
   <main class="cv content">
-    <nav class="cv-nav">
+    <nav class="cv-nav" aria-label="Principal" data-aria="nav">
       <a class="text-link" id="return" href="./index.html" data-t="backSite">← Portafolio</a>
-      <div class="languages" aria-label="Idioma / Language">
+      <div class="languages" role="group" aria-label="Idioma / Language">
         <button type="button" data-lang="es" aria-label="Español">ES</button>
         <button type="button" data-lang="en" aria-label="English">EN</button>
       </div>
       <button class="button secondary" type="button" id="print" data-t="print">Imprimir / Guardar PDF</button>
     </nav>
-    <header>
-      <p class="eyebrow" data-t="cvSummary">CV breve</p>
-      <h1>Diego Patricio Jijón Viscaino</h1>
-      <p data-t="bio">Estudio Ingeniería en Software en la Universidad Técnica de Ambato. Me interesa desarrollar aplicaciones, trabajar con bases de datos y aplicar IA y automatización a problemas concretos.</p>
-      <a class="text-link cv-print-contact" href="https://github.com/Diego200509">github.com/Diego200509</a>
-    </header>
-    <section><h2 data-t="education">Formación</h2><p data-t="degree">Ingeniería en Software · Universidad Técnica de Ambato</p></section>
-    <section><h2 data-t="experience">Experiencia</h2><div class="resume-experience" id="cv-experience"></div></section>
-    <section><h2 data-t="skills">Habilidades</h2><ul class="resume-skills" id="cv-skills"></ul></section>
-    <section><h2 data-t="languages">Idiomas</h2><p data-t="languageLevels">Español nativo · Inglés B1</p></section>
-    <section><h2 data-t="selected">Proyectos seleccionados</h2><ul id="cv-projects"></ul></section>
-    <section class="cv-contact"><h2 data-t="contact">Contacto</h2><a href="https://github.com/Diego200509" class="text-link">github.com/Diego200509</a></section>
+    <article class="cv-sheet" aria-labelledby="cv-name">
+      <header class="cv-header">
+        <img class="cv-photo" src="./assets/diego-jijon.jpg" width="460" height="460" alt="Retrato de Diego Jijón" data-alt="profilePhotoAlt">
+        <div>
+          <h1 id="cv-name">Diego Patricio Jijón Viscaino</h1>
+          <p class="cv-role" data-t="cvRole">Estudiante de Ingeniería en Software · 8.º semestre</p>
+          <p class="cv-location"><span data-t="profileLocation">Ambato, Ecuador</span> · <span data-t="profileRemote">Abierto a oportunidades remotas</span></p>
+          <ul class="cv-links">
+            <li><a href="mailto:diegojijon2005@gmail.com"><svg aria-hidden="true"><use href="./assets/contact-icons.svg#email"></use></svg>diegojijon2005@gmail.com</a></li>
+            <li><a id="cv-portfolio" href="./index.html#inicio"><svg aria-hidden="true"><use href="./assets/landing-icons.svg#arrow"></use></svg>diego200509.github.io</a></li>
+            <li><a href="https://github.com/Diego200509"><svg aria-hidden="true"><use href="./assets/landing-icons.svg#github"></use></svg>GitHub</a></li>
+            <li><a href="https://www.linkedin.com/in/diego-jij%C3%B3n-undefined-981508311/"><svg aria-hidden="true"><use href="./assets/landing-icons.svg#linkedin"></use></svg>LinkedIn</a></li>
+          </ul>
+        </div>
+      </header>
+      <section class="cv-profile" aria-labelledby="cv-profile-title">
+        <h2 id="cv-profile-title" data-t="cvProfile">Perfil</h2>
+        <p data-t="cvOverview">Desarrollo aplicaciones web que conectan interfaces, APIs y bases de datos. En Ambacar trabajé en el módulo de usuarios de AMBYSOFT. Me interesa la IA aplicada al análisis de datos y a la toma de decisiones.</p>
+      </section>
+      <div class="cv-columns">
+        <div class="cv-main">
+          <section id="cv-experience-section"><h2 data-t="experience">Experiencia</h2><div class="resume-experience" id="cv-experience"></div></section>
+          <section><h2 data-t="selected">Proyectos seleccionados</h2><ul id="cv-projects"></ul></section>
+        </div>
+        <aside class="cv-side">
+          <section><h2 data-t="education">Formación</h2><p data-t="degree">Ingeniería en Software · Universidad Técnica de Ambato</p></section>
+          <section><h2 data-t="skills">Habilidades</h2><ul class="resume-skills" id="cv-skills"></ul></section>
+          <section>
+            <h2 data-t="certificates">Certificados</h2>
+            <ul class="cv-certificates">
+              <li><a href="./assets/cisco-data-science-python.pdf" data-t="certDataTitle">Fundamentos de ciencia de datos con Python</a><time datetime="2026-09-28">2026 · 40 h</time></li>
+              <li><a href="./assets/cisco-soporte-seguridad-red.pdf" data-t="certNetworkTitle">Soporte y Seguridad de Red</a><time datetime="2024-12-21">2024 · 12 h</time></li>
+              <li><a href="./assets/cisco-introduction-to-iot.pdf">Introduction to IoT</a><time datetime="2024-06-10">2024</time></li>
+            </ul>
+          </section>
+          <section><h2 data-t="languages">Idiomas</h2><p data-t="languageLevels">Español nativo · Inglés B1</p></section>
+        </aside>
+      </div>
+    </article>
   </main>
 </body>
 </html>

@@ -1,0 +1,183 @@
+.cv-page {
+  --cv-ink: #24272c;
+  --cv-muted: #59564f;
+  --cv-accent: #775938;
+  --cv-line: #dfd9ce;
+  background: radial-gradient(ellipse at 45% 4%, #302b26, transparent 44%), #17191c;
+}
+
+.cv { width: min(100% - 36px, 950px); padding-block: 22px 64px; }
+
+.cv-nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px 12px;
+  padding-bottom: 20px;
+}
+
+.cv-nav .languages { margin-left: auto; }
+.cv-nav .button { min-height: 40px; }
+
+.cv-sheet {
+  color-scheme: light;
+  padding: clamp(24px, 5.2vw, 59px);
+  border: 1px solid var(--cv-line);
+  border-top: 5px solid #b69b74;
+  border-radius: 12px;
+  background: #fffdf8;
+  color: var(--cv-ink);
+  box-shadow: 0 22px 58px #08090972;
+  font-size: .91rem;
+  line-height: 1.52;
+}
+
+.cv-header {
+  display: grid;
+  grid-template-columns: clamp(72px, 10vw, 112px) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(14px, 2.6vw, 29px);
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--cv-line);
+}
+
+.cv-photo {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border: 1px solid var(--cv-line);
+  border-radius: 50%;
+  background: white;
+}
+
+.cv-header h1 {
+  margin: 0 0 6px;
+  font: 800 clamp(2.05rem, 4.8vw, 3.6rem)/.93 var(--display);
+  letter-spacing: -.025em;
+  text-transform: none;
+  text-shadow: none;
+}
+
+.cv-role { color: var(--cv-accent); font-weight: 700; }
+.cv-location { margin-top: 3px; color: var(--cv-muted); }
+
+.cv-links,
+.cv .resume-skills,
+.cv-certificates,
+#cv-projects {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cv-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 15px;
+  margin-top: 10px;
+  font-size: .8rem;
+}
+
+.cv-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  color: var(--cv-accent);
+  font-weight: 700;
+}
+
+.cv-links svg { width: 14px; height: 14px; flex: none; }
+.cv-profile { padding-block: 19px; }
+
+.cv-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(15px, 3vw, 32px);
+}
+
+.cv-side {
+  height: 100%;
+  padding-left: clamp(14px, 2.6vw, 27px);
+  border-left: 1px solid var(--cv-line);
+}
+
+.cv-columns section + section { margin-top: 19px; }
+
+.cv-sheet h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 7px;
+  color: var(--cv-accent);
+  font: 700 clamp(1.2rem, 2.7vw, 1.53rem)/1 var(--display);
+}
+
+.cv-sheet h2::after {
+  flex: 1;
+  height: 1px;
+  background: var(--cv-line);
+  content: "";
+}
+
+.cv-sheet h3 { font-size: .97rem; }
+.cv-sheet .resume-meta { color: var(--cv-muted); font: 500 .75rem/1.4 var(--body); }
+.cv .resume-experience { gap: 13px; }
+.cv .resume-experience ul { padding-left: 19px; }
+
+.resume-skills,
+.cv-certificates,
+#cv-projects { display: grid; gap: 8px; }
+
+.resume-skills strong,
+.resume-skills span,
+.cv-certificates time { display: block; }
+
+.resume-skills span,
+.cv-certificates time { color: var(--cv-muted); font-size: .83rem; }
+
+.cv-certificates a,
+#cv-projects .text-link { color: var(--cv-accent); font: 700 .9rem/1.35 var(--body); }
+#cv-projects p { font-size: .84rem; }
+
+@media (max-width: 680px) {
+  .cv-columns { grid-template-columns: minmax(0, 1fr); }
+  .cv-side { height: auto; padding: 0; border: 0; }
+}
+
+@media (max-width: 460px) {
+  .cv-sheet { padding: 17px; }
+  .cv-header { grid-template-columns: minmax(0, 1fr); }
+  .cv-photo { width: 76px; }
+}
+
+@media print {
+  @page { size: A4; margin: 11mm; }
+  :root { color-scheme: light; }
+  html, .cv-page { background: white; }
+  .cv { width: auto; padding: 0; }
+  .cv-nav { display: none; }
+  .cv-sheet { padding: 0; border: 0; border-radius: 0; background: white; box-shadow: none; font-size: 10pt; line-height: 1.35; }
+  .cv-header { grid-template-columns: 22mm minmax(0, 1fr); gap: 4mm; padding-bottom: 3mm; }
+  .cv-photo { width: 22mm; }
+  .cv-header h1 { margin-bottom: 2mm; font-size: 25pt; }
+  .cv-links { gap: 1mm 3mm; margin-top: 1.8mm; font-size: 9pt; }
+  .cv-links svg { width: 3mm; height: 3mm; }
+  .cv-profile { padding-block: 3mm; }
+  .cv-columns { grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); gap: 5mm; }
+  .cv-side { height: 100%; padding-left: 4mm; border-left: 1px solid var(--cv-line); }
+  .cv-columns section + section { margin-top: 3mm; }
+  .cv-sheet h2 { margin-bottom: 1.2mm; font-size: 13pt; }
+  .cv-sheet h3 { font-size: 10.5pt; }
+  .cv-sheet .resume-meta { font-size: 8.75pt; }
+  .cv .resume-experience { gap: 2mm; }
+  .cv .resume-experience article { break-inside: avoid; }
+  .cv .resume-experience ul { padding-left: 4mm; }
+  .cv .resume-experience li { padding-bottom: .5mm; }
+  .resume-skills, .cv-certificates, #cv-projects { gap: 1.5mm; }
+  .resume-skills span, .cv-certificates time, #cv-projects p { font-size: 9.5pt; }
+  .cv-certificates a, #cv-projects .text-link { font-size: 10pt; }
+}

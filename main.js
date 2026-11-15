@@ -1,6 +1,7 @@
 import { loadLanguage, projects, saveLanguage, translatePage, translations } from "./content.js";
 import { experience, experienceMarkup } from "./experience.js";
 import { setupMission } from "./game/mission.js";
+import { archiveProjects, renderArchiveCards } from "./project-archive.js";
 
 const get = (id) => document.getElementById(id);
 const projectById = new Map(projects.map((project) => [project.id, project]));
@@ -70,6 +71,7 @@ function renderCards() {
     get(project.id + "-kind").textContent = copy.kind;
     get(project.id + "-description").textContent = copy.short;
   }
+  renderArchiveCards(get("more-project-grid"), language, archiveProjects.slice(0, 3), "h4");
 }
 
 function renderDetail() {
@@ -232,6 +234,7 @@ function render() {
   translatePage(language);
   document.querySelector(".brand").setAttribute("aria-label", words().home);
   get("cv-link").href = "./cv.html?lang=" + language;
+  get("archive-link").href = "./archive.html?lang=" + language;
   get("game-language").textContent = language === "es" ? "EN" : "ES";
   get("game-language").setAttribute("aria-label", words().switchLanguage);
   viewport.setAttribute("aria-label", words().focusGame);

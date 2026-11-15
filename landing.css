@@ -519,15 +519,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-.profile-source {
-  display: inline-block;
-  margin-top: 8px;
-  color: var(--muted);
-  font: .7rem/1.4 var(--mono);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
 .profile-availability {
   display: inline-flex;
   align-items: center;

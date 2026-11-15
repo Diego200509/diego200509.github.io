@@ -58,10 +58,10 @@ export const experience = [
 ];
 
 export const skills = [
-  { es: "Lenguajes", en: "Languages", tools: "Java · JavaScript · TypeScript · PHP · Python · C#" },
-  { es: "Desarrollo web", en: "Web development", tools: "HTML · CSS · Bootstrap · Laravel · Angular · .NET" },
-  { es: "Bases de datos", en: "Databases", tools: "MySQL · SQL Server · PostgreSQL" },
-  { es: "Análisis y control de versiones", en: "Analysis and version control", tools: "UML · Git · GitHub" }
+  { es: "Lenguajes", en: "Languages", tools: "TypeScript · JavaScript · Python · C# · PHP · Java" },
+  { es: "Desarrollo web", en: "Web development", tools: "React · Next.js · Angular · Express · Laravel · .NET" },
+  { es: "Bases de datos", en: "Databases", tools: "SQL Server · MySQL · PostgreSQL · MongoDB" },
+  { es: "Herramientas", en: "Tools", tools: "Git · GitHub · IIS · Three.js" }
 ];
 
 export function experienceMarkup(entry, language, detailsLabel = "", expanded = false) {
