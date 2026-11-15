@@ -185,8 +185,13 @@ function renderTarget() {
 }
 
 function renderExperience() {
-  get("experience-list").innerHTML = experience.map((entry) =>
-    `<article>${experienceMarkup(entry, language)}</article>`).join("");
+  const list = get("experience-list");
+  const expanded = new Set([...list.querySelectorAll("details[open]")].map(details => details.closest("article").dataset.experience));
+  list.innerHTML = experience.map((entry) =>
+    `<article data-experience="${entry.id}">
+      <div class="experience-icon" aria-hidden="true"><svg focusable="false"><use href="./assets/landing-icons.svg#${entry.icon}"></use></svg></div>
+      ${experienceMarkup(entry, language, words().experienceDetails, expanded.has(entry.id))}
+    </article>`).join("");
 }
 
 function renderCamera() {

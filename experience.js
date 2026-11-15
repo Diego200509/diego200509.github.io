@@ -1,6 +1,6 @@
 export const experience = [
   {
-    id: "ambacar",
+    id: "ambacar", icon: "briefcase",
     organization: "Ambacar S.A.",
     es: {
       title: "Prácticas de desarrollo de software y soporte TI",
@@ -24,7 +24,7 @@ export const experience = [
     }
   },
   {
-    id: "water",
+    id: "water", icon: "water",
     organization: "Junta Administradora de Agua Potable Miñarica San Vicente Yaculoma y Bellavista El Rosario",
     es: {
       title: "Desarrollo del módulo contable",
@@ -40,7 +40,7 @@ export const experience = [
     }
   },
   {
-    id: "insurance",
+    id: "insurance", icon: "shield",
     organization: "Honorable Gobierno Provincial de Tungurahua",
     es: {
       title: "Desarrollo de un sistema de control de pólizas",
@@ -64,8 +64,12 @@ export const skills = [
   { es: "Análisis y control de versiones", en: "Analysis and version control", tools: "UML · Git · GitHub" }
 ];
 
-export function experienceMarkup(entry, language) {
+export function experienceMarkup(entry, language, detailsLabel = "", expanded = false) {
   const { title, context, summary, details } = entry[language];
+  const list = `<ul>${details.map((detail) => `<li>${detail}</li>`).join("")}</ul>`;
+  const responsibilities = detailsLabel
+    ? `<details${expanded ? " open" : ""}><summary>${detailsLabel}</summary>${list}</details>`
+    : list;
   return `<h3>${title}</h3><p class="resume-meta">${entry.organization} · ${context}</p>
-    <p>${summary}</p><ul>${details.map((detail) => `<li>${detail}</li>`).join("")}</ul>`;
+    <p>${summary}</p>${responsibilities}`;
 }
