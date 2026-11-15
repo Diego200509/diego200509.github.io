@@ -10,9 +10,11 @@
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./landing.css">
   <link rel="stylesheet" href="./rgb-demo.css">
+  <link rel="stylesheet" href="./traffic-demo.css">
   <script type="module" src="./main.js"></script>
   <script type="module" src="./landing.js"></script>
   <script type="module" src="./rgb-demo.js"></script>
+  <script type="module" src="./traffic-demo.js"></script>
 </head>
 <body>
   <a class="skip" href="#projects" data-t="skip">Ir a proyectos</a>
@@ -101,6 +103,44 @@
         <a href="https://github.com/Diego200509?tab=repositories" class="text-link" target="_blank" rel="noopener noreferrer" data-t="allRepos">Todos en GitHub ↗</a>
       </header>
       <div class="project-grid" id="project-grid" data-reveal="sequence">
+        <article class="project-card traffic-card" id="traffic-demo" aria-labelledby="traffic-title">
+          <div class="traffic-scene" aria-hidden="true">
+            <div class="traffic-road traffic-road-vertical"></div>
+            <div class="traffic-road traffic-road-horizontal"></div>
+            <div class="traffic-crosswalk traffic-crosswalk-vertical"></div>
+            <div class="traffic-crosswalk traffic-crosswalk-horizontal"></div>
+            <div class="traffic-cars traffic-cars-vertical"></div>
+            <div class="traffic-cars traffic-cars-horizontal"></div>
+            <span class="traffic-passing traffic-passing-vertical"></span>
+            <span class="traffic-passing traffic-passing-horizontal"></span>
+            <span class="traffic-light traffic-light-vertical" data-phase="green"></span>
+            <span class="traffic-light traffic-light-horizontal" data-phase="red"></span>
+            <span class="traffic-axis traffic-axis-vertical">N–S</span>
+            <span class="traffic-axis traffic-axis-horizontal" data-t="trafficEastWest">E–O</span>
+          </div>
+          <div class="project-copy">
+            <small id="traffic-kind">Simulación de tráfico</small>
+            <h3 id="traffic-title">Semáforo IA</h3>
+            <span id="traffic-description">Comparación de control adaptativo y tiempos fijos en cruces simulados.</span>
+            <div class="traffic-controls">
+              <div class="traffic-stats" role="group" aria-label="Vehículos en espera" data-aria="trafficQueues">
+                <span data-t="trafficWaiting">Colas</span>
+                <span class="traffic-stat"><span>N–S</span> <b id="traffic-count-vertical">3</b></span>
+                <span class="traffic-stat"><span data-t="trafficEastWest">E–O</span> <b id="traffic-count-horizontal">2</b></span>
+              </div>
+              <div class="traffic-modes" role="group" aria-label="Modo del semáforo" data-aria="trafficMode">
+                <button type="button" data-traffic-mode="fixed" aria-pressed="true" data-t="trafficFixed" disabled>Fijo</button>
+                <button type="button" data-traffic-mode="adaptive" aria-pressed="false" data-t="trafficAdaptive" disabled>Adaptativo</button>
+              </div>
+              <div class="traffic-actions">
+                <button type="button" id="traffic-demand" aria-pressed="false" data-aria="trafficDemandLabel" data-t="trafficDemand" disabled>+ Tráfico N–S</button>
+                <button type="button" id="traffic-play" data-t="trafficPlay" disabled>Iniciar</button>
+              </div>
+              <p class="sr-only" id="traffic-phase"><span data-t="trafficGreenNorth">Verde norte–sur</span><span data-t="trafficGreenEast" hidden>Verde este–oeste</span><span data-t="trafficAllRed" hidden>Rojo en ambas vías</span></p>
+            </div>
+            <button class="traffic-details" type="button" id="traffic-details" aria-haspopup="dialog" data-t="detail">Ver ficha ↗</button>
+          </div>
+        </article>
         <article class="project-card rgb-card" id="rgb-demo" aria-labelledby="rgb-title">
           <div class="rgb-preview">
             <img id="rgb-original" src="./assets/rgb-frutas.webp" width="880" height="660" loading="lazy" alt="Frutas de varios colores en cestas" data-alt="rgbSampleAlt">

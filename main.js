@@ -65,8 +65,12 @@ const workshopMission = setupMission(missionDialog, () => language, () => {
 
 function renderCards() {
   const grid = get("project-grid");
-  const rgbDemo = get("rgb-demo");
+  const traffic = projectById.get("traffic");
+  const trafficDemo = get("traffic-demo");
   const rgb = projectById.get("rgb")[language];
+  get("traffic-kind").textContent = traffic[language].kind;
+  get("traffic-description").textContent = traffic[language].short;
+  get("traffic-title").textContent = traffic.name[language];
   get("rgb-kind").textContent = rgb.kind;
   get("rgb-description").textContent = rgb.short;
 
@@ -83,7 +87,7 @@ function renderCards() {
     return card;
   };
   for (const card of grid.querySelectorAll("button.project-card")) card.remove();
-  rgbDemo.before(...projects.filter(project => project.id !== "rgb").map(template));
+  trafficDemo.before(...projects.filter(project => project.id !== "rgb" && project.id !== "traffic").map(template));
 }
 
 function renderDetail() {
@@ -104,6 +108,7 @@ function renderDetail() {
   get("detail-title").textContent = project.name[language];
   get("detail-content").innerHTML = `<section><h3>${words().problem}</h3><p>${copy.problem}</p></section>
     <section><h3>${words().solution}</h3><p>${copy.solution}</p></section>
+    ${detailId === "traffic" && !inGame ? `<p>${words().trafficDemoNote}</p>` : ""}
     <p class="stack">${(language === "en" && project.stackEn) || project.stack}</p>`;
   link.href = project.repo;
   link.target = "_blank";
@@ -376,6 +381,7 @@ for (const button of document.querySelectorAll("[data-lang]")) {
 entry.addEventListener("click", enterGame);
 get("featured-detail").addEventListener("click", () => openProject(ambacar.id));
 get("preview-project").addEventListener("click", () => openProject("rgb"));
+get("traffic-details").addEventListener("click", () => openProject("traffic"));
 get("exit").addEventListener("click", exitGame);
 get("game-language").addEventListener("click", () => changeLanguage(language === "es" ? "en" : "es"));
 cameraButton.addEventListener("click", () => {
