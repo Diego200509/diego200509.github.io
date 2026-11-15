@@ -1,5 +1,6 @@
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const header = document.querySelector("#top");
+const main = document.querySelector("#main");
 const navigation = [...header.querySelectorAll("nav a[href^='#']")]
   .map(link => ({ link, section: document.querySelector(link.hash) }));
 const portrait = document.querySelector(".portrait-frame");
@@ -42,7 +43,7 @@ if ("IntersectionObserver" in window && "animate" in Element.prototype) {
   }
 }
 
-document.querySelector("#main").addEventListener("focusin", (event) => {
+main.addEventListener("focusin", (event) => {
   for (const animation of chapterAnimations) {
     if (animation.effect.target.contains(event.target)) animation.finish();
   }
@@ -85,6 +86,7 @@ reducedMotion.addEventListener("change", () => {
 
 let scrollFrame = 0;
 let activeLink = null;
+let headerSpace = 0;
 
 function showDestination() {
   const destination = chapters.find(chapter => "#" + chapter.id === location.hash);
@@ -99,12 +101,16 @@ function updateNavigation() {
   if (document.body.classList.contains("playing")) return;
   const scrollRange = Math.max(1, document.documentElement.scrollHeight - innerHeight);
   const progress = Math.min(1, Math.max(0, scrollY / scrollRange));
-  const headerBottom = header.getBoundingClientRect().bottom;
-  const marker = headerBottom + Math.min(180, innerHeight * .28);
+  const headerBox = header.getBoundingClientRect();
+  const marker = headerBox.bottom + Math.min(180, innerHeight * .28);
   const start = innerHeight * .94;
+  const atBottom = scrollRange - scrollY < 3 && scrollY > 0;
   let next = null;
+  let linkedAtBottom = null;
   for (const { link, section } of navigation) {
-    if (section.getBoundingClientRect().top <= marker) next = link;
+    const top = section.getBoundingClientRect().top;
+    if (top <= marker) next = link;
+    if (atBottom && link.hash === location.hash && top >= headerBox.bottom) linkedAtBottom = link;
   }
   const arrivals = chapters.map((chapter) => {
     const pageTop = chapter.getBoundingClientRect().top + scrollY;
@@ -114,11 +120,16 @@ function updateNavigation() {
     const arrival = reducedMotion.matches ? 1 : Math.min(1, Math.max(0, fraction));
     return { chapter, arrival };
   });
+  const nextHeaderSpace = Math.ceil(headerBox.height + 16);
+  if (nextHeaderSpace !== headerSpace) {
+    headerSpace = nextHeaderSpace;
+    main.style.setProperty("--landing-header-space", headerSpace + "px");
+  }
   header.style.setProperty("--read-progress", progress);
   for (const { chapter, arrival } of arrivals) {
     chapter.style.setProperty("--chapter-arrival", arrival.toFixed(3));
   }
-  if (scrollRange - scrollY < 3 && scrollY > 0) next = navigation.at(-1).link;
+  if (atBottom) next = linkedAtBottom ?? navigation.at(-1).link;
   if (next === activeLink) return;
   activeLink?.removeAttribute("aria-current");
   next?.setAttribute("aria-current", "location");
@@ -137,7 +148,9 @@ window.addEventListener("hashchange", () => {
 });
 showDestination();
 if ("ResizeObserver" in window) {
-  new ResizeObserver(queueNavigationUpdate).observe(document.querySelector("#main"));
+  const observer = new ResizeObserver(queueNavigationUpdate);
+  observer.observe(main);
+  observer.observe(header);
 }
 document.fonts?.ready.then(queueNavigationUpdate);
 queueNavigationUpdate();
