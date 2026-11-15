@@ -374,7 +374,6 @@ for (const button of document.querySelectorAll("[data-lang]")) {
 }
 entry.addEventListener("click", enterGame);
 get("featured-detail").addEventListener("click", () => openProject(ambacar.id));
-get("preview-project").addEventListener("click", () => openProject("rgb"));
 const talkModes = document.querySelectorAll("[data-talk-mode]");
 const talkChats = document.querySelectorAll("[data-talk-chat]");
 for (const button of talkModes) {
