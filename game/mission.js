@@ -4,10 +4,16 @@ const solution = { branch: "quito", division: "service", role: "support" };
 const translations = {
   es: {
     title: "Primer día en la agencia",
-    label: "TERMINAL · AMBACAR",
+    label: "Estación de trabajo · Ambacar",
+    users: "Usuarios",
+    ticket: "Solicitud de acceso",
+    panel: "Nuevo usuario",
+    savedPanel: "Usuario registrado",
+    pending: "Pendiente",
+    registered: "Registrado",
     request: "Lucía Torres se incorpora al equipo de posventa en Quito. Necesita un perfil de soporte para consultar y gestionar las solicitudes del taller.",
     note: "Simulación con datos ficticios.",
-    placeholder: "Selecciona una opción",
+    placeholder: "Seleccionar",
     branch: ["Agencia", [["ambato", "Ambato"], ["quito", "Quito"], ["guayaquil", "Guayaquil"]]],
     division: ["División", [["sales", "Ventas"], ["service", "Posventa"], ["finance", "Finanzas"]]],
     role: ["Rol", [["support", "Soporte"], ["supervisor", "Supervisor"], ["billing", "Facturación"]]],
@@ -22,10 +28,16 @@ const translations = {
   },
   en: {
     title: "First day at the branch",
-    label: "TERMINAL · AMBACAR",
+    label: "Workstation · Ambacar",
+    users: "Users",
+    ticket: "Access request",
+    panel: "New user",
+    savedPanel: "User registered",
+    pending: "Pending",
+    registered: "Registered",
     request: "Lucía Torres is joining the after-sales team in Quito. She needs a support profile to view and manage workshop requests.",
     note: "Simulation with fictional data.",
-    placeholder: "Select an option",
+    placeholder: "Select",
     branch: ["Branch", [["ambato", "Ambato"], ["quito", "Quito"], ["guayaquil", "Guayaquil"]]],
     division: ["Division", [["sales", "Sales"], ["service", "After-sales"], ["finance", "Finance"]]],
     role: ["Role", [["support", "Support"], ["supervisor", "Supervisor"], ["billing", "Billing"]]],
@@ -43,16 +55,23 @@ const translations = {
 export function setupMission(dialog, getLanguage, onComplete, onProject) {
   const get = (name) => dialog.querySelector("[data-mission=" + name + "]");
   const form = dialog.querySelector("#mission-form");
+  const record = get("record");
   const result = get("result");
   let complete = false;
 
   function render() {
     const copy = translations[getLanguage()];
-    for (const key of ["title", "label", "request", "note", "submit", "result"]) get(key).textContent = copy[key];
+    for (const key of ["title", "label", "request", "note", "submit", "result", "ticket"]) get(key).textContent = copy[key];
+    for (const label of dialog.querySelectorAll('[data-mission="users"]')) label.textContent = copy.users;
+    get("panel").textContent = complete ? copy.savedPanel : copy.panel;
+    get("status").textContent = complete ? copy.registered : copy.pending;
+    dialog.dataset.complete = String(complete);
     get("feedback").textContent = complete ? copy.success : "";
     get("feedback").classList.toggle("success", complete);
     form.hidden = complete;
     result.hidden = !complete;
+    record.hidden = !complete;
+    record.replaceChildren();
     for (const key of fields) {
       const select = form.elements.namedItem(key);
       const value = select.value;
@@ -60,6 +79,15 @@ export function setupMission(dialog, getLanguage, onComplete, onProject) {
       select.replaceChildren(new Option(copy.placeholder, ""), ...copy[key][1].map(([id, label]) => new Option(label, id)));
       select.value = value;
       select.removeAttribute("aria-invalid");
+      if (complete) {
+        const item = document.createElement("div");
+        const term = document.createElement("dt");
+        const savedValue = document.createElement("dd");
+        term.textContent = copy[key][0];
+        savedValue.textContent = copy[key][1].find(([id]) => id === solution[key])[1];
+        item.append(term, savedValue);
+        record.append(item);
+      }
     }
   }
 

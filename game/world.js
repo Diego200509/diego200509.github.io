@@ -1,8 +1,8 @@
 import * as THREE from "../vendor/three.module.min.js";
-import { createAvatar } from "./avatar.js";
+import { createAvatar } from "./avatar.js?v=workstation";
 import { createPlayerCamera } from "./camera.js";
-import { buildDistrict } from "./scene.js";
-import { workshopClear, workshopLocal, workshopPoint, workshopTerminal, workshopYaw } from "./workshop.js";
+import { buildDistrict } from "./scene.js?v=workstation";
+import { workshopClear, workshopLocal, workshopPoint, workshopTerminal, workshopYaw } from "./workshop.js?v=workstation";
 
 const Y_AXIS = new THREE.Vector3(0, 1, 0);
 const RANGE = 4.6;
@@ -52,7 +52,6 @@ export function createWorld(viewport, callbacks) {
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let pitch = -0.045;
   let yaw = 0;
-  let pointer = null;
   let running = false;
   let paused = false;
   let last = 0;
@@ -142,6 +141,12 @@ export function createWorld(viewport, callbacks) {
       return;
     }
     if (interaction === "terminal") {
+      const screen = workshopPoint(workshopTerminal.x, workshopTerminal.z);
+      const dx = player.position.x - screen.x;
+      const dz = player.position.z - screen.z;
+      yaw = Math.atan2(dx, dz);
+      pitch = Math.atan2(-.26, Math.max(.6, Math.hypot(dx, dz)));
+      updateRotation();
       callbacks.onMission();
       return;
     }
@@ -188,10 +193,12 @@ export function createWorld(viewport, callbacks) {
     last = time;
     const moving = !paused && updateMovement(dt);
     if (player.thirdPerson) {
-      const angle = moving ? Math.atan2(-motion.x, -motion.z) : yaw;
-      const current = avatar.body.rotation.y;
-      const difference = Math.atan2(Math.sin(angle - current), Math.cos(angle - current));
-      avatar.body.rotation.y = current + difference * (reduceMotion ? 1 : 1 - Math.exp(-13 * dt));
+      if (moving) {
+        const angle = Math.atan2(-motion.x, -motion.z);
+        const current = avatar.body.rotation.y;
+        const difference = Math.atan2(Math.sin(angle - current), Math.cos(angle - current));
+        avatar.body.rotation.y = current + difference * (reduceMotion ? 1 : 1 - Math.exp(-13 * dt));
+      }
       avatar.update(dt, moving, reduceMotion);
     }
     workshop.update(dt, time, doorOpen, missionComplete, reduceMotion);
@@ -209,34 +216,12 @@ export function createWorld(viewport, callbacks) {
     if (!paused) reportTarget();
   }
 
-  viewport.addEventListener("pointerdown", (event) => {
-    if (!running || paused || pointer || event.button !== 0) return;
-    viewport.setPointerCapture(event.pointerId);
-    pointer = { id: event.pointerId, x: event.clientX, y: event.clientY, motion: 0 };
-  });
-  viewport.addEventListener("pointermove", (event) => {
-    if (pointer?.id !== event.pointerId || paused) return;
-    const x = event.clientX - pointer.x;
-    const y = event.clientY - pointer.y;
-    pointer.motion += Math.abs(x) + Math.abs(y);
-    pointer.x = event.clientX;
-    pointer.y = event.clientY;
-    yaw -= x * 0.004;
-    pitch = THREE.MathUtils.clamp(pitch - y * 0.0037, -1.12, 1.12);
-    updateRotation();
-  });
-  viewport.addEventListener("pointerup", (event) => {
-    if (pointer?.id !== event.pointerId) return;
-    const click = pointer.motion < 7;
-    pointer = null;
-    if (click && closestStop() === "rgb" && aimedPrism() !== null) interact();
-  });
-  viewport.addEventListener("lostpointercapture", () => { pointer = null; });
   window.addEventListener("resize", resize);
 
   function toggleCamera() {
     if (!running || paused) return;
     const thirdPerson = player.toggle();
+    if (thirdPerson) avatar.body.rotation.y = yaw;
     updateRotation();
     callbacks.onCamera(thirdPerson);
     reportTarget();
@@ -266,13 +251,11 @@ export function createWorld(viewport, callbacks) {
     stop() {
       running = false;
       keys.clear();
-      pointer = null;
       renderer.setAnimationLoop(null);
     },
     pause(value) {
       paused = value;
       keys.clear();
-      pointer = null;
     },
     setMove(code, held) {
       if (!running || paused) return;
@@ -283,6 +266,15 @@ export function createWorld(viewport, callbacks) {
       if (!running || paused) return;
       yaw += amount;
       updateRotation();
+    },
+    lookBy(x, y) {
+      if (!running || paused || (!x && !y)) return;
+      yaw -= x * .0035;
+      pitch = THREE.MathUtils.clamp(pitch - y * .0033, -1.12, 1.12);
+      updateRotation();
+    },
+    clickPrism() {
+      if (running && !paused && closestStop() === "rgb" && aimedPrism() !== null) interact();
     },
     interact,
     completeMission() { missionComplete = true; },

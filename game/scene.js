@@ -1,5 +1,5 @@
 import * as THREE from "../vendor/three.module.min.js";
-import { buildWorkshop, workshopPoint } from "./workshop.js";
+import { buildWorkshop, workshopPoint } from "./workshop.js?v=workstation";
 
 const LAND = "#d1ad83";
 const CREAM = "#e9c8a0";

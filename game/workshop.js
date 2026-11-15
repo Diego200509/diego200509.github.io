@@ -21,6 +21,43 @@ export function workshopClear(x, z, open) {
   return !(z < -0.89 && x > 0.79 && x < 2.8) && !(x < -2.28 && z < 1.62);
 }
 
+function createMonitor() {
+  const canvas = document.createElement("canvas");
+  canvas.width = 384;
+  canvas.height = 234;
+  const context = canvas.getContext("2d");
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  let last;
+
+  return {
+    material: new THREE.MeshBasicMaterial({ map: texture, toneMapped: false }),
+    update(completed) {
+      if (last === completed) return;
+      last = completed;
+      context.fillStyle = "#263134";
+      context.fillRect(0, 0, 384, 234);
+      context.fillStyle = "#364347";
+      context.fillRect(0, 0, 384, 30);
+      context.fillStyle = "#647878";
+      context.fillRect(58, 9, 296, 12);
+      context.fillStyle = "#f0d2a8";
+      context.font = "bold 46px sans-serif";
+      context.fillText("ZEUS", 25, 90);
+      context.fillStyle = "#445456";
+      context.fillRect(24, 110, 334, 90);
+      context.fillStyle = completed ? "#addaaf" : "#e1b781";
+      context.fillRect(42, 130, 32, 32);
+      context.fillStyle = "#b0beb8";
+      context.fillRect(90, 134, 201, 8);
+      context.fillStyle = "#819592";
+      context.fillRect(90, 153, 140, 7);
+      context.fillRect(43, 179, 277, 5);
+      texture.needsUpdate = true;
+    }
+  };
+}
+
 export function buildWorkshop(scene, block, piece, sign) {
   const room = new THREE.Group();
   room.position.set(X, 0, Z);
@@ -61,13 +98,18 @@ export function buildWorkshop(scene, block, piece, sign) {
   block(room, 2.02, .12, .72, 1.75, .96, benchZ, wood);
   for (const x of [0.85, 2.65]) block(room, .12, .94, .61, x, .48, benchZ, steel);
   block(room, .78, .55, .15, workshopTerminal.x, 1.38, benchZ, steel);
-  const screen = new THREE.MeshStandardMaterial({ color: "#86e9ce", emissive: "#61dabc", emissiveIntensity: .88 });
-  block(room, .64, .39, .035, workshopTerminal.x, 1.39, benchZ + .09, screen, false);
-  block(room, .28, .09, .21, workshopTerminal.x, 1.07, benchZ, steel);
-  block(room, .53, .038, .18, workshopTerminal.x, 1.04, benchZ + .27, steel);
-  for (let i = 0; i < 4; i++) {
-    block(room, .24 + i * .043, .014, .026, workshopTerminal.x - .07, 1.49 - i * .06, benchZ + .112, "#e9fff5", false);
+  const monitor = createMonitor();
+  monitor.update(false);
+  block(room, .70, .43, .018, workshopTerminal.x, 1.40, benchZ + .087, monitor.material, false);
+  block(room, .10, .16, .08, workshopTerminal.x, 1.09, benchZ, steel);
+  block(room, .33, .033, .23, workshopTerminal.x, 1.038, benchZ, steel);
+  block(room, .51, .026, .16, workshopTerminal.x, 1.033, benchZ + .25, "#2b383b", false);
+  for (let row = 0; row < 3; row++) {
+    for (let key = 0; key < 10; key++) {
+      block(room, .037, .012, .029, workshopTerminal.x - .207 + key * .046, 1.049, benchZ + .204 + row * .043, "#647472", false);
+    }
   }
+  piece(room, new THREE.SphereGeometry(1, 9, 5), new THREE.MeshStandardMaterial({ color: "#2b383b", roughness: .75 }), workshopTerminal.x + .39, 1.034, benchZ + .24).scale.set(.057, .026, .076);
   block(room, .85, 2.05, 2.65, -2.92, 1.025, -.32, steel);
   for (let i = 0; i < 3; i++) {
     block(room, .94, .08, 2.77, -2.86, .48 + i * .58, -.32, wood);
@@ -104,7 +146,7 @@ export function buildWorkshop(scene, block, piece, sign) {
       signalMaterial.emissiveIntensity = completed ? 2.2 : .35;
       portal.material.color.set(completed ? "#bdffd3" : "#ffffff");
       welcome.color.set(completed ? "#a6f1bb" : "#dfa459");
-      screen.emissiveIntensity = completed ? 1.55 : .88;
+      monitor.update(completed);
       marker.visible = !completed;
       if (!reduced) {
         marker.position.y = 1.92 + Math.sin(time / 480) * .08;

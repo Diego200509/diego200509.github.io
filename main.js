@@ -1,6 +1,7 @@
 import { loadLanguage, projectPage, projects, saveLanguage, translatePage, translations } from "./content.js";
 import { experience, experienceMarkup } from "./experience.js";
-import { setupMission } from "./game/mission.js";
+import { setupMission } from "./game/mission.js?v=workstation";
+import { createLookInput } from "./game/look-input.js";
 import { archiveProjects, renderArchiveCards } from "./project-archive.js";
 import { mountContactFooter } from "./site-footer.js";
 import { mountSiteHeader } from "./site-header.js?v=section-links";
@@ -22,6 +23,7 @@ const mapDialog = get("map-dialog");
 const projectDialog = get("project-dialog");
 const missionDialog = get("mission-dialog");
 const mobile = matchMedia("(pointer: coarse)");
+const mouse = matchMedia("(any-pointer: fine)");
 const moveKeys = new Set(["KeyW", "KeyA", "KeyS", "KeyD"]);
 const arrows = { ArrowUp: "KeyW", ArrowDown: "KeyS" };
 let language = loadLanguage();
@@ -35,6 +37,13 @@ let soundContext;
 let loadStage = 0;
 let thirdPerson = false;
 let showControls = false;
+const lookInput = createLookInput(viewport, {
+  active: () => inGame && !anyDialogOpen(),
+  canCapture: () => mouse.matches && (inGame || opening) && !anyDialogOpen(),
+  look: (x, y) => world?.lookBy(x, y),
+  click: () => world?.clickPrism(),
+  lockChanged: locked => { game.dataset.pointerLocked = String(locked); }
+});
 
 function loadProgress() {
   try {
@@ -122,7 +131,7 @@ function openProject(id) {
     progress.visited.add(id);
     storeProgress();
     renderProgress();
-    world.pause(true);
+    pauseWorld();
   }
   renderDetail();
   projectDialog.showModal();
@@ -163,10 +172,11 @@ function renderMap() {
 function renderTarget() {
   const { stop, prism, restored, interaction } = target;
   const action = get("interact");
+  const label = get("interact-label");
   const objective = get("objective");
   action.hidden = !stop;
   objective.hidden = !stop;
-  action.textContent = words().interact;
+  label.textContent = words().interact;
   if (!stop) {
     objective.textContent = "";
     return;
@@ -176,7 +186,7 @@ function renderTarget() {
       progress.workshop ? words().workshopDone : `${words().garage} · Ambacar`;
     const prompts = { door: "workshopDoor", "door-open": "workshopEnter", terminal: "workshopTerminal" };
     action.hidden = interaction === "inside";
-    if (!action.hidden) action.textContent = words()[prompts[interaction]];
+    if (!action.hidden) label.textContent = words()[prompts[interaction]];
     return;
   }
   const name = projectById.get(stop).name[language];
@@ -184,11 +194,11 @@ function renderTarget() {
     objective.textContent = prism === null
       ? `${words().lab} · ${progress.prisms.size}/3`
       : `${words().aimed} ${words()[["red", "green", "blue"][prism]]} · ${progress.prisms.size}/3`;
-    action.textContent = words().nextPrism;
+    label.textContent = words().nextPrism;
     return;
   }
   objective.textContent = stop === "rgb" ? words().labDone : `${name} · ${words().use}`;
-  action.textContent = words().detail;
+  label.textContent = words().detail;
 }
 
 function renderExperience() {
@@ -267,6 +277,11 @@ function focusWorld() {
   viewport.focus({ preventScroll: true });
 }
 
+function pauseWorld() {
+  lookInput.release();
+  world.pause(true);
+}
+
 function playPrism(index) {
   if (!soundContext || soundContext.state !== "running") return;
   const time = soundContext.currentTime;
@@ -309,11 +324,12 @@ async function enterGame() {
   get("top").inert = true;
   document.body.classList.add("playing");
   get("exit").focus();
+  lookInput.capture();
   try {
     await nextPaint();
     if (request !== openingRequest) return;
     if (!world) {
-      const { createWorld } = await import("./game/world.js");
+      const { createWorld } = await import("./game/world.js?v=workstation");
       if (request !== openingRequest) return;
       setLoadStage(1);
       await nextPaint();
@@ -325,7 +341,7 @@ async function enterGame() {
         },
         onProject: openProject,
         onMission() {
-          world.pause(true);
+          pauseWorld();
           workshopMission.open(progress.workshop);
         },
         onCamera(enabled) {
@@ -372,6 +388,7 @@ function exitGame() {
   openingRequest++;
   inGame = false;
   opening = false;
+  lookInput.release();
   world?.stop();
   game.removeAttribute("aria-busy");
   game.hidden = true;
@@ -413,12 +430,13 @@ game.addEventListener("wheel", (event) => {
   // Match the direction of zooming away from or toward the player.
   if ((event.deltaY > 0) !== thirdPerson) world.toggleCamera();
 }, { passive: false });
-mapButton.addEventListener("click", () => {
-  if (!inGame) return;
+function showMap() {
+  if (!inGame || anyDialogOpen()) return;
   renderMap();
-  world.pause(true);
+  pauseWorld();
   mapDialog.showModal();
-});
+}
+mapButton.addEventListener("click", showMap);
 get("interact").addEventListener("click", () => {
   world?.interact();
   if (!anyDialogOpen()) focusWorld();
@@ -447,8 +465,10 @@ window.addEventListener("keydown", (event) => {
     world.interact();
   } else if (event.code === "KeyV" && !event.repeat) {
     world.toggleCamera();
+  } else if (event.code === "KeyM" && !event.repeat) {
+    showMap();
   } else if (event.code === "Escape" && !event.repeat) {
-    exitGame();
+    lookInput.release();
   }
 });
 window.addEventListener("keyup", (event) => world?.setMove(arrows[event.code] || event.code, false));
