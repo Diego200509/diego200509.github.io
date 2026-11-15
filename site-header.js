@@ -5,6 +5,7 @@ export function mountSiteHeader() {
   const inner = header.querySelector(".site-header-inner");
   const actions = header.querySelector(".site-header-actions");
   const landing = header.id === "top";
+  const wide = matchMedia("(min-width: 1100px)");
 
   actions.insertAdjacentHTML("beforeend", `<button class="site-menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Menú" data-aria="menu">
     <span class="site-menu-label" data-t="menu">Menú</span>
@@ -29,18 +30,32 @@ export function mountSiteHeader() {
 
   function setOpen(open) {
     toggle.setAttribute("aria-expanded", String(open));
-    menu.inert = !open;
+    menu.inert = !wide.matches && !open;
   }
+
+  function updateLayout() {
+    const focus = document.activeElement;
+    const focusWasInMenu = menu.contains(focus);
+    header.toggleAttribute("data-compact", !wide.matches);
+    if (wide.matches) actions.before(menu);
+    else inner.append(menu);
+    setOpen(false);
+    if (wide.matches && focus === toggle) links[0].focus({ preventScroll: true });
+    else if (focusWasInMenu) (wide.matches ? focus : toggle).focus({ preventScroll: true });
+  }
+
+  wide.addEventListener("change", updateLayout);
+  updateLayout();
 
   toggle.addEventListener("click", () => setOpen(menu.inert));
   document.addEventListener("click", event => {
-    if (!menu.inert && !header.contains(event.target)) setOpen(false);
+    if (!wide.matches && !menu.inert && !header.contains(event.target)) setOpen(false);
   });
   header.addEventListener("focusout", event => {
-    if (event.relatedTarget && !header.contains(event.relatedTarget)) setOpen(false);
+    if (!wide.matches && event.relatedTarget && !header.contains(event.relatedTarget)) setOpen(false);
   });
   document.addEventListener("keydown", event => {
-    if (event.key !== "Escape" || menu.inert) return;
+    if (event.key !== "Escape" || wide.matches || menu.inert) return;
     event.preventDefault();
     toggle.focus({ preventScroll: true });
     setOpen(false);

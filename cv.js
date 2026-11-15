@@ -1,7 +1,7 @@
 import { loadLanguage, projects, saveLanguage, translatePage } from "./content.js";
 import { experience, experienceMarkup, skills } from "./experience.js";
 import { mountContactFooter } from "./site-footer.js";
-import { mountSiteHeader } from "./site-header.js";
+import { mountSiteHeader } from "./site-header.js?v=responsive";
 
 mountContactFooter();
 const updateHeaderLinks = mountSiteHeader();

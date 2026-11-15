@@ -107,6 +107,32 @@
 .site-menu-pages a { border-color: var(--line); background: var(--surface-inset); font-weight: 600; }
 .site-menu a:is(:hover, :focus-visible, [aria-current]) { border-color: var(--gold-line); background: var(--gold-wash); color: var(--gold); text-decoration: none; }
 
+.site-header:not([data-compact]) .site-menu-toggle { display: none; }
+
+.site-header:not([data-compact]) .site-menu {
+  position: static;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(5px, .85vw, 12px);
+  width: auto;
+  max-height: none;
+  overflow: visible;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: none;
+}
+
+.site-header:not([data-compact]) :is(.site-menu-sections, .site-menu-pages) { display: flex; gap: 2px; }
+.site-header:not([data-compact]) .site-menu-pages { margin: 0; padding: 0 0 0 6px; border: 0; border-left: 1px solid var(--line); }
+.site-header:not([data-compact]) .site-menu a { min-height: 42px; padding-inline: clamp(5px, .55vw, 9px); font-size: .82rem; white-space: nowrap; }
+.site-header:not([data-compact]) .site-menu-pages a:not(:hover, :focus-visible, [aria-current]) { border-color: transparent; background: transparent; }
+
 @media (max-width: 590px) {
   :root { --site-header-height: 62px; }
   .site-menu-toggle { padding: 0; }

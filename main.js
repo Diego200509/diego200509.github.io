@@ -3,7 +3,7 @@ import { experience, experienceMarkup } from "./experience.js";
 import { setupMission } from "./game/mission.js";
 import { archiveProjects, renderArchiveCards } from "./project-archive.js";
 import { mountContactFooter } from "./site-footer.js";
-import { mountSiteHeader } from "./site-header.js";
+import { mountSiteHeader } from "./site-header.js?v=responsive";
 
 mountContactFooter();
 const updateHeaderLinks = mountSiteHeader();
