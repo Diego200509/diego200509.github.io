@@ -5,6 +5,7 @@ function render(language) {
   translatePage(language);
   document.querySelector("#return").href = "./index.html?lang=" + language;
   document.querySelector("#cv-portfolio").href = "./index.html?lang=" + language + "#inicio";
+  document.querySelector("#cv-download").href = "./assets/diego-jijon-cv-" + language + ".pdf";
   document.title = "Diego Jijón · " + (language === "es" ? "CV" : "Résumé");
   document.querySelector("#cv-experience").innerHTML = experience.map((entry) =>
     `<article>${experienceMarkup(entry, language)}</article>`).join("");
@@ -31,5 +32,4 @@ for (const button of document.querySelectorAll("[data-lang]")) {
     render(button.dataset.lang);
   });
 }
-document.querySelector("#print").addEventListener("click", () => window.print());
 render(loadLanguage());

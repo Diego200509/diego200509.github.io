@@ -6,10 +6,10 @@
   <meta name="description" content="Currículum de Diego Jijón, estudiante de octavo semestre de Ingeniería en Software.">
   <title>Diego Jijón · CV</title>
   <link rel="stylesheet" href="./styles.css?v=cv-archive">
-  <link rel="stylesheet" href="./cv.css">
+  <link rel="stylesheet" href="./cv.css?v=download">
   <link rel="icon" href="./assets/mark.svg" type="image/svg+xml">
-  <script type="importmap">{"imports":{"./content.js":"./content.js?v=cv-archive","./experience.js":"./experience.js?v=cv"}}</script>
-  <script type="module" src="./cv.js?v=cv-archive"></script>
+  <script type="importmap">{"imports":{"./content.js":"./content.js?v=cv-download","./experience.js":"./experience.js?v=cv"}}</script>
+  <script type="module" src="./cv.js?v=download"></script>
 </head>
 <body class="cv-page">
   <main class="cv content">
@@ -19,7 +19,7 @@
         <button type="button" data-lang="es" aria-label="Español">ES</button>
         <button type="button" data-lang="en" aria-label="English">EN</button>
       </div>
-      <button class="button secondary" type="button" id="print" data-t="print">Imprimir / Guardar PDF</button>
+      <a class="button secondary" id="cv-download" href="./assets/diego-jijon-cv-es.pdf" download data-t="cvDownload">Descargar PDF</a>
     </nav>
     <article class="cv-sheet" aria-labelledby="cv-name">
       <header class="cv-header">
@@ -38,7 +38,8 @@
       </header>
       <section class="cv-profile" aria-labelledby="cv-profile-title">
         <h2 id="cv-profile-title" data-t="cvProfile">Perfil</h2>
-        <p data-t="cvOverview">Desarrollo aplicaciones web que conectan interfaces, APIs y bases de datos. En Ambacar trabajé en el módulo de usuarios de AMBYSOFT. Me interesa la IA aplicada al análisis de datos y a la toma de decisiones.</p>
+        <p data-t="cvOverview">Estudio Ingeniería en Software en la Universidad Técnica de Ambato y me gusta desarrollar aplicaciones de principio a fin, desde la interfaz hasta la API y la base de datos. En Ambacar trabajé en la administración de usuarios de AMBYSOFT, donde implementé filtros y paginación del lado del servidor.</p>
+        <p data-t="cvInterests">Con TalkApp trabajé en mensajería en tiempo real. Me interesa aplicar la inteligencia artificial al análisis de datos y a problemas cotidianos, como la gestión del tráfico, un tema que exploré mediante simulación en Semáforo IA.</p>
       </section>
       <div class="cv-columns">
         <div class="cv-main">

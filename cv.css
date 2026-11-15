@@ -91,6 +91,7 @@
 
 .cv-links svg { width: 14px; height: 14px; flex: none; }
 .cv-profile { padding-block: 19px; }
+.cv-profile p + p { margin-top: .55em; }
 
 .cv-columns {
   display: grid;
@@ -155,18 +156,18 @@
 }
 
 @media print {
-  @page { size: A4; margin: 11mm; }
+  @page { size: A4; margin: 0; }
   :root { color-scheme: light; }
   html, .cv-page { background: white; }
   .cv { width: auto; padding: 0; }
   .cv-nav { display: none; }
-  .cv-sheet { padding: 0; border: 0; border-radius: 0; background: white; box-shadow: none; font-size: 10pt; line-height: 1.35; }
-  .cv-header { grid-template-columns: 22mm minmax(0, 1fr); gap: 4mm; padding-bottom: 3mm; }
-  .cv-photo { width: 22mm; }
-  .cv-header h1 { margin-bottom: 2mm; font-size: 25pt; }
+  .cv-sheet { padding: 11mm; border: 0; border-radius: 0; background: white; box-shadow: none; font-size: 10pt; line-height: 1.35; }
+  .cv-header { grid-template-columns: 24mm minmax(0, 1fr); gap: 4.5mm; padding-bottom: 3.5mm; }
+  .cv-photo { width: 24mm; }
+  .cv-header h1 { margin-bottom: 2mm; font-size: 26pt; }
   .cv-links { gap: 1mm 3mm; margin-top: 1.8mm; font-size: 9pt; }
   .cv-links svg { width: 3mm; height: 3mm; }
-  .cv-profile { padding-block: 3mm; }
+  .cv-profile { padding-block: 3.5mm; }
   .cv-columns { grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); gap: 5mm; }
   .cv-side { height: 100%; padding-left: 4mm; border-left: 1px solid var(--cv-line); }
   .cv-columns section + section { margin-top: 3mm; }
