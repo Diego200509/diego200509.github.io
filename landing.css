@@ -228,10 +228,6 @@
   .project-details-button { min-height: 40px; }
 }
 
-#contact h2 {
-  font-size: clamp(2.45rem, 6vw, 5.1rem);
-}
-
 #inicio {
   position: relative;
   isolation: isolate;
@@ -600,8 +596,7 @@
 
 .technology-tools,
 .certificate-meta,
-.certificate-links,
-.social-links {
+.certificate-links {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -667,7 +662,6 @@
 .certificate-links { margin-top: auto; padding-top: 4px; }
 .certificate-links .button { min-height: 40px; padding-inline: 12px; }
 .certificate-links .text-link { font-size: .75rem; }
-.social-links { gap: 10px; }
 
 .achievements {
   margin-top: clamp(25px, 4vw, 56px);

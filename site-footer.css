@@ -1,0 +1,150 @@
+:root {
+  --contact-dock-size: calc(52px + env(safe-area-inset-bottom, 0px));
+  scroll-padding-bottom: var(--contact-dock-size);
+}
+
+.site-footer {
+  --contact-accent: #e3ccaa;
+  --contact-line: #e3ccaa38;
+  padding-bottom: calc(var(--contact-dock-size) + clamp(22px, 4vw, 54px));
+  scroll-margin-top: 110px;
+}
+
+body.playing .site-footer { display: none; }
+
+.contact-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .95fr);
+  align-items: center;
+  gap: clamp(24px, 6vw, 82px);
+  padding: clamp(22px, 5.5vw, 72px);
+  border: 1px solid var(--contact-line);
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse at 12% 0%, #aa80653b, transparent 65%),
+    linear-gradient(145deg, #232528, #1a1e22 72%);
+}
+
+.contact-intro .eyebrow { margin-bottom: 9px; color: var(--contact-accent); }
+.contact-intro h2 { font-size: clamp(2.9rem, 8vw, 6.3rem); }
+.contact-description { max-width: 39ch; margin-top: 12px; color: #e8e3d9; }
+
+.contact-availability {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  color: var(--muted);
+  font: 500 .73rem/1.45 var(--mono);
+}
+
+.contact-availability::before {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: #a6c6ae;
+  content: "";
+}
+
+.contact-actions { display: grid; min-width: 0; gap: 9px; }
+.site-footer svg { display: block; width: 18px; height: 18px; flex: none; }
+
+.contact-email {
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, 1.6vw, 16px);
+  padding: clamp(11px, 1.85vw, 20px);
+  border: 1px solid var(--contact-line);
+  border-radius: 10px;
+  background: #17191c9c;
+  overflow-wrap: anywhere;
+  transition: border-color .2s ease, background-color .2s ease;
+}
+
+.contact-email:is(:hover, :focus-visible) {
+  border-color: var(--contact-accent);
+  background: #272522;
+  text-decoration: none;
+}
+
+.contact-email-icon {
+  display: grid;
+  width: clamp(32px, 4.4vw, 47px);
+  aspect-ratio: 1;
+  flex: none;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--contact-accent);
+  color: #271d14;
+}
+
+.contact-email-label { display: block; color: var(--muted); font-size: .76rem; }
+.contact-email strong { color: var(--contact-accent); font-size: clamp(.85rem, 1.75vw, 1.28rem); }
+.contact-arrow { margin-left: auto; align-self: start; color: var(--contact-accent); }
+
+.contact-profiles { display: grid; gap: 8px; }
+.contact-profiles a {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 6px 10px;
+  border: 1px solid var(--contact-line);
+  border-radius: 7px;
+  background: #17191c75;
+  font-size: .81rem;
+  transition: border-color .2s ease, color .2s ease;
+}
+
+.contact-profiles a > :last-child { margin-left: auto; color: var(--contact-accent); }
+.contact-profiles a:is(:hover, :focus-visible) { border-color: var(--contact-accent); color: var(--contact-accent); text-decoration: none; }
+
+.site-contact-dock {
+  position: fixed;
+  z-index: 2;
+  inset: auto 0 0;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  border-top: 1px solid var(--contact-line);
+  background: #191b1fee;
+  backdrop-filter: blur(14px);
+}
+
+.contact-dock-inner,
+.contact-dock-links { display: flex; align-items: center; }
+.contact-dock-inner { justify-content: space-between; min-height: 51px; }
+.contact-dock-links { gap: 2px; }
+.contact-signature { color: var(--muted); font: 500 .75rem var(--mono); }
+
+.contact-dock-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 6px;
+  color: #e4dacb;
+  transition: background-color .2s ease, color .2s ease;
+}
+
+.contact-dock-links a:is(:hover, :focus-visible) { background: #e3ccaa19; color: var(--contact-accent); text-decoration: none; }
+.contact-dock-links .contact-dock-anchor { padding-inline: 10px; color: var(--contact-accent); font-weight: 700; font-size: .85rem; }
+
+@media (min-width: 1080px) {
+  .contact-profiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 710px) {
+  .contact-panel { grid-template-columns: minmax(0, 1fr); }
+  .contact-signature { display: none; }
+  .contact-dock-inner { justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-footer a { transition: none; }
+}
+
+@media print {
+  .site-footer { display: none; }
+}

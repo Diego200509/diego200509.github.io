@@ -4,6 +4,18 @@ const github = "https://github.com/Diego200509/";
 
 export const archiveProjects = [
   {
+    category: "ai",
+    icon: "agent",
+    iconSheet: "contact-icons.svg?v=agent",
+    name: { es: "SICOP Agente", en: "SICOP Agente" },
+    summary: {
+      es: "Desarrollé un asistente para el proyecto SICOP que responde preguntas sobre el estado de las tareas con datos de seguimiento del proyecto.",
+      en: "I built an assistant for the SICOP project that answers questions about task status using project tracking data."
+    },
+    stack: "Next.js · TypeScript · Supabase · OpenAI",
+    links: [["archiveCode", github + "sicop-agente"]]
+  },
+  {
     category: "web",
     icon: "nextdotjs",
     name: { es: "EduRural", en: "EduRural" },
@@ -61,6 +73,7 @@ export const archiveProjects = [
 ];
 
 const categoryLabels = {
+  ai: "archiveAI",
   web: "archiveWeb",
   data: "archiveData",
   interactive: "archiveInteractive"
@@ -70,7 +83,7 @@ export function renderArchiveCards(container, language, selection, heading = "h3
   const words = translations[language];
   container.innerHTML = selection.map(project => `<article class="archive-card">
     <div class="archive-card-header">
-      <span class="archive-icon" aria-hidden="true"><svg focusable="false"><use href="./assets/landing-icons.svg#${project.icon}"></use></svg></span>
+      <span class="archive-icon" aria-hidden="true"><svg focusable="false"><use href="./assets/${project.iconSheet ?? "landing-icons.svg"}#${project.icon}"></use></svg></span>
       <small>${words[categoryLabels[project.category]]}</small>
     </div>
     <${heading}>${project.name[language]}</${heading}>

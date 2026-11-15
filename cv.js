@@ -1,5 +1,8 @@
 import { loadLanguage, projects, saveLanguage, translatePage } from "./content.js";
 import { experience, experienceMarkup, skills } from "./experience.js";
+import { mountContactFooter } from "./site-footer.js";
+
+mountContactFooter();
 
 function render(language) {
   translatePage(language);

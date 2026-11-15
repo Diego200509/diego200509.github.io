@@ -3,13 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Archivo de proyectos de Diego Jijón en desarrollo web, procesamiento de imágenes y Three.js.">
+  <meta name="description" content="Archivo de proyectos de Diego Jijón en desarrollo web, inteligencia artificial, procesamiento de imágenes y Three.js.">
   <title>Diego Jijón · Archivo de proyectos</title>
   <link rel="stylesheet" href="./styles.css">
-  <link rel="stylesheet" href="./archive.css">
+  <link rel="stylesheet" href="./archive.css?v=sicop">
+  <link rel="stylesheet" href="./site-footer.css">
   <link rel="icon" href="./assets/mark.svg" type="image/svg+xml">
-  <script type="importmap">{"imports":{"./content.js":"./content.js?v=cv-archive"}}</script>
-  <script type="module" src="./archive.js"></script>
+  <script type="importmap">{"imports":{"./content.js":"./content.js?v=contact","./project-archive.js":"./project-archive.js?v=sicop"}}</script>
+  <script type="module" src="./archive.js?v=contact"></script>
 </head>
 <body class="archive-page">
   <main class="content archive-layout">
@@ -22,13 +23,14 @@
     </nav>
     <header class="archive-intro">
       <h1 data-t="archiveTitle">Archivo de proyectos</h1>
-      <p data-t="archiveIntroduction">Aplicaciones web, procesamiento de imágenes y experiencias interactivas que he construido.</p>
+      <p data-t="archiveIntroduction">Aplicaciones web, asistentes de IA y experiencias interactivas que he construido.</p>
     </header>
     <section aria-labelledby="archive-catalog-heading">
       <h2 class="sr-only" id="archive-catalog-heading" data-t="projects">Proyectos</h2>
       <div class="archive-filters" role="group" aria-label="Filtrar por área" data-aria="archiveFilterLabel">
         <button type="button" data-category="all" data-t="archiveAll" aria-pressed="true">Todos</button>
         <button type="button" data-category="web" data-t="archiveWeb" aria-pressed="false">Desarrollo web</button>
+        <button type="button" data-category="ai" data-t="archiveAI" aria-pressed="false">Inteligencia artificial</button>
         <button type="button" data-category="data" data-t="archiveData" aria-pressed="false">Imágenes y datos</button>
         <button type="button" data-category="interactive" data-t="archiveInteractive" aria-pressed="false">Experiencias 3D</button>
       </div>
@@ -37,5 +39,6 @@
       <noscript><p><a class="text-link" href="https://github.com/Diego200509?tab=repositories">Ver repositorios en GitHub ↗</a></p></noscript>
     </section>
   </main>
+  <footer id="contact" class="site-footer"></footer>
 </body>
 </html>

@@ -2,7 +2,9 @@ import { loadLanguage, projects, saveLanguage, translatePage, translations } fro
 import { experience, experienceMarkup } from "./experience.js";
 import { setupMission } from "./game/mission.js";
 import { archiveProjects, renderArchiveCards } from "./project-archive.js";
+import { mountContactFooter } from "./site-footer.js";
 
+mountContactFooter();
 const get = (id) => document.getElementById(id);
 const projectById = new Map(projects.map((project) => [project.id, project]));
 const ambacar = experience.find((entry) => entry.id === "ambacar");
@@ -71,7 +73,7 @@ function renderCards() {
     get(project.id + "-kind").textContent = copy.kind;
     get(project.id + "-description").textContent = copy.short;
   }
-  renderArchiveCards(get("more-project-grid"), language, archiveProjects.slice(0, 3), "h4");
+  renderArchiveCards(get("more-project-grid"), language, archiveProjects.slice(0, 4), "h4");
 }
 
 function renderDetail() {
