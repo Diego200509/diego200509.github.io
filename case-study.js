@@ -1,6 +1,6 @@
 import { loadLanguage, projectPage, projects, saveLanguage, translatePage, translations } from "./content.js";
 import { mountContactFooter } from "./site-footer.js";
-import { mountSiteHeader } from "./site-header.js?v=responsive";
+import { mountSiteHeader } from "./site-header.js?v=section-links";
 import { caseDetails, caseLabels } from "./case-content.js?v=sections";
 import { caseDemos } from "./case-demos.js";
 

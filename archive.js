@@ -1,7 +1,7 @@
 import { loadLanguage, saveLanguage, translatePage, translations } from "./content.js";
 import { archiveProjects, renderArchiveCards } from "./project-archive.js";
 import { mountContactFooter } from "./site-footer.js";
-import { mountSiteHeader } from "./site-header.js?v=responsive";
+import { mountSiteHeader } from "./site-header.js?v=section-links";
 
 mountContactFooter();
 const updateHeaderLinks = mountSiteHeader();

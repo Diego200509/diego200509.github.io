@@ -12,21 +12,13 @@ export function mountSiteHeader() {
     <span class="site-menu-glyph" aria-hidden="true"><span></span><span></span><span></span></span>
   </button>`);
   inner.insertAdjacentHTML("beforeend", `<nav class="site-menu" id="site-menu" aria-label="Principal" data-aria="nav" inert>
-    <div class="site-menu-sections">${sections.map(section =>
-      `<a href="${landing || section === "contact" ? "" : "./index.html"}#${section}" data-section="${section}" data-t="${section}">${section}</a>`).join("")}</div>
-    <div class="site-menu-pages">
-      <a href="./archive.html" data-page="archive.html" data-t="archiveTitle">Archivo de proyectos</a>
-      <a href="./cv.html" data-page="cv.html" data-t="cv">Ver CV</a>
-    </div>
+    ${sections.map(section =>
+      `<a href="${landing || section === "contact" ? "" : "./index.html"}#${section}" data-section="${section}"><span data-t="${section}">${section}</span></a>`).join("")}
   </nav>`);
 
   const toggle = actions.querySelector(".site-menu-toggle");
   const menu = inner.querySelector("#site-menu");
   const links = [...menu.querySelectorAll("a")];
-  const currentPage = location.pathname.split("/").at(-1);
-  for (const link of links) {
-    if (link.dataset.page === currentPage) link.setAttribute("aria-current", "page");
-  }
 
   function setOpen(open) {
     toggle.setAttribute("aria-expanded", String(open));
@@ -74,10 +66,10 @@ export function mountSiteHeader() {
   });
 
   return language => {
+    if (landing) return;
     for (const link of links) {
-      const { page, section } = link.dataset;
-      if (page) link.href = "./" + page + "?lang=" + language;
-      else if (!landing && section !== "contact") link.href = "./index.html?lang=" + language + "#" + section;
+      const { section } = link.dataset;
+      if (section !== "contact") link.href = "./index.html?lang=" + language + "#" + section;
     }
   };
 }
