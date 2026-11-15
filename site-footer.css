@@ -1,12 +1,7 @@
-:root {
-  --contact-dock-size: calc(52px + env(safe-area-inset-bottom, 0px));
-  scroll-padding-bottom: var(--contact-dock-size);
-}
-
 .site-footer {
   --contact-accent: #e3ccaa;
   --contact-line: #e3ccaa38;
-  padding-bottom: calc(var(--contact-dock-size) + clamp(22px, 4vw, 54px));
+  padding-bottom: calc(clamp(22px, 4vw, 54px) + env(safe-area-inset-bottom, 0px));
   scroll-margin-top: 110px;
 }
 
@@ -100,45 +95,12 @@ body.playing .site-footer { display: none; }
 .contact-profiles a > :last-child { margin-left: auto; color: var(--contact-accent); }
 .contact-profiles a:is(:hover, :focus-visible) { border-color: var(--contact-accent); color: var(--contact-accent); text-decoration: none; }
 
-.site-contact-dock {
-  position: fixed;
-  z-index: 2;
-  inset: auto 0 0;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  border-top: 1px solid var(--contact-line);
-  background: #191b1fee;
-  backdrop-filter: blur(14px);
-}
-
-.contact-dock-inner,
-.contact-dock-links { display: flex; align-items: center; }
-.contact-dock-inner { justify-content: space-between; min-height: 51px; }
-.contact-dock-links { gap: 2px; }
-.contact-signature { color: var(--muted); font: 500 .75rem var(--mono); }
-
-.contact-dock-links a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  min-width: 44px;
-  min-height: 44px;
-  border-radius: 6px;
-  color: #e4dacb;
-  transition: background-color .2s ease, color .2s ease;
-}
-
-.contact-dock-links a:is(:hover, :focus-visible) { background: #e3ccaa19; color: var(--contact-accent); text-decoration: none; }
-.contact-dock-links .contact-dock-anchor { padding-inline: 10px; color: var(--contact-accent); font-weight: 700; font-size: .85rem; }
-
 @media (min-width: 1080px) {
   .contact-profiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 710px) {
   .contact-panel { grid-template-columns: minmax(0, 1fr); }
-  .contact-signature { display: none; }
-  .contact-dock-inner { justify-content: center; }
 }
 
 @media (prefers-reduced-motion: reduce) {

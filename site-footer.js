@@ -10,9 +10,9 @@ function icon(name) {
   return `<svg aria-hidden="true" focusable="false"><use href="./assets/${sprite}.svg#${name}"></use></svg>`;
 }
 
-function profileLink(profile, compact = false) {
-  return `<a href="${profile.url}" target="_blank" rel="noopener noreferrer" ${compact ? `aria-label="${profile.name}"` : ""}>
-    ${icon(profile.icon)}${compact ? "" : `<span>${profile.name}</span><span aria-hidden="true">↗</span>`}
+function profileLink(profile) {
+  return `<a href="${profile.url}" target="_blank" rel="noopener noreferrer">
+    ${icon(profile.icon)}<span>${profile.name}</span><span aria-hidden="true">↗</span>
   </a>`;
 }
 
@@ -32,17 +32,7 @@ export function mountContactFooter() {
           <span><span class="contact-email-label" data-t="contactEmail">Escríbeme un correo</span><strong>${email}</strong></span>
           <span class="contact-arrow" aria-hidden="true">↗</span>
         </a>
-        <div class="contact-profiles">${profiles.map(profile => profileLink(profile)).join("")}</div>
+        <div class="contact-profiles">${profiles.map(profileLink).join("")}</div>
       </div>
-    </div>
-    <nav class="site-contact-dock" aria-label="Contacto rápido" data-aria="contactQuick">
-      <div class="content contact-dock-inner">
-        <span class="contact-signature">Diego Jijón</span>
-        <div class="contact-dock-links">
-          <a href="#contact" class="contact-dock-anchor"><span data-t="contact">Contacto</span><span aria-hidden="true">↗</span></a>
-          <a href="mailto:${email}" aria-label="Correo personal" data-aria="personalEmail">${icon("email")}</a>
-          ${profiles.map(profile => profileLink(profile, true)).join("")}
-        </div>
-      </div>
-    </nav>`;
+    </div>`;
 }
