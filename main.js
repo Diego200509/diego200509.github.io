@@ -65,15 +65,20 @@ const workshopMission = setupMission(missionDialog, () => language, () => {
 
 function renderCards() {
   const template = (project) => {
-    const card = document.createElement("button");
+    const hasDemo = project.id === "rgb";
+    const card = document.createElement(hasDemo ? "a" : "button");
     const copy = project[language];
-    card.type = "button";
+    if (hasDemo) {
+      card.href = "#rgb-demo";
+    } else {
+      card.type = "button";
+      card.addEventListener("click", () => openProject(project.id));
+    }
     card.className = "project-card";
     card.dataset.project = project.id;
     card.style.setProperty("--accent", project.accent);
     card.innerHTML = `<span class="project-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${project.icon}</svg></span>
-      <span class="project-copy"><small>${copy.kind}</small><strong>${project.name[language]}</strong><span>${copy.short}</span><span class="project-link">${words().detail}</span></span>`;
-    card.addEventListener("click", () => openProject(project.id));
+      <span class="project-copy"><small>${copy.kind}</small><strong>${project.name[language]}</strong><span>${copy.short}</span><span class="project-link">${hasDemo ? words().rgbTry : words().detail}</span></span>`;
     return card;
   };
   get("project-grid").replaceChildren(...projects.map(template));
