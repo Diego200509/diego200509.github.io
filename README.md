@@ -4,6 +4,8 @@ Portafolio bilingüe de Diego Jijón. La campaña 3D **Después del apagón** co
 
 ## Controles
 
+La guía de teclado, ratón y pantalla táctil está en **Ajustes → Controles** dentro del juego.
+
 - **WASD** y ratón para moverte y mirar. Las flechas también funcionan. **Shift** corre y **Ctrl** o **C** agacha.
 - **E** usa el dispositivo más cercano. **M** abre el mapa y **T** abre el celular en un punto seguro. **V**, **Ctrl + rueda** y el botón **Cámara** cambian la vista.
 - Con el emisor, haz clic para disparar y pulsa **R** para recargar. Las mejoras habilitan **Q** para escanear y **X** para cargar un pulso. El primer clic al recuperar la captura del ratón se usa para capturar el puntero.

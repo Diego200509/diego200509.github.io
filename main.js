@@ -3,10 +3,11 @@ import { experience, experienceMarkup } from "./experience.js";
 import { setupMission } from "./game/mission.js?v=interiors";
 import { createLookInput } from "./game/look-input.js?v=campaign";
 import { levels, loadCampaign, stations as destinations } from "./game/campaign.js?v=levels";
-import { campaignText } from "./game/campaign-text.js?v=interiors";
+import { campaignText } from "./game/campaign-text.js?v=controls";
 import { setupDevices } from "./game/devices.js?v=interiors";
 import { createDistrictSound } from "./game/sound.js";
 import { bindTouchControls } from "./game/touch-input.js";
+import { setupSettingsMenu } from "./game/settings-menu.js";
 import { archiveProjects, renderArchiveCards } from "./project-archive.js";
 import { mountContactFooter } from "./site-footer.js";
 import { mountSiteHeader } from "./site-header.js?v=section-links";
@@ -23,7 +24,7 @@ const entry = get("enter");
 const loading = get("loading");
 const cameraButton = get("camera-button");
 const mapButton = get("map-button");
-const helpButton = get("help-button");
+const settingsButton = get("settings-button");
 const mapDialog = get("map-dialog");
 const projectDialog = get("project-dialog");
 const missionDialog = get("mission-dialog");
@@ -51,7 +52,6 @@ let visibleSignal;
 let signalTimer;
 let loadStage = 0;
 let thirdPerson = false;
-let showControls = false;
 let touchMode = mobile.matches;
 const campaign = loadCampaign({
   getItem: key => localStorage.getItem(key),
@@ -117,6 +117,7 @@ const workshopMission = setupMission(missionDialog, () => language, {
   onProject: () => openProject(ambacar.id)
 });
 const devices = setupDevices(deviceDialog, desktopDialog, () => language, campaign, (id, data) => world.complete(id, data), openProject);
+const settingsMenu = setupSettingsMenu(settingsDialog, () => language, campaign);
 
 function markVisit(id) {
   if (progress.visited.has(id)) return;
@@ -306,11 +307,6 @@ function renderCamera() {
 
 function renderControls() {
   const active = inputActive();
-  const text = copy();
-  helpButton.setAttribute("aria-expanded", String(showControls));
-  const unlocks = [campaign.done("talkapp") && "Q", campaign.done("traffic") && (language === "es" ? "Mantén X" : "Hold X")].filter(Boolean);
-  get("controls-text").textContent = touchMode ? text.touchHelp : [text.desktopHelp, ...unlocks].join(" · ");
-  get("controls-text").hidden = !showControls || !active;
   get("touch-controls").hidden = !touchMode || !active;
   game.dataset.touch = String(touchMode);
   game.dataset.left = String(preferences.left);
@@ -320,29 +316,30 @@ function renderControls() {
   get("touch-charge").hidden = !campaign.done("traffic");
   get("game-bottom").hidden = !active;
   get("campaign-intro").hidden = !inGame || phase !== "wake";
-  get("settings-button").disabled = !active;
+  settingsButton.disabled = !active;
   mapButton.disabled = !active;
-  helpButton.disabled = !active;
   get("phone-button").hidden = !target.phone || !active;
 }
 
 function renderSettings() {
   const text = copy();
   for (const [id, key] of Object.entries({
-    "health-label": "life", "phone-button": "phone", "settings-title": "settings", "sensitivity-label": "sensitivity",
+    "health-label": "life", "phone-button": "phone", "settings-title": "settings", "settings-button-label": "settings",
+    "sensitivity-label": "sensitivity",
     "left-hand-label": "leftHand", "volume-label": "volume", "mute-label": "mute", "campaign-restart": "restart",
     "restart-copy": "restartConfirm", "restart-yes": "restart", "restart-no": "cancel", "intro-title": "intro",
     "intro-skip": "skip", "touch-fire": "fire", "touch-crouch": "crouch", "touch-reload": "reload",
     "touch-scan": "scan", "touch-charge": "pulse"
   })) get(id).textContent = text[key];
-  get("settings-button").setAttribute("aria-label", text.settings);
-  get("settings-button").title = text.settings;
+  settingsButton.setAttribute("aria-label", text.settings);
+  settingsButton.title = text.settings;
   get("joystick").setAttribute("aria-label", text.move);
   get("game-sensitivity").value = preferences.sensitivity;
   get("game-volume").value = preferences.volume;
   get("game-left-hand").checked = preferences.left;
   get("game-mute").checked = preferences.mute;
   sound.level(preferences.mute ? 0 : preferences.volume);
+  settingsMenu.render();
 }
 
 function renderEntry() {
@@ -471,8 +468,6 @@ async function enterGame() {
   setLoadStage(0);
   mapButton.disabled = true;
   cameraButton.disabled = true;
-  helpButton.disabled = true;
-  showControls = false;
   renderControls();
   get("game-bottom").hidden = true;
   get("main").inert = true;
@@ -611,11 +606,6 @@ get("game-language").addEventListener("click", () => changeLanguage(language ===
 cameraButton.addEventListener("click", () => {
   world?.toggleCamera();
 });
-helpButton.addEventListener("click", () => {
-  showControls = !showControls;
-  renderControls();
-  focusWorld();
-});
 viewport.addEventListener("wheel", (event) => {
   if (!inGame || anyDialogOpen() || !event.ctrlKey || !event.deltaY) return;
   event.preventDefault();
@@ -644,11 +634,11 @@ get("touch-charge").addEventListener("keydown", event => {
 get("touch-charge").addEventListener("keyup", event => {
   if (event.code === "Space" && inputActive()) world?.charge(false);
 });
-get("settings-button").addEventListener("click", () => {
+settingsButton.addEventListener("click", () => {
   if (!inputActive()) return;
   pauseWorld("settings");
   confirmRestart(false);
-  settingsDialog.showModal();
+  settingsMenu.open(touchMode);
 });
 
 function confirmRestart(visible) {
@@ -709,9 +699,6 @@ window.addEventListener("keydown", (event) => {
     if (actions[code]) {
       event.preventDefault();
       actions[code]();
-    } else if (event.key === "?") {
-      showControls = !showControls;
-      renderControls();
     }
   }
 });

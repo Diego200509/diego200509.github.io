@@ -146,11 +146,7 @@ h2{font:700 clamp(2.2rem,5vw,3.65rem)/.98 var(--display);letter-spacing:-.016em}
 .crosshair{width:11px;height:11px;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:2px solid var(--ink);border-radius:50%;box-shadow:0 0 0 1px var(--shadow);pointer-events:none}
 .game-bottom{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 22px);left:50%;transform:translateX(-50%);width:min(85vw,560px);text-align:center;display:grid;justify-items:center;gap:7px;pointer-events:none}
 .game-bottom button{pointer-events:auto}
-.objective,.game-controls{padding:6px 10px;border-radius:5px;background:var(--surface-inset);color:var(--ink)}
-.objective{font-weight:600}
-.game-controls{font:500 .72rem/1.5 var(--mono);padding:10px 14px;border:1px solid var(--gold-line)}
-#help-button{min-width:38px}
-#help-button[aria-expanded=true]{color:var(--on-gold);background:var(--gold)}
+.objective{padding:6px 10px;border-radius:5px;background:var(--surface-inset);color:var(--ink);font-weight:600}
 .game-bottom .primary{box-shadow:0 4px 17px color-mix(in srgb,var(--shadow) 32%,transparent)}
 .loading{position:absolute;inset:0;z-index:1;display:grid;place-content:center;justify-items:center;gap:24px;color:var(--ink);background:radial-gradient(ellipse at 50% 40%,var(--surface-raised),var(--bg) 74%);font:500 .87rem var(--mono)}
 .loading-plan{position:relative;width:min(76vw,344px);aspect-ratio:1.7;border:1px solid var(--gold-line);border-radius:7px;overflow:hidden;background:repeating-linear-gradient(0deg,var(--gold-tint) 0 1px,transparent 1px 16px),repeating-linear-gradient(90deg,var(--gold-tint) 0 1px,transparent 1px 16px)}
