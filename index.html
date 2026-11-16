@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#17191c">
   <title>Distrito Cero · Diego Jijón</title>
   <link rel="icon" href="./assets/mark.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=workstation">
+  <link rel="stylesheet" href="./styles.css?v=camera-return">
   <link rel="stylesheet" href="./site-header.css?v=section-links">
   <link rel="stylesheet" href="./landing.css?v=header">
   <link rel="stylesheet" href="./archive.css?v=header">
@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="./traffic-demo.css?v=header">
   <link rel="stylesheet" href="./workstation.css?v=desktop">
   <script type="importmap">{"imports":{"./content.js":"./content.js?v=workstation","./experience.js":"./experience.js?v=visual","./project-archive.js":"./project-archive.js?v=sicop","./site-footer.js":"./site-footer.js?v=inline"}}</script>
-  <script type="module" src="./main.js?v=desktop"></script>
+  <script type="module" src="./main.js?v=camera-return"></script>
   <script type="module" src="./landing.js?v=header"></script>
   <script type="module" src="./district-preview.js?v=2"></script>
   <script type="module" src="./asotema-demo.js"></script>
@@ -520,6 +520,7 @@
       <button data-move="KeyS" type="button" aria-label="Atrás" data-aria="back">↓</button>
       <button data-move="KeyD" type="button" aria-label="Derecha" data-aria="right">→</button>
     </div>
+    <div id="camera-transition" class="camera-transition" aria-hidden="true"></div>
   </section>
   <dialog class="sheet rgb-settings" id="rgb-settings" aria-labelledby="rgb-settings-title">
     <div class="sheet-top">

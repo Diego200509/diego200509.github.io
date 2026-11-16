@@ -14,6 +14,7 @@ const ambacar = experience.find((entry) => entry.id === "ambacar");
 const destinations = ["rgb", "asotema", "talkapp", "ambacar", "traffic"];
 const game = get("game");
 const viewport = get("viewport");
+const cameraTransition = get("camera-transition");
 const entry = get("enter");
 const loading = get("loading");
 const cameraButton = get("camera-button");
@@ -22,6 +23,8 @@ const helpButton = get("help-button");
 const mapDialog = get("map-dialog");
 const projectDialog = get("project-dialog");
 const missionDialog = get("mission-dialog");
+const worldDialogs = [mapDialog, projectDialog, missionDialog];
+const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const mobile = matchMedia("(pointer: coarse)");
 const mouse = matchMedia("(any-pointer: fine)");
 const moveKeys = new Set(["KeyW", "KeyA", "KeyS", "KeyD"]);
@@ -155,9 +158,8 @@ function renderMap() {
     status.textContent = progress.visited.has(id) ? words().seen : words().unseen;
     button.append(label, subtitle, status);
     button.addEventListener("click", () => {
-      mapDialog.close();
       world.moveTo(id);
-      focusWorld();
+      mapDialog.close();
     });
     return button;
   };
@@ -278,8 +280,26 @@ function focusWorld() {
 }
 
 function pauseWorld() {
+  cancelCameraTransition();
   lookInput.release();
-  world.pause(true);
+  world.pause();
+}
+
+function cancelCameraTransition() {
+  for (const animation of cameraTransition.getAnimations()) animation.cancel();
+}
+
+function resumeWorld() {
+  if (!inGame || anyDialogOpen()) return;
+  const duration = reducedMotion.matches ? 0 : 420;
+  if (duration) {
+    cameraTransition.animate([
+      { opacity: 1, backdropFilter: "blur(5px)" },
+      { opacity: 0, backdropFilter: "blur(0)" }
+    ], { duration, easing: "ease-out" });
+  }
+  world.resume(duration);
+  focusWorld();
 }
 
 function playPrism(index) {
@@ -329,7 +349,7 @@ async function enterGame() {
     await nextPaint();
     if (request !== openingRequest) return;
     if (!world) {
-      const { createWorld } = await import("./game/world.js?v=workstation");
+      const { createWorld } = await import("./game/world.js?v=camera-return");
       if (request !== openingRequest) return;
       setLoadStage(1);
       await nextPaint();
@@ -388,6 +408,7 @@ function exitGame() {
   openingRequest++;
   inGame = false;
   opening = false;
+  cancelCameraTransition();
   lookInput.release();
   world?.stop();
   game.removeAttribute("aria-busy");
@@ -398,7 +419,7 @@ function exitGame() {
   entry.focus({ preventScroll: true });
 }
 
-function anyDialogOpen() { return mapDialog.open || projectDialog.open || missionDialog.open; }
+function anyDialogOpen() { return worldDialogs.some(dialog => dialog.open); }
 
 for (const button of document.querySelectorAll("[data-lang]")) {
   button.addEventListener("click", () => changeLanguage(button.dataset.lang));
@@ -441,13 +462,7 @@ get("interact").addEventListener("click", () => {
   world?.interact();
   if (!anyDialogOpen()) focusWorld();
 });
-for (const dialog of [mapDialog, projectDialog, missionDialog]) {
-  dialog.addEventListener("close", () => {
-    if (!inGame || anyDialogOpen()) return;
-    world.pause(false);
-    focusWorld();
-  });
-}
+for (const dialog of worldDialogs) dialog.addEventListener("close", resumeWorld);
 window.addEventListener("keydown", (event) => {
   if (opening && event.code === "Escape") {
     exitGame();

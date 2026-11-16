@@ -136,6 +136,7 @@ h2{font:700 clamp(2.2rem,5vw,3.65rem)/.98 var(--display);letter-spacing:-.016em}
 .viewport,.viewport canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .viewport{touch-action:none;cursor:grab}
 .viewport:active{cursor:grabbing}
+.camera-transition{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0;background:color-mix(in srgb,var(--shadow) 78%,transparent)}
 .game-top{position:absolute;inset:0 0 auto;z-index:2;display:flex;align-items:start;justify-content:space-between;gap:8px;padding:calc(env(safe-area-inset-top) + 14px) max(14px,env(safe-area-inset-right)) 10px max(14px,env(safe-area-inset-left));background:linear-gradient(color-mix(in srgb,var(--shadow) 76%,transparent),transparent);pointer-events:none}
 .game-top button,.game-menu{pointer-events:auto}
 .game-menu{display:flex;gap:6px}

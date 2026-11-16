@@ -6,6 +6,7 @@ import { workshopClear, workshopLocal, workshopPoint, workshopTerminal, workshop
 
 const Y_AXIS = new THREE.Vector3(0, 1, 0);
 const RANGE = 4.6;
+const CAMERA_FOV = 67;
 
 const stops = {
   rgb: { x: 0, z: -3.3, yaw: -0.02 },
@@ -25,7 +26,7 @@ function positionAllowed(x, z, doorOpen) {
 
 export function createWorld(viewport, callbacks) {
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(67, 1, 0.08, 130);
+  const camera = new THREE.PerspectiveCamera(CAMERA_FOV, 1, 0.08, 130);
   camera.rotation.order = "YXZ";
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
@@ -54,10 +55,22 @@ export function createWorld(viewport, callbacks) {
   let yaw = 0;
   let running = false;
   let paused = false;
+  let cameraReturn = null;
   let last = 0;
   let targetKey = "";
   let activePrisms = new Set();
   let preparing;
+
+  function setCameraFov(fov) {
+    camera.fov = fov;
+    camera.updateProjectionMatrix();
+  }
+
+  function clearCameraReturn() {
+    if (!cameraReturn) return;
+    cameraReturn = null;
+    setCameraFov(CAMERA_FOV);
+  }
 
   function updateRotation() {
     const local = workshopLocal(player.position.x, player.position.z);
@@ -191,6 +204,12 @@ export function createWorld(viewport, callbacks) {
     if (!running) return;
     const dt = Math.min((time - last) / 1000 || 0, 0.05);
     last = time;
+    if (cameraReturn) {
+      const progress = THREE.MathUtils.clamp((time - cameraReturn.start) / cameraReturn.duration, 0, 1);
+      const remaining = (1 - progress) ** 3;
+      setCameraFov(CAMERA_FOV - 3 * remaining);
+      if (progress === 1) cameraReturn = null;
+    }
     const moving = !paused && updateMovement(dt);
     if (player.thirdPerson) {
       if (moving) {
@@ -251,11 +270,19 @@ export function createWorld(viewport, callbacks) {
     stop() {
       running = false;
       keys.clear();
+      clearCameraReturn();
       renderer.setAnimationLoop(null);
     },
-    pause(value) {
-      paused = value;
+    pause() {
+      paused = true;
       keys.clear();
+      clearCameraReturn();
+    },
+    resume(duration) {
+      paused = false;
+      if (!duration) return;
+      cameraReturn = { start: performance.now(), duration };
+      setCameraFov(CAMERA_FOV - 3);
     },
     setMove(code, held) {
       if (!running || paused) return;
