@@ -20,8 +20,11 @@ const translations = {
     division: ["División", [["sales", "Ventas"], ["service", "Posventa"], ["finance", "Finanzas"]]],
     role: ["Rol", [["support", "Soporte"], ["supervisor", "Supervisor"], ["billing", "Facturación"]]],
     submit: "Validar y registrar",
-    success: "Acceso registrado. El letrero del taller ya está encendido.",
-    result: "Mis prácticas en Ambacar",
+    success: "Acceso registrado. El casillero y la salida se desbloquearon.",
+    rapid: "Emisor de recarga rápida concedido.",
+    basic: "Emisor básico concedido.",
+    incomplete: "Completa estos campos",
+    result: "Ver proyecto",
     feedback: {
       branch: "Revisa la agencia donde trabajará Lucía.",
       division: "Revisa el equipo al que se incorpora.",
@@ -44,8 +47,11 @@ const translations = {
     division: ["Division", [["sales", "Sales"], ["service", "After-sales"], ["finance", "Finance"]]],
     role: ["Role", [["support", "Support"], ["supervisor", "Supervisor"], ["billing", "Billing"]]],
     submit: "Validate and register",
-    success: "Access registered. The workshop sign is now lit.",
-    result: "My internship at Ambacar",
+    success: "Access registered. The locker and exit are unlocked.",
+    rapid: "Rapid-recharge emitter awarded.",
+    basic: "Basic emitter awarded.",
+    incomplete: "Complete these fields",
+    result: "View project",
     feedback: {
       branch: "Check which branch Lucía will be working at.",
       division: "Check which team she’s joining.",
@@ -54,22 +60,23 @@ const translations = {
   }
 };
 
-export function setupMission(dialog, getLanguage, onComplete, onProject) {
+export function setupMission(dialog, getLanguage, { onComplete, onFailed, onProject }) {
   const desktop = createDesktop(dialog, getLanguage);
   const get = (name) => dialog.querySelector("[data-mission=" + name + "]");
   const form = dialog.querySelector("#mission-form");
   const record = get("record");
   const result = get("result");
-  let complete = false;
+  let emitter = null;
 
   function render() {
     const copy = translations[getLanguage()];
+    const complete = Boolean(emitter);
     for (const key of ["title", "label", "request", "note", "submit", "result", "ticket"]) get(key).textContent = copy[key];
     for (const label of dialog.querySelectorAll('[data-mission="users"]')) label.textContent = copy.users;
     get("panel").textContent = complete ? copy.savedPanel : copy.panel;
     get("status").textContent = complete ? copy.registered : copy.pending;
     dialog.dataset.complete = String(complete);
-    get("feedback").textContent = complete ? copy.success : "";
+    get("feedback").textContent = complete ? `${copy.success} ${copy[emitter]}` : "";
     get("feedback").classList.toggle("success", complete);
     form.hidden = complete;
     result.hidden = !complete;
@@ -96,20 +103,23 @@ export function setupMission(dialog, getLanguage, onComplete, onProject) {
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
+    if (emitter) return;
     const copy = translations[getLanguage()];
-    const errors = fields.filter((key) => form.elements.namedItem(key).value !== solution[key]);
+    const missing = fields.filter(key => !form.elements.namedItem(key).value);
+    const errors = missing.length ? missing : fields.filter(key => form.elements.namedItem(key).value !== solution[key]);
     for (const key of fields) {
       const select = form.elements.namedItem(key);
       if (errors.includes(key)) select.setAttribute("aria-invalid", "true");
       else select.removeAttribute("aria-invalid");
     }
     if (errors.length) {
-      get("feedback").textContent = errors.map((key) => copy.feedback[key]).join(" ");
+      if (!missing.length) onFailed();
+      get("feedback").textContent = missing.length ? `${copy.incomplete} · ${missing.map(key => copy[key][0]).join(", ")}` :
+        errors.map(key => copy.feedback[key]).join(" ");
       form.elements.namedItem(errors[0]).focus();
       return;
     }
-    complete = true;
-    onComplete();
+    emitter = onComplete();
     render();
     result.focus();
   });
@@ -124,8 +134,8 @@ export function setupMission(dialog, getLanguage, onComplete, onProject) {
   });
 
   return {
-    open(completed) {
-      complete = completed;
+    open(variant) {
+      emitter = variant;
       render();
       desktop.open();
     }

@@ -1,7 +1,12 @@
 import { loadLanguage, projectPage, projects, saveLanguage, translatePage, translations } from "./content.js";
 import { experience, experienceMarkup } from "./experience.js";
-import { setupMission } from "./game/mission.js?v=desktop";
-import { createLookInput } from "./game/look-input.js";
+import { setupMission } from "./game/mission.js";
+import { createLookInput } from "./game/look-input.js?v=campaign";
+import { loadCampaign, stations as destinations } from "./game/campaign.js";
+import { campaignText } from "./game/campaign-text.js";
+import { setupDevices } from "./game/devices.js";
+import { createDistrictSound } from "./game/sound.js";
+import { bindTouchControls } from "./game/touch-input.js";
 import { archiveProjects, renderArchiveCards } from "./project-archive.js";
 import { mountContactFooter } from "./site-footer.js";
 import { mountSiteHeader } from "./site-header.js?v=section-links";
@@ -11,7 +16,6 @@ const updateHeaderLinks = mountSiteHeader();
 const get = (id) => document.getElementById(id);
 const projectById = new Map(projects.map((project) => [project.id, project]));
 const ambacar = experience.find((entry) => entry.id === "ambacar");
-const destinations = ["rgb", "asotema", "talkapp", "ambacar", "traffic"];
 const game = get("game");
 const viewport = get("viewport");
 const cameraTransition = get("camera-transition");
@@ -23,7 +27,9 @@ const helpButton = get("help-button");
 const mapDialog = get("map-dialog");
 const projectDialog = get("project-dialog");
 const missionDialog = get("mission-dialog");
-const worldDialogs = [mapDialog, projectDialog, missionDialog];
+const deviceDialog = get("device-dialog");
+const settingsDialog = get("campaign-settings");
+const worldDialogs = [mapDialog, projectDialog, missionDialog, deviceDialog, settingsDialog];
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const mobile = matchMedia("(pointer: coarse)");
 const mouse = matchMedia("(any-pointer: fine)");
@@ -35,17 +41,46 @@ let inGame = false;
 let opening = false;
 let openingRequest = 0;
 let detailId = null;
-let target = { stop: null, prism: null, restored: false };
-let soundContext;
+let target = { next: "zeus" };
+let combatStatus;
+let phase = "explore";
+let devicePending;
+let queuedSignal;
+let signalId;
+let signalTimer;
 let loadStage = 0;
 let thirdPerson = false;
 let showControls = false;
+let touchMode = mobile.matches;
+const campaign = loadCampaign({
+  getItem: key => localStorage.getItem(key),
+  setItem: (key, value) => localStorage.setItem(key, value)
+});
+const sound = createDistrictSound();
+const preferences = { sensitivity: 1, volume: .55, left: false, mute: false };
+try {
+  const saved = JSON.parse(localStorage.getItem("district-input"));
+  if (Number.isFinite(saved?.sensitivity)) preferences.sensitivity = Math.max(.45, Math.min(2.15, saved.sensitivity));
+  if (Number.isFinite(saved?.volume)) preferences.volume = Math.max(0, Math.min(1, saved.volume));
+  preferences.left = saved?.left === true;
+  preferences.mute = saved?.mute === true;
+} catch {}
+
 const lookInput = createLookInput(viewport, {
-  active: () => inGame && !anyDialogOpen(),
-  canCapture: () => mouse.matches && (inGame || opening) && !anyDialogOpen(),
-  look: (x, y) => world?.lookBy(x, y),
-  click: () => world?.clickPrism(),
+  active: inputActive,
+  canCapture: () => mouse.matches && !touchMode && inputActive(),
+  touchSide: event => (event.clientX >= viewport.clientWidth * .42) !== preferences.left,
+  look: (x, y, touch) => world?.lookBy(x * (touch ? preferences.sensitivity : 1), y * (touch ? preferences.sensitivity : 1)),
+  fire: () => world?.fire(),
   lockChanged: locked => { game.dataset.pointerLocked = String(locked); }
+});
+const touchInput = bindTouchControls(get("touch-controls"), {
+  active: inputActive,
+  move: (x, y) => world?.setTouch(x, y),
+  look: (x, y) => world?.lookBy(x * preferences.sensitivity, y * preferences.sensitivity),
+  fire: held => world?.holdFire(held),
+  single: () => world?.fire(),
+  charge: (held, cancel) => world?.charge(held, cancel)
 });
 
 function loadProgress() {
@@ -70,15 +105,24 @@ function storeProgress() {
 }
 
 function words() { return translations[language]; }
+function copy() { return campaignText[language]; }
 
-const workshopMission = setupMission(missionDialog, () => language, () => {
-  progress.workshop = true;
-  progress.visited.add(ambacar.id);
+const workshopMission = setupMission(missionDialog, () => language, {
+  onFailed: campaign.failZeus,
+  onComplete() {
+    world.complete("zeus");
+    return campaign.state.emitter;
+  },
+  onProject: () => openProject(ambacar.id)
+});
+const devices = setupDevices(deviceDialog, () => language, campaign, (id, data) => world.complete(id, data), openProject);
+
+function markVisit(id) {
+  if (progress.visited.has(id)) return;
+  progress.visited.add(id);
   storeProgress();
-  world.completeMission();
   renderProgress();
-  renderTarget();
-}, () => openProject(ambacar.id));
+}
 
 function renderCards() {
   for (const project of projects) {
@@ -131,10 +175,8 @@ function renderDetail() {
 function openProject(id) {
   detailId = id;
   if (inGame) {
-    progress.visited.add(id);
-    storeProgress();
-    renderProgress();
-    pauseWorld();
+    markVisit(id);
+    pauseWorld("project");
   }
   renderDetail();
   projectDialog.showModal();
@@ -155,7 +197,12 @@ function renderMap() {
     button.dataset.destination = id;
     label.textContent = project?.[language].location ?? words().garage;
     subtitle.textContent = project?.name[language] ?? "Ambacar";
-    status.textContent = progress.visited.has(id) ? words().seen : words().unseen;
+    const allowed = campaign.travelAllowed(id);
+    const station = campaign.state.station === "return" ? "ambacar" : campaign.state.station;
+    const goal = station === id && !campaign.done("power");
+    status.textContent = [goal && copy().current, allowed ? (progress.visited.has(id) ? words().seen : words().unseen) : copy().locked].filter(Boolean).join(" · ");
+    button.disabled = !allowed;
+    if (goal) button.setAttribute("aria-current", "location");
     button.append(label, subtitle, status);
     button.addEventListener("click", () => {
       world.moveTo(id);
@@ -169,38 +216,55 @@ function renderMap() {
   const buttons = destinations.map(createDestination);
   buttons.splice(2, 0, plaza);
   get("map-list").replaceChildren(...buttons);
+  get("map-hint").textContent = copy().mapHint;
 }
 
 function renderTarget() {
-  const { stop, prism, restored, interaction } = target;
-  const action = get("interact");
-  const label = get("interact-label");
-  const objective = get("objective");
-  action.hidden = !stop;
-  objective.hidden = !stop;
-  label.textContent = words().interact;
-  if (!stop) {
-    objective.textContent = "";
-    return;
+  const { action, next, prisms, phone } = target;
+  const text = copy();
+  get("objective").textContent = next === "rgb" ? `${text.objectives.rgb} · ${prisms}/3` : text.objectives[next ?? "free"];
+  get("interact").hidden = !action;
+  get("interact").disabled = action === "lockedDoor";
+  get("interact-label").textContent = text.actions[action] ?? "";
+  get("phone-button").hidden = !phone || !inputActive();
+}
+
+function renderCombat() {
+  if (!combatStatus) return;
+  const { health, ammo, ammoLimit, reloading, charging, charged, attackWarning, exposed, aim, sprinting, crouching, damage } = combatStatus;
+  const text = copy();
+  get("campaign-hud").hidden = !inGame || phase === "wake" || !campaign.state.emitter;
+  get("health").value = health;
+  get("health-value").textContent = health;
+  get("health").textContent = health;
+  const charge = reloading ? text.reloading : charging ? `${text.charging}${charged ? " ✓" : "…"}` : `${text.charge} ${ammo}/${ammoLimit}`;
+  get("emitter-status").textContent = charge + (sprinting ? ` · ${text.sprint}` : "");
+  const warning = attackWarning ? text.signals.danger : exposed ? text.signals.exposed : health < 30 ? text.low : "";
+  if (get("combat-status").textContent !== warning) get("combat-status").textContent = warning;
+  get("touch-crouch").setAttribute("aria-pressed", String(crouching));
+  game.dataset.aim = aim;
+  const indicator = get("damage-indicator");
+  indicator.hidden = damage === null || phase !== "explore";
+  if (!indicator.hidden) {
+    indicator.dataset.direction = reducedMotion.matches ? "steady" : ["front", "right", "back", "left"][damage];
+    indicator.textContent = `${["▲", "▶", "▼", "◀"][damage]} ${text.from} ${text.damage[damage]}`;
   }
-  if (stop === ambacar.id) {
-    objective.textContent = interaction === "inside" ? words().workshopInside :
-      progress.workshop ? words().workshopDone : `${words().garage} · Ambacar`;
-    const prompts = { door: "workshopDoor", "door-open": "workshopEnter", terminal: "workshopTerminal" };
-    action.hidden = interaction === "inside";
-    if (!action.hidden) label.textContent = words()[prompts[interaction]];
-    return;
-  }
-  const name = projectById.get(stop).name[language];
-  if (stop === "rgb" && !restored) {
-    objective.textContent = prism === null
-      ? `${words().lab} · ${progress.prisms.size}/3`
-      : `${words().aimed} ${words()[["red", "green", "blue"][prism]]} · ${progress.prisms.size}/3`;
-    label.textContent = words().nextPrism;
-    return;
-  }
-  objective.textContent = stop === "rgb" ? words().labDone : `${name} · ${words().use}`;
-  label.textContent = words().detail;
+}
+
+function renderSignal() {
+  const signal = get("campaign-signal");
+  signal.hidden = !signalId || (!inGame && !opening);
+  signal.textContent = copy().signals[signalId] ?? "";
+}
+
+function showSignal(id) {
+  clearTimeout(signalTimer);
+  signalId = id;
+  renderSignal();
+  signalTimer = setTimeout(() => {
+    signalId = undefined;
+    renderSignal();
+  }, id === "wake" ? 3300 : 5600);
 }
 
 function renderExperience() {
@@ -222,11 +286,48 @@ function renderCamera() {
 }
 
 function renderControls() {
+  const active = inputActive();
+  const text = copy();
   helpButton.setAttribute("aria-expanded", String(showControls));
-  get("controls-text").textContent = mobile.matches ? words().touchControls : words().controls;
-  get("controls-text").hidden = !showControls;
-  get("touch-controls").hidden = !mobile.matches || !showControls;
-  game.dataset.touch = String(mobile.matches && showControls);
+  const unlocks = [campaign.done("talkapp") && "Q", campaign.done("traffic") && (language === "es" ? "Mantén X" : "Hold X")].filter(Boolean);
+  get("controls-text").textContent = touchMode ? text.touchHelp : [text.desktopHelp, ...unlocks].join(" · ");
+  get("controls-text").hidden = !showControls || !active;
+  get("touch-controls").hidden = !touchMode || !active;
+  game.dataset.touch = String(touchMode);
+  game.dataset.left = String(preferences.left);
+  get("touch-fire").hidden = !campaign.state.emitter;
+  get("touch-reload").hidden = !campaign.state.emitter;
+  get("touch-scan").hidden = !campaign.done("talkapp");
+  get("touch-charge").hidden = !campaign.done("traffic");
+  get("game-bottom").hidden = !active;
+  get("campaign-intro").hidden = !inGame || phase !== "wake";
+  get("settings-button").disabled = !active;
+  mapButton.disabled = !active;
+  helpButton.disabled = !active;
+  get("phone-button").hidden = !target.phone || !active;
+}
+
+function renderSettings() {
+  const text = copy();
+  for (const [id, key] of Object.entries({
+    "health-label": "life", "phone-button": "phone", "settings-title": "settings", "sensitivity-label": "sensitivity",
+    "left-hand-label": "leftHand", "volume-label": "volume", "mute-label": "mute", "campaign-restart": "restart",
+    "restart-copy": "restartConfirm", "restart-yes": "restart", "restart-no": "cancel", "intro-title": "intro",
+    "intro-skip": "skip", "touch-fire": "fire", "touch-crouch": "crouch", "touch-reload": "reload",
+    "touch-scan": "scan", "touch-charge": "pulse"
+  })) get(id).textContent = text[key];
+  get("settings-button").setAttribute("aria-label", text.settings);
+  get("settings-button").title = text.settings;
+  get("joystick").setAttribute("aria-label", text.move);
+  get("game-sensitivity").value = preferences.sensitivity;
+  get("game-volume").value = preferences.volume;
+  get("game-left-hand").checked = preferences.left;
+  get("game-mute").checked = preferences.mute;
+  sound.level(preferences.mute ? 0 : preferences.volume);
+}
+
+function renderEntry() {
+  entry.querySelector("[data-t=enter]").textContent = campaign.state.awakened ? copy().continue : words().enter;
 }
 
 function setLoadStage(stage) {
@@ -263,6 +364,10 @@ function render() {
   renderProgress();
   renderCamera();
   renderTarget();
+  renderCombat();
+  renderSignal();
+  renderEntry();
+  renderSettings();
   if (opening) setLoadStage(loadStage);
   if (mapDialog.open) renderMap();
   if (projectDialog.open) renderDetail();
@@ -279,10 +384,18 @@ function focusWorld() {
   viewport.focus({ preventScroll: true });
 }
 
-function pauseWorld() {
+function clearWorldInput() {
+  lookInput.clear();
+  touchInput.clear();
+  world?.clearInput();
+}
+
+function pauseWorld(kind, id) {
   cancelCameraTransition();
   lookInput.release();
-  world.pause();
+  clearWorldInput();
+  sound.ambience(.006);
+  return world.pause(kind, id);
 }
 
 function cancelCameraTransition() {
@@ -290,44 +403,47 @@ function cancelCameraTransition() {
 }
 
 function resumeWorld() {
-  if (!inGame || anyDialogOpen()) return;
-  const duration = reducedMotion.matches ? 0 : 420;
-  if (duration) {
-    cameraTransition.animate([
-      { opacity: 1, backdropFilter: "blur(5px)" },
-      { opacity: 0, backdropFilter: "blur(0)" }
-    ], { duration, easing: "ease-out" });
-  }
+  if (!inGame || anyDialogOpen() || devicePending || phase === "wake") return;
+  const duration = reducedMotion.matches ? 0 : 260;
+  fadeScene("teleport", duration);
   world.resume(duration);
+  sound.ambience(document.hidden ? 0 : .029);
+  if (queuedSignal) {
+    showSignal(queuedSignal);
+    sound.cue("relay");
+    queuedSignal = undefined;
+  }
   focusWorld();
 }
 
-function playPrism(index) {
-  if (!soundContext || soundContext.state !== "running") return;
-  const time = soundContext.currentTime;
-  const oscillator = soundContext.createOscillator();
-  const gain = soundContext.createGain();
-  oscillator.type = "sine";
-  oscillator.frequency.setValueAtTime([440, 554, 659][index], time);
-  gain.gain.setValueAtTime(0.001, time);
-  gain.gain.exponentialRampToValueAtTime(0.075, time + 0.018);
-  gain.gain.exponentialRampToValueAtTime(0.001, time + 0.3);
-  oscillator.connect(gain).connect(soundContext.destination);
-  oscillator.start();
-  oscillator.stop(time + 0.33);
+function fadeScene(kind, duration = 300) {
+  cancelCameraTransition();
+  if (!duration || reducedMotion.matches) return;
+  const frames = kind === "device" ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: .94 }, { opacity: 0 }];
+  cameraTransition.animate(frames, { duration, easing: "ease-out", fill: kind === "device" ? "forwards" : "none" });
+}
+
+function openDevice(id) {
+  if (!inputActive()) return;
+  markVisit(id);
+  campaign.recordDemo(id);
+  const delay = pauseWorld("device", id);
+  const show = () => {
+    devicePending = undefined;
+    if (!inGame || world.phase !== "device") return;
+    if (id === "ambacar") workshopMission.open(campaign.state.emitter);
+    else devices.open(id, projectById.get(id).name[language]);
+    cancelCameraTransition();
+  };
+  if (delay) devicePending = setTimeout(show, delay);
+  else show();
 }
 
 async function enterGame() {
   if (inGame || opening) return;
   opening = true;
   const request = ++openingRequest;
-  try {
-    const Audio = window.AudioContext || window.webkitAudioContext;
-    if (Audio) {
-      soundContext ??= new Audio();
-      soundContext.resume().catch(() => {});
-    }
-  } catch {}
+  sound.start();
 
   get("game-error").hidden = true;
   game.hidden = false;
@@ -337,32 +453,56 @@ async function enterGame() {
   mapButton.disabled = true;
   cameraButton.disabled = true;
   helpButton.disabled = true;
-  showControls = mobile.matches;
+  showControls = false;
   renderControls();
   get("game-bottom").hidden = true;
   get("main").inert = true;
   get("top").inert = true;
+  get("contact").inert = true;
   document.body.classList.add("playing");
   get("exit").focus();
-  lookInput.capture();
   try {
     await nextPaint();
     if (request !== openingRequest) return;
     if (!world) {
-      const { createWorld } = await import("./game/world.js?v=camera-return");
+      const { createWorld } = await import("./game/world.js?v=campaign");
       if (request !== openingRequest) return;
       setLoadStage(1);
       await nextPaint();
       if (request !== openingRequest) return;
-      world = createWorld(viewport, {
+      world = createWorld(viewport, campaign, {
         onTarget(state) {
           target = state;
           renderTarget();
         },
-        onProject: openProject,
-        onMission() {
-          pauseWorld();
-          workshopMission.open(progress.workshop);
+        onDevice: openDevice,
+        onVisit: markVisit,
+        onPhase(next) {
+          phase = next;
+          game.dataset.phase = next;
+          if (next !== "explore" && next !== "wake") clearWorldInput();
+          if (next === "explore" && document.activeElement === get("intro-skip")) focusWorld();
+          renderControls();
+          renderCombat();
+        },
+        onStatus(state) { combatStatus = state; renderCombat(); },
+        onSignal: showSignal,
+        onSound: sound.cue,
+        onTransition: fadeScene,
+        onResult(id, cue) {
+          if (id === "zeus") {
+            progress.workshop = true;
+            storeProgress();
+          }
+          if (cue) {
+            if (anyDialogOpen()) queuedSignal = cue;
+            else {
+              showSignal(cue);
+              sound.cue("relay");
+            }
+          }
+          renderControls();
+          renderEntry();
         },
         onCamera(enabled) {
           thirdPerson = enabled;
@@ -371,8 +511,7 @@ async function enterGame() {
         onPrism(index) {
           progress.prisms.add(index);
           storeProgress();
-          playPrism(index);
-          renderTarget();
+          sound.cue(`prism${index}`);
         }
       });
     }
@@ -382,17 +521,18 @@ async function enterGame() {
     updateDistrictLabels();
     await world.prepare();
     if (request !== openingRequest) return;
-    world.start(progress.prisms, progress.workshop);
+    world.start();
     setLoadStage(3);
     await nextPaint();
     if (request !== openingRequest) return;
     inGame = true;
     loading.hidden = true;
-    get("game-bottom").hidden = false;
     game.removeAttribute("aria-busy");
     cameraButton.disabled = false;
-    mapButton.disabled = false;
-    helpButton.disabled = false;
+    renderControls();
+    renderTarget();
+    renderCombat();
+    sound.ambience(.029);
     focusWorld();
   } catch (error) {
     if (request !== openingRequest) return;
@@ -408,18 +548,29 @@ function exitGame() {
   openingRequest++;
   inGame = false;
   opening = false;
+  clearTimeout(devicePending);
+  devicePending = undefined;
+  queuedSignal = undefined;
+  clearTimeout(signalTimer);
+  signalId = undefined;
   cancelCameraTransition();
   lookInput.release();
+  clearWorldInput();
+  sound.ambience(0);
+  for (const dialog of worldDialogs) if (dialog.open) dialog.close();
   world?.stop();
   game.removeAttribute("aria-busy");
   game.hidden = true;
   get("main").inert = false;
   get("top").inert = false;
+  get("contact").inert = false;
   document.body.classList.remove("playing");
+  renderEntry();
   entry.focus({ preventScroll: true });
 }
 
 function anyDialogOpen() { return worldDialogs.some(dialog => dialog.open); }
+function inputActive() { return inGame && phase === "explore" && !anyDialogOpen() && !devicePending && !document.hidden; }
 
 for (const button of document.querySelectorAll("[data-lang]")) {
   button.addEventListener("click", () => changeLanguage(button.dataset.lang));
@@ -442,65 +593,134 @@ cameraButton.addEventListener("click", () => {
 });
 helpButton.addEventListener("click", () => {
   showControls = !showControls;
-  if (!showControls) for (const key of moveKeys) world?.setMove(key, false);
   renderControls();
+  focusWorld();
 });
-game.addEventListener("wheel", (event) => {
+viewport.addEventListener("wheel", (event) => {
   if (!inGame || anyDialogOpen() || !event.ctrlKey || !event.deltaY) return;
   event.preventDefault();
   // Match the direction of zooming away from or toward the player.
   if ((event.deltaY > 0) !== thirdPerson) world.toggleCamera();
 }, { passive: false });
 function showMap() {
-  if (!inGame || anyDialogOpen()) return;
+  if (!inputActive()) return;
   renderMap();
-  pauseWorld();
+  pauseWorld("map");
   mapDialog.showModal();
 }
 mapButton.addEventListener("click", showMap);
 get("interact").addEventListener("click", () => {
   world?.interact();
-  if (!anyDialogOpen()) focusWorld();
+  if (inputActive()) focusWorld();
 });
+get("phone-button").addEventListener("click", () => world?.phone());
+get("intro-skip").addEventListener("click", () => world?.skipWake());
+get("touch-crouch").addEventListener("click", () => world?.crouch());
+get("touch-reload").addEventListener("click", () => world?.reload());
+get("touch-scan").addEventListener("click", () => world?.scan());
+get("touch-charge").addEventListener("keydown", event => {
+  if (event.code === "Space" && !event.repeat && inputActive()) world?.charge(true);
+});
+get("touch-charge").addEventListener("keyup", event => {
+  if (event.code === "Space" && inputActive()) world?.charge(false);
+});
+get("settings-button").addEventListener("click", () => {
+  if (!inputActive()) return;
+  pauseWorld("settings");
+  confirmRestart(false);
+  settingsDialog.showModal();
+});
+
+function confirmRestart(visible) {
+  get("restart-confirm").hidden = !visible;
+  get("campaign-restart").setAttribute("aria-expanded", String(visible));
+  if (visible) get("restart-no").focus();
+}
+
+get("campaign-restart").addEventListener("click", () => confirmRestart(true));
+get("restart-no").addEventListener("click", () => {
+  confirmRestart(false);
+  get("campaign-restart").focus();
+});
+get("restart-yes").addEventListener("click", () => {
+  campaign.reset();
+  settingsDialog.close();
+  queuedSignal = undefined;
+  world.stop();
+  world.start();
+  renderEntry();
+  fadeScene("teleport");
+  focusWorld();
+});
+
+for (const [id, key] of [["game-sensitivity", "sensitivity"], ["game-volume", "volume"], ["game-left-hand", "left"], ["game-mute", "mute"]]) {
+  get(id).addEventListener("input", ({ target: input }) => {
+    preferences[key] = input.type === "checkbox" ? input.checked : Number(input.value);
+    try { localStorage.setItem("district-input", JSON.stringify(preferences)); } catch {}
+    sound.level(preferences.mute ? 0 : preferences.volume);
+    renderControls();
+  });
+}
 for (const dialog of worldDialogs) dialog.addEventListener("close", resumeWorld);
 window.addEventListener("keydown", (event) => {
-  if (opening && event.code === "Escape") {
+  const { code } = event;
+  if (opening && code === "Escape") {
     exitGame();
     return;
   }
-  if (!inGame || anyDialogOpen() || event.ctrlKey || event.metaKey || event.altKey) return;
-  const code = moveKeys.has(event.code) ? event.code : arrows[event.code];
-  if (code) {
-    event.preventDefault();
-    world.setMove(code, true);
-  } else if (event.code === "ArrowLeft" || event.code === "ArrowRight") {
-    event.preventDefault();
-    world.look(event.code === "ArrowLeft" ? 0.075 : -0.075);
-  } else if (event.code === "KeyE" && !event.repeat) {
-    world.interact();
-  } else if (event.code === "KeyV" && !event.repeat) {
+  if (code === "KeyV" && inGame && phase === "wake" && !event.repeat) {
     world.toggleCamera();
-  } else if (event.code === "KeyM" && !event.repeat) {
-    showMap();
-  } else if (event.code === "Escape" && !event.repeat) {
-    lookInput.release();
+    return;
   }
-});
-window.addEventListener("keyup", (event) => world?.setMove(arrows[event.code] || event.code, false));
-window.addEventListener("blur", () => {
-  for (const key of moveKeys) world?.setMove(key, false);
-});
-for (const control of document.querySelectorAll("[data-move]")) {
-  control.addEventListener("pointerdown", (event) => {
+  if (!inputActive() || event.metaKey || event.altKey) return;
+  const movement = moveKeys.has(code) ? code : arrows[code];
+  if (movement || code.startsWith("Control") || code.startsWith("Shift")) {
     event.preventDefault();
-    control.setPointerCapture(event.pointerId);
-    world?.setMove(control.dataset.move, true);
-  });
-  for (const type of ["pointerup", "pointercancel", "lostpointercapture"]) {
-    control.addEventListener(type, () => world?.setMove(control.dataset.move, false));
+    world.setMove(movement || code, true);
+  } else if (code === "ArrowLeft" || code === "ArrowRight") {
+    event.preventDefault();
+    world.lookBy(code === "ArrowLeft" ? -24 : 24, 0);
+  } else if (!event.repeat && !event.ctrlKey) {
+    const actions = {
+      KeyC: world.crouch, KeyR: world.reload, KeyQ: world.scan, KeyX: () => world.charge(true), KeyT: world.phone,
+      KeyE: world.interact, KeyV: world.toggleCamera, KeyM: showMap, Escape: lookInput.release
+    };
+    if (actions[code]) {
+      event.preventDefault();
+      actions[code]();
+    } else if (event.key === "?") {
+      showControls = !showControls;
+      renderControls();
+    }
   }
-}
-mobile.addEventListener("change", renderControls);
+});
+window.addEventListener("keyup", ({ code }) => {
+  world?.setMove(arrows[code] || code, false);
+  if (code === "KeyX") world?.charge(false);
+});
+window.addEventListener("blur", clearWorldInput);
+window.addEventListener("orientationchange", clearWorldInput);
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    lookInput.release();
+    clearWorldInput();
+  }
+  sound.ambience(document.hidden || !inGame ? 0 : inputActive() ? .029 : .006);
+  renderControls();
+});
+document.addEventListener("pointerdown", event => {
+  const touch = event.pointerType === "touch" || event.pointerType === "pen";
+  if (touchMode === touch) return;
+  clearWorldInput();
+  if (touch) lookInput.release();
+  touchMode = touch;
+  renderControls();
+}, true);
+mobile.addEventListener("change", event => {
+  clearWorldInput();
+  touchMode = event.matches;
+  renderControls();
+});
 
 viewport.tabIndex = 0;
 render();

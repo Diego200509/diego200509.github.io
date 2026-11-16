@@ -1,23 +1,36 @@
-export function createLookInput(viewport, { active, canCapture, look, click, lockChanged }) {
+export function createLookInput(viewport, { active, canCapture, touchSide, look, fire, lockChanged }) {
   let touch = null;
   let mousePoint = null;
   let wantsCapture = false;
+  let denied = false;
   const locked = () => document.pointerLockElement === viewport;
 
+  function rejected() {
+    wantsCapture = false;
+    denied = true;
+  }
+
   function capture() {
-    if (!canCapture() || locked() || !viewport.requestPointerLock) return;
+    if (denied || !canCapture() || locked() || !viewport.requestPointerLock) return false;
     wantsCapture = true;
     try {
-      viewport.requestPointerLock()?.catch(() => { wantsCapture = false; });
+      viewport.requestPointerLock()?.catch(rejected);
+      return true;
     } catch {
-      wantsCapture = false;
+      rejected();
+      return true;
     }
+  }
+
+  function clear() {
+    if (touch && viewport.hasPointerCapture(touch.id)) viewport.releasePointerCapture(touch.id);
+    touch = null;
+    mousePoint = null;
   }
 
   function release() {
     wantsCapture = false;
-    touch = null;
-    mousePoint = null;
+    clear();
     if (locked()) document.exitPointerLock();
   }
 
@@ -26,53 +39,43 @@ export function createLookInput(viewport, { active, canCapture, look, click, loc
       release();
       return;
     }
-    touch = null;
-    mousePoint = null;
+    clear();
     lockChanged(locked());
   });
-  document.addEventListener("pointerlockerror", () => {
-    wantsCapture = false;
-  });
+  document.addEventListener("pointerlockerror", rejected);
 
   viewport.addEventListener("mousemove", event => {
-    if (locked() && active()) look(event.movementX, event.movementY);
+    if (locked() && active()) look(event.movementX, event.movementY, false);
   });
   viewport.addEventListener("pointermove", event => {
     if (locked() || !active()) return;
     if (event.pointerType === "mouse") {
-      const x = mousePoint ? event.clientX - mousePoint.x : event.movementX;
-      const y = mousePoint ? event.clientY - mousePoint.y : event.movementY;
+      const x = mousePoint ? event.clientX - mousePoint.x : 0;
+      const y = mousePoint ? event.clientY - mousePoint.y : 0;
       mousePoint = { x: event.clientX, y: event.clientY };
-      look(x || 0, y || 0);
-      return;
+      look(x, y, false);
+    } else if (touch?.id === event.pointerId) {
+      look(event.clientX - touch.x, event.clientY - touch.y, true);
+      touch.x = event.clientX;
+      touch.y = event.clientY;
     }
-    if (touch?.id !== event.pointerId) return;
-    const x = event.clientX - touch.x;
-    const y = event.clientY - touch.y;
-    touch = { ...touch, x: event.clientX, y: event.clientY, distance: touch.distance + Math.abs(x) + Math.abs(y) };
-    look(x, y);
   });
-
   viewport.addEventListener("pointerdown", event => {
-    if (!active() || event.pointerType === "mouse" || touch || event.button !== 0) return;
-    viewport.setPointerCapture(event.pointerId);
-    touch = { id: event.pointerId, x: event.clientX, y: event.clientY, distance: 0 };
+    if (!active() || event.button !== 0) return;
+    if (event.pointerType === "mouse") {
+      if (locked() || !capture()) fire();
+    } else if (!touch && touchSide(event)) {
+      event.preventDefault();
+      viewport.setPointerCapture(event.pointerId);
+      touch = { id: event.pointerId, x: event.clientX, y: event.clientY };
+    }
   });
   viewport.addEventListener("pointerleave", () => { mousePoint = null; });
-  viewport.addEventListener("pointerup", event => {
-    if (touch?.id !== event.pointerId) return;
-    const tapped = touch.distance < 7;
-    touch = null;
-    if (tapped && active()) click();
-  });
-  viewport.addEventListener("lostpointercapture", event => {
-    if (touch?.id === event.pointerId) touch = null;
-  });
-  viewport.addEventListener("click", event => {
-    if (!active() || event.detail === 0 || event.pointerType === "touch" || event.pointerType === "pen") return;
-    click();
-    capture();
-  });
+  for (const type of ["pointerup", "pointercancel", "lostpointercapture"]) {
+    viewport.addEventListener(type, event => {
+      if (touch?.id === event.pointerId) touch = null;
+    });
+  }
 
-  return { capture, release };
+  return { capture, clear, release };
 }

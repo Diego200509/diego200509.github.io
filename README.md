@@ -1,22 +1,23 @@
 # Distrito Cero
 
-Portafolio bilingüe de Diego Jijón. El barrio se construye con geometría de Three.js e incluye cuatro proyectos, una parada de experiencia en Ambacar y un CV web imprimible.
+Portafolio bilingüe de Diego Jijón. La campaña 3D **Después del apagón** conecta Ambacar, Laboratorio RGB, TalkApp, Semáforo IA y ASOTEMA. El menú de proyectos y el CV se pueden consultar desde la portada.
 
 ## Controles
 
-- **WASD** para caminar, arrastrar para mirar y **E** para interactuar.
-- **Ctrl + rueda hacia abajo** para pasar a tercera persona, **Ctrl + rueda hacia arriba** para volver. **V** y el botón **Cámara** también alternan la vista.
-- En un dispositivo táctil, usa las flechas, arrastra sobre la escena y toca **Cámara** o el botón de acción.
-- Pulsa **?** para mostrar u ocultar los controles. En pantallas táctiles se muestran al entrar.
+- **WASD** y ratón para moverte y mirar. Las flechas también funcionan. **Shift** corre y **Ctrl** o **C** agacha.
+- **E** usa el dispositivo más cercano. **M** abre el mapa y **T** abre el celular en un punto seguro. **V**, **Ctrl + rueda** y el botón **Cámara** cambian la vista.
+- Con el emisor, haz clic para disparar y pulsa **R** para recargar. Las mejoras habilitan **Q** para escanear y **X** para cargar un pulso. El primer clic al recuperar la captura del ratón se usa para capturar el puntero.
+- En pantalla táctil, usa el joystick y arrastra el lado opuesto para mirar. Puedes arrastrar **Disparar** para ajustar la mira mientras emites pulsos. En **Ajustes** puedes invertir el lado del joystick, cambiar la sensibilidad y controlar el volumen.
 
-En el mapa, el **Taller de TI** lleva a Ambacar. Abre la puerta, acércate al banco de trabajo y usa la terminal para jugar **Primer día en la agencia**. La misión usa datos ficticios y guarda el avance en el navegador.
+ZEUS desbloquea la salida de Ambacar y concede el emisor. El navegador guarda los hitos y los puntos seguros de la campaña. Puedes continuar desde la portada o volver a empezar desde **Ajustes**. Las demos usan datos ficticios.
 
 ## Código
 
 - `content.js` contiene las fichas de proyectos y las traducciones de la interfaz.
 - `experience.js` contiene la trayectoria y las habilidades que comparten el sitio y el CV.
 - `main.js` conecta la interfaz del portafolio con el juego y guarda el progreso local.
-- `game/world.js` coordina el recorrido, los destinos y la misión RGB.
+- `game/campaign.js` guarda los hitos. `game/world.js` coordina las fases de juego, los destinos y las consecuencias en 3D.
+- `game/combat.js` simula los robots y el emisor. `game/devices.js` contiene las demos de RGB, TalkApp, Semáforo IA y ASOTEMA.
 - `game/scene.js`, `game/camera.js` y `game/avatar.js` contienen la construcción del barrio, las vistas y el personaje animado.
 - `game/workshop.js` construye el interior de Ambacar y `game/mission.js` define su terminal bilingüe.
 

@@ -14,13 +14,6 @@ export function workshopPoint(x, z) {
   return { x: X + (x + z) * C, z: Z + (z - x) * C };
 }
 
-export function workshopClear(x, z, open) {
-  if (Math.abs(x) >= 3.95 || Math.abs(z) >= 3.15) return true;
-  if (z >= 2.36) return open && Math.abs(x) < 1.25;
-  if (Math.abs(x) > 3.38 || z < -2.33) return false;
-  return !(z < -0.89 && x > 0.79 && x < 2.8) && !(x < -2.28 && z < 1.62);
-}
-
 function createMonitor() {
   const canvas = document.createElement("canvas");
   canvas.width = 384;
@@ -117,6 +110,13 @@ export function buildWorkshop(scene, block, piece, sign) {
       block(room, .78, .28, .58, -2.77, .66 + i * .58, z, i === 1 ? "#a97755" : "#698080");
     }
   }
+  block(room, 1.16, .29, .84, -1.58, .39, .67, wood);
+  block(room, 1.15, .17, .85, -1.58, .61, .61, "#856d5f");
+  block(room, 1.17, .82, .23, -1.58, .92, 1.02, "#856d5f");
+  for (const x of [-2.11, -1.05]) block(room, .16, .36, .83, x, .72, .67, wood);
+  block(room, .58, 1.79, .64, 2.75, .895, 1.77, steel);
+  const lockerDoor = block(room, .52, 1.71, .06, 2.75, .9, 2.11, "#58717a");
+  block(room, .08, .125, .08, 2.9, .99, 2.16, "#e1b781", false);
   const stripe = new THREE.MeshBasicMaterial({ color: "#ffc989" });
   block(room, 4.2, .055, .14, 0, 3.29, -.65, stripe, false);
   block(room, 5.96, .28, .05, 0, .17, -2.68, steel, false);
@@ -136,11 +136,15 @@ export function buildWorkshop(scene, block, piece, sign) {
 
   return {
     sign: portal,
+    get doorBottom() { return 2.635 - Math.max(.03, 1 - doorPosition) * 2.59; },
+    get doorVisible() { return door.visible; },
     update(dt, time, open, completed, reduced) {
       doorPosition = reduced ? Number(open) : THREE.MathUtils.damp(doorPosition, Number(open), 9, dt);
       door.scale.y = Math.max(.03, 1 - doorPosition);
       door.position.y = 2.635 - door.scale.y * 1.295;
       door.visible = doorPosition < .97;
+      lockerDoor.position.y = reduced ? (completed ? 1.62 : .9) :
+        THREE.MathUtils.damp(lockerDoor.position.y, completed ? 1.62 : .9, 8, dt);
       signalMaterial.color.set(completed ? "#a6f1bb" : "#dfa459");
       signalMaterial.emissive.copy(signalMaterial.color);
       signalMaterial.emissiveIntensity = completed ? 2.2 : .35;

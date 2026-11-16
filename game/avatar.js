@@ -157,27 +157,48 @@ export function createAvatar(scene) {
     return { arm, leg, knee, side };
   });
 
+  const emitter = new THREE.Group();
+  const hand = limbs[1].arm;
+  hand.add(emitter);
+  emitter.position.set(0, -.49, -.03);
+  part(emitter, new THREE.BoxGeometry(.15, .34, .17), "#435965", 0, -.12, -.055);
+  part(emitter, new THREE.BoxGeometry(.09, .21, .045), "#a1f7d6", 0, -.15, -.155);
+  const avatarMaterials = [...materials.values()];
+  for (const material of avatarMaterials) material.transparent = true;
+
   let phase = 0;
   let stride = 0;
   let idle = 0;
   return {
     body,
-    update(dt, moving, reduceMotion) {
+    fade(opacity) {
+      for (const material of avatarMaterials) {
+        material.opacity = opacity;
+        material.depthWrite = opacity > .95;
+      }
+    },
+    update(dt, moving, reduceMotion, { crouch, sprint, sitting, armed, aim, pitch, recoil, reload }) {
       idle += dt;
       stride = THREE.MathUtils.damp(stride, moving ? 1 : 0, 13, dt);
-      phase += dt * (6 + 5 * stride);
+      phase += dt * (6 + (sprint ? 10 : 5) * stride);
       const amount = reduceMotion ? .43 : 1;
       const breath = reduceMotion ? 0 : Math.sin(idle * 2.2) * .013 * (1 - stride);
-      torso.position.y = breath + Math.abs(Math.sin(phase)) * .065 * stride * amount;
+      const lowered = .54 * crouch + .38 * sitting;
+      torso.position.y = -lowered + (breath + Math.abs(Math.sin(phase)) * .065 * stride * amount) * (1 - sitting);
       torso.rotation.set(-.085 * stride, Math.sin(phase) * .15 * stride * amount, Math.cos(phase) * .047 * stride * amount);
       head.rotation.y = -torso.rotation.y * .54;
       head.rotation.z = breath * 1.5;
+      emitter.visible = armed;
       for (const { arm, leg, knee, side } of limbs) {
         const cycle = Math.sin(phase) * side;
-        const swing = cycle * stride * amount;
+        const swing = cycle * stride * amount * (sprint ? 1.35 : 1);
         arm.rotation.set(-.68 * swing + breath, 0, side * (.075 + .055 * stride));
-        leg.rotation.x = .68 * swing;
-        knee.rotation.x = -.82 * Math.max(0, -cycle) * stride * amount;
+        if (aim && armed && side === 1) arm.rotation.x = 1.46 + pitch - recoil * .27 - reload * .6;
+        else if (side === -1) arm.rotation.x += reload * 1.2;
+        arm.rotation.x += sitting * .73;
+        leg.position.y = .87 - lowered;
+        leg.rotation.x = .68 * swing + crouch * 1.08 + sitting * 1.52;
+        knee.rotation.x = -.82 * Math.max(0, -cycle) * stride * amount - crouch * 1.48 - sitting * 1.47;
       }
     }
   };

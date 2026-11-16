@@ -1,5 +1,7 @@
 import * as THREE from "../vendor/three.module.min.js";
-import { buildWorkshop, workshopPoint } from "./workshop.js?v=workstation";
+import { buildWorkshop, workshopPoint } from "./workshop.js";
+import { buildCampaignProps } from "./district-props.js";
+import { muralCells, muralPalette } from "./mural.js";
 
 const LAND = "#d1ad83";
 const CREAM = "#e9c8a0";
@@ -7,7 +9,7 @@ const CLAY = "#b86c51";
 const INK = "#334858";
 const WHITE = "#f4deba";
 const WOOD = "#835139";
-const PALETTE = ["#f65351", "#60e893", "#64a0ff"];
+const PALETTE = muralPalette.map(color => `rgb(${color.join(",")})`);
 const Y_AXIS = new THREE.Vector3(0, 1, 0);
 const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 const materials = new Map();
@@ -227,12 +229,16 @@ function terrain(scene) {
     block(scene, 2.2, 0.29, 0.09, x, 0.78, z - 0.2, WOOD);
     for (const dx of [-0.76, 0.76]) block(scene, 0.18, 0.48, 0.46, x + dx, 0.25, z, CREAM);
   }
-  const lantern = new THREE.MeshStandardMaterial({ color: "#ffe5af", emissive: "#ffc276", emissiveIntensity: .74 });
-  for (const [x, z] of [[-6.5, -6], [6.5, -6], [-7.3, 7], [-3.4, 13.6]]) {
+  return [[-6.5, -6], [6.5, -6], [-7.3, 7], [-3.4, 13.6]].map(([x, z]) => {
+    const lantern = new THREE.MeshStandardMaterial({ color: "#ffe5af", emissive: "#ffc276", emissiveIntensity: .74 });
     block(scene, 0.1, 2.75, 0.1, x, 1.38, z, INK);
     block(scene, 0.34, 0.18, 0.34, x, 2.73, z, INK);
     block(scene, 0.24, 0.25, 0.24, x, 2.57, z, lantern, false);
-  }
+    const light = new THREE.PointLight("#ffc276", 0, 6.5, 2);
+    light.position.set(x, 2.42, z);
+    scene.add(light);
+    return { lantern, light };
+  });
 }
 
 function crossing(scene) {
@@ -253,15 +259,8 @@ function crossing(scene) {
 }
 
 function makeLab(scene, house) {
-  const mural = [];
-  for (let col = 0; col < 12; col++) {
-    for (let row = 0; row < 6; row++) {
-      const rise = Math.abs(Math.sin(col * 0.58 + 0.2)) * 2.7;
-      const band = row < 1 + rise * 0.53 ? 1 : row < 2.4 + rise * 0.72 ? 0 : 2;
-      const tile = block(house, 0.275, 0.244, 0.10, -3.85 + col * 0.29, 0.73 + row * 0.258, 3.01, row % 2 ? "#a99e91" : "#beb1a2", false);
-      mural.push({ tile, band, gray: tile.material });
-    }
-  }
+  const mural = muralCells.map(({ col, row, band, shade }) =>
+    ({ band, tile: block(house, .275, .244, .10, -3.85 + col * .29, .73 + row * .258, 3.01, `rgb(${shade},${shade},${shade})`, false) }));
   const prisms = PALETTE.map((color, i) => {
     const x = 1.62 + i * 1.1;
     block(house, 0.82, 1.43, 0.25, x, 1.88, 3.01, INK);
@@ -279,7 +278,7 @@ function makeLab(scene, house) {
 }
 
 function sceneLighting(scene) {
-  scene.fog = new THREE.Fog("#d2c1b3", 24, 82);
+  scene.fog = new THREE.Fog("#63758b", 8, 37);
   const skyDome = new THREE.Mesh(new THREE.SphereGeometry(89, 24, 16), new THREE.ShaderMaterial({
     side: THREE.BackSide,
     depthWrite: false,
@@ -302,8 +301,8 @@ function sceneLighting(scene) {
   }));
   skyDome.frustumCulled = false;
   scene.add(skyDome);
-  const sky = new THREE.HemisphereLight("#deebff", "#9a735e", 1.86);
-  const sun = new THREE.DirectionalLight("#ffd0a0", 2.66);
+  const sky = new THREE.HemisphereLight("#adc9ff", "#716e82", 1.08);
+  const sun = new THREE.DirectionalLight("#b7c7ff", .74);
   sun.position.set(-18, 15, -9);
   sun.castShadow = true;
   Object.assign(sun.shadow.camera, { left: -22, right: 22, top: 21, bottom: -21, near: 0.5, far: 63 });
@@ -311,11 +310,33 @@ function sceneLighting(scene) {
   sun.shadow.bias = -0.0004;
   sun.shadow.normalBias = 0.045;
   scene.add(sky, sun);
+  const haze = new THREE.ShaderMaterial({
+    transparent: true,
+    side: THREE.DoubleSide,
+    depthWrite: false,
+    uniforms: { strength: { value: .2 }, drift: { value: 0 } },
+    vertexShader: "varying vec2 sheetUv; void main() { sheetUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+    fragmentShader: `varying vec2 sheetUv; uniform float strength; uniform float drift;
+      void main() {
+        vec2 edge = vec2(1.0) - abs(sheetUv * 2.0 - 1.0);
+        float fade = smoothstep(0.0, 0.42, edge.x) * smoothstep(0.0, 0.34, edge.y);
+        float shape = sin(sheetUv.x * 29.0 + sin(sheetUv.y * 17.0 + drift) + drift) * 0.20 + 0.6;
+        gl_FragColor = vec4(0.53, 0.63, 0.72, strength * fade * shape);
+      }`
+  });
+  const hazeGeometry = new THREE.PlaneGeometry(24, 6);
+  for (const [x, z, height] of [[-1, 3.2, .16], [3.1, -4.7, .23]]) {
+    const layer = new THREE.Mesh(hazeGeometry, haze);
+    layer.position.set(x, height, z);
+    layer.rotation.x = -Math.PI / 2;
+    scene.add(layer);
+  }
+  return { sky, sun, skyDome, haze };
 }
 
 export function buildDistrict(scene) {
-  sceneLighting(scene);
-  terrain(scene);
+  const lighting = sceneLighting(scene);
+  const lanterns = terrain(scene);
 
   const rgbHouse = building(scene, 0, -11, 0, 9.5, "#ce906c", "#a96451", false);
   const association = building(scene, -14, 0, Math.PI / 2, 7.65, "#d4aa78", "#ad7251");
@@ -325,6 +346,10 @@ export function buildDistrict(scene) {
   const lab = makeLab(scene, rgbHouse);
   const traffic = crossing(scene);
   const workshop = buildWorkshop(scene, block, piece, sign);
+  const props = buildCampaignProps(scene, block);
+  for (const [id, x, z, yaw] of [[1, 11.04, 2.4, -Math.PI / 2], [2, -11.04, -2.4, Math.PI / 2], [3, 3.35, -8.02, 0]]) {
+    props.addWindow(x, 1.97, z, yaw, id);
+  }
   const signs = {
     rgb: sign(rgbHouse, 0, 3.12, 2.94, 3.8),
     asotema: sign(association, 0, 3.12, 2.94, 3.55),
@@ -337,7 +362,7 @@ export function buildDistrict(scene) {
     lab,
     traffic,
     workshop,
-    color: (index) => material(PALETTE[index]),
+    props, lighting, lanterns, material,
     setLabels(labels) {
       for (const [id, mesh] of Object.entries(signs)) {
         if (previous[id] === labels[id]) continue;
