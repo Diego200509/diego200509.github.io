@@ -15,6 +15,8 @@ La campaña tiene seis niveles. Empieza en Ambacar y revela Laboratorio RGB, Tal
 
 Entra en cada estación para usar sus equipos. Ambacar, RGB y ASOTEMA abren un escritorio con su aplicación. TalkApp usa el celular y Semáforo IA se controla desde la tableta de la caseta. Los interiores son puntos seguros. En la calle, los robots resisten más, golpean más fuerte y atacan más rápido conforme avanzas.
 
+Los robots detectan al jugador a distancia y buscan un camino alrededor de las estructuras hasta su última posición conocida. Tras restaurar el distrito, recorren circuitos de mantenimiento por calles, plazas y accesos de las estaciones.
+
 ## Código
 
 - `content.js` contiene las fichas de proyectos y las traducciones de la interfaz.

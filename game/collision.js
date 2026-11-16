@@ -3,8 +3,34 @@ import { roomBox, rooms, roomWalls } from "./interiors.js";
 import { workshopLocal, workshopPoint, workshopTerminal, workshopYaw } from "./workshop.js";
 
 const bodyRadius = .25;
+const bounds = { minX: -17.55, maxX: 17.55, minZ: -15.7, maxZ: 19.4 };
+const axes = ["x", "z"];
 const { x: roomX, z: roomZ } = workshopPoint(0, 0);
 const roomOrigin = new THREE.Vector3(roomX, 0, roomZ);
+
+function insideDistrict(x, z) {
+  return x > bounds.minX && x < bounds.maxX && z > bounds.minZ && z < bounds.maxZ;
+}
+
+function overlapsSegment(box, from, to, radius) {
+  let entry = 0;
+  let exit = 1;
+  for (const axis of axes) {
+    const min = box.min[axis] - radius;
+    const max = box.max[axis] + radius;
+    const delta = to[axis] - from[axis];
+    if (Math.abs(delta) < .00001) {
+      if (from[axis] <= min || from[axis] >= max) return false;
+      continue;
+    }
+    const a = (min - from[axis]) / delta;
+    const b = (max - from[axis]) / delta;
+    entry = Math.max(entry, Math.min(a, b));
+    exit = Math.min(exit, Math.max(a, b));
+    if (entry >= exit) return false;
+  }
+  return true;
+}
 
 export function createCollision() {
   const volumes = [];
@@ -47,18 +73,26 @@ export function createCollision() {
 
   return {
     add,
+    bounds,
     door,
     areaVolumes,
-    canStand(x, z, height) {
-      if (x <= -17.55 || x >= 17.55 || z <= -15.7 || z >= 19.4) return false;
+    canStand(x, z, height, radius = bodyRadius) {
+      if (!insideDistrict(x, z)) return false;
       const room = workshopLocal(x, z);
       return !volumes.some(({ box, workshop, active }) => {
         if (!active || box.max.y <= .035 || box.min.y >= height) return false;
         const px = workshop ? room.x : x;
         const pz = workshop ? room.z : z;
-        return px > box.min.x - bodyRadius && px < box.max.x + bodyRadius &&
-          pz > box.min.z - bodyRadius && pz < box.max.z + bodyRadius;
+        return px > box.min.x - radius && px < box.max.x + radius &&
+          pz > box.min.z - radius && pz < box.max.z + radius;
       });
+    },
+    canTraverse(from, to, height, radius) {
+      if (!insideDistrict(to.x, to.z)) return false;
+      const roomFrom = workshopLocal(from.x, from.z);
+      const roomTo = workshopLocal(to.x, to.z);
+      return !volumes.some(({ box, workshop, active }) => active && box.max.y > .035 && box.min.y < height &&
+        overlapsSegment(box, workshop ? roomFrom : from, workshop ? roomTo : to, radius));
     },
     fraction(from, to, margin = 0) {
       const length = from.distanceTo(to);

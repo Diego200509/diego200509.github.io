@@ -484,7 +484,7 @@ async function enterGame() {
     await nextPaint();
     if (request !== openingRequest) return;
     if (!world) {
-      const { createWorld } = await import("./game/world.js?v=interiors");
+      const { createWorld } = await import("./game/world.js?v=robots");
       if (request !== openingRequest) return;
       setLoadStage(1);
       await nextPaint();

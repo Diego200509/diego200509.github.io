@@ -1,8 +1,8 @@
 import * as THREE from "../vendor/three.module.min.js";
 import { createAvatar } from "./avatar.js";
 import { createPlayerCamera } from "./camera.js?v=campaign";
-import { createCollision } from "./collision.js?v=interiors";
-import { createCombat } from "./combat.js?v=interiors";
+import { createCollision } from "./collision.js?v=robots";
+import { createCombat } from "./combat.js?v=robots";
 import { generator, seat, stand } from "./district-props.js?v=interiors";
 import { consoles, entrances, roomContains, roomPoint, rooms, supply } from "./interiors.js";
 import { muralColors } from "./mural.js";
