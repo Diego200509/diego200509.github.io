@@ -1,10 +1,17 @@
 import { newSimulation, step } from "../traffic-model.js";
-import { campaignText } from "./campaign-text.js";
+import { campaignText } from "./campaign-text.js?v=interiors";
+import { createDesktop } from "./desktop.js?v=interiors";
 import { muralCells, muralColors } from "./mural.js";
 
 const trafficPreset = () => ({ ...newSimulation(), queues: [12, 3] });
 const roundLength = 12;
 const queueLimit = 6;
+const apps = {
+  rgb: { icon: "RGB", address: "rgb.local/editor" },
+  asotema: { icon: "A", address: "asotema.local" },
+  talkapp: { icon: "✦" },
+  traffic: { icon: "●" }
+};
 
 function element(tag, text, className) {
   const node = document.createElement(tag);
@@ -26,20 +33,33 @@ function actionRow(...children) {
   return row;
 }
 
-export function setupDevices(dialog, getLanguage, campaign, onComplete, onProject) {
-  const body = dialog.querySelector("#device-body");
+export function setupDevices(handheld, workstation, getLanguage, campaign, onComplete, onProject) {
+  const desktop = createDesktop(workstation, getLanguage);
+  const launch = handheld.querySelector("[data-device-launch]");
+  const home = handheld.querySelector("[data-device-home]");
+  const launchpad = handheld.querySelector("[data-device-launchpad]");
+  const screen = handheld.querySelector("[data-device-page]");
   let stopTrial = () => {};
-  let currentId;
-  let title;
 
-  function render() {
+  function showApp(visible, focus = false) {
+    screen.hidden = !visible;
+    launchpad.hidden = visible;
+    if (focus) (visible ? handheld.querySelector("h2") : launch).focus({ preventScroll: true });
+  }
+
+  launch.addEventListener("click", () => showApp(true, true));
+  home.addEventListener("click", () => showApp(false, true));
+  handheld.addEventListener("cancel", event => {
+    if (screen.hidden) return;
+    event.preventDefault();
+    showApp(false, true);
+  });
+
+  function render(dialog, id) {
     const copy = campaignText[getLanguage()];
-    const id = currentId;
+    const body = dialog.querySelector("[data-device-body]");
     const result = id === "asotema" ? "expense" : id;
     const saved = campaign.done(result);
-    dialog.dataset.device = id;
-    dialog.querySelector("h2").textContent = title;
-    dialog.querySelector("#device-close").textContent = copy.close;
     const status = element("p", "", "device-status");
     status.setAttribute("role", "status");
     const project = button(copy.project, () => {
@@ -242,16 +262,39 @@ export function setupDevices(dialog, getLanguage, campaign, onComplete, onProjec
     }
   }
 
-  dialog.addEventListener("close", () => {
-    if (!dialog.open) stopTrial();
-  });
+  for (const dialog of [handheld, workstation]) {
+    dialog.addEventListener("close", () => {
+      if (!dialog.open) stopTrial();
+    });
+  }
 
   return {
     open(id, label) {
-      currentId = id;
-      title = label;
-      render();
-      dialog.showModal();
+      const app = apps[id];
+      const dialog = app.address ? workstation : handheld;
+      const language = getLanguage();
+      const copy = campaignText[language];
+      dialog.dataset.device = id;
+      for (const name of dialog.querySelectorAll("[data-app-name]")) name.textContent = label;
+      for (const icon of dialog.querySelectorAll("[data-app-icon]")) icon.textContent = app.icon;
+      render(dialog, id);
+      if (app.address) {
+        workstation.querySelector("#device-desktop-title").textContent = `${copy.desktop} · ${label}`;
+        workstation.querySelector("[data-device-address]").textContent = app.address;
+        desktop.open({ name: label, leave: copy.close });
+      } else {
+        const clock = handheld.querySelector("[data-device-clock]");
+        const now = new Date();
+        clock.textContent = new Intl.DateTimeFormat(language, { hour: "2-digit", minute: "2-digit" }).format(now);
+        clock.dateTime = now.toISOString();
+        handheld.querySelector("[data-device-leave]").textContent = copy.close;
+        launch.setAttribute("aria-label", copy.openApp(label));
+        home.setAttribute("aria-label", copy.homeScreen);
+        home.title = copy.homeScreen;
+        showApp(true);
+        screen.scrollTop = 0;
+        handheld.showModal();
+      }
     }
   };
 }

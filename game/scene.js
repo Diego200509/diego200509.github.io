@@ -1,6 +1,8 @@
 import * as THREE from "../vendor/three.module.min.js";
 import { buildWorkshop, workshopPoint } from "./workshop.js";
-import { buildCampaignProps } from "./district-props.js";
+import { levels } from "./campaign.js?v=levels";
+import { buildCampaignProps } from "./district-props.js?v=interiors";
+import { doorwayWidth, rooms, roomWalls } from "./interiors.js";
 import { muralCells, muralPalette } from "./mural.js";
 
 const LAND = "#d1ad83";
@@ -38,37 +40,38 @@ function piece(parent, geometry, color, x, y, z) {
   return mesh;
 }
 
-function building(scene, x, z, rotation, width, wall, roof, frontWindows = true) {
+function building(scene, room, wall, roof, frontWindows = true) {
+  const { x, z, yaw, width, depth } = room;
+  const front = depth / 2;
   const house = new THREE.Group();
   house.position.set(x, 0, z);
-  house.rotation.y = rotation;
+  house.rotation.y = yaw;
   scene.add(house);
 
-  block(house, width + 0.48, 0.22, 6, 0, 0.11, 0, WOOD);
-  block(house, width, 3.55, 5.45, 0, 1.94, 0, wall);
-  block(house, width + 0.54, 0.22, 5.85, 0, 3.72, 0, WHITE);
-  block(house, width + 0.42, 0.34, 5.7, 0, 3.96, 0, roof);
-  block(house, width + 0.46, 0.12, 5.75, 0, 4.18, 0, WOOD);
-  block(house, width, 0.18, 0.13, 0, 0.49, 2.76, CLAY);
-  block(house, width, 0.12, 0.14, 0, 3.46, 2.78, WHITE);
-  block(house, 1.9, 2.66, 0.18, 0, 1.53, 2.79, WHITE);
-  block(house, 1.57, 2.36, 0.13, 0, 1.39, 2.9, INK);
-  block(house, 0.7, 1.52, 0.07, -0.38, 1.51, 2.98, "#657a7c");
-  block(house, 0.7, 1.52, 0.07, 0.38, 1.51, 2.98, "#657a7c");
-  block(house, 2.18, 0.13, 0.6, 0, 0.12, 3.03, WHITE);
-  block(house, 2.5, 0.09, 0.84, 0, 0.04, 3.22, CLAY);
+  block(house, width + .3, .08, depth + .24, 0, .018, 0, WOOD);
+  for (const [px, y, pz, w, h, d] of roomWalls(room)) block(house, w, h, d, px, y, pz, wall);
+  block(house, width + .54, .22, depth + .4, 0, 3.66, 0, WHITE);
+  block(house, width + .42, .34, depth + .25, 0, 3.94, 0, roof);
+  block(house, width + .46, .12, depth + .3, 0, 4.16, 0, WOOD);
+  block(house, width, .12, .14, 0, 3.44, front + .08, WHITE);
+  block(house, doorwayWidth + .32, .16, .23, 0, 2.38, front + .14, WHITE);
+  block(house, doorwayWidth + .13, .065, .24, 0, 2.26, front + .08, "#bbd5aa", false);
+  block(house, doorwayWidth + .3, .06, .6, 0, .035, front + .28, CREAM, false);
+  const base = (width - doorwayWidth - .24) / 2;
 
   for (const side of [-1, 1]) {
+    block(house, .15, 2.36, .25, side * (doorwayWidth / 2 + .075), 1.19, front + .13, WHITE);
+    block(house, base, .18, .13, side * (width - base) / 2, .49, front + .09, CLAY);
     if (frontWindows) {
       const windowX = side * (width / 2 - 1.42);
-      block(house, 1.6, 1.56, 0.15, windowX, 1.97, 2.76, WHITE);
-      block(house, 1.41, 1.36, 0.12, windowX, 1.97, 2.85, INK);
-      block(house, 1.21, 1.13, 0.07, windowX, 1.97, 2.92, "#708d99");
-      block(house, 0.06, 1.2, 0.06, windowX, 1.97, 2.97, WHITE);
-      block(house, 1.53, 0.12, 0.3, windowX, 1.21, 2.91, WOOD);
+      block(house, 1.6, 1.56, .15, windowX, 1.97, front + .04, WHITE);
+      block(house, 1.41, 1.36, .12, windowX, 1.97, front + .13, INK);
+      block(house, 1.21, 1.13, .07, windowX, 1.97, front + .2, "#708d99");
+      block(house, .06, 1.2, .06, windowX, 1.97, front + .24, WHITE);
+      block(house, 1.53, .12, .3, windowX, 1.21, front + .19, WOOD);
     }
     for (let i = 0; i < 3; i++) {
-      block(house, 0.33, 0.1, 0.07, side * (width / 2 - 0.53 - i * 0.31), 3.12 - i * 0.13, 2.76, CLAY);
+      block(house, .33, .1, .07, side * (width / 2 - .53 - i * .31), 3.12 - i * .13, front + .12, CLAY);
     }
   }
 
@@ -255,7 +258,7 @@ function crossing(scene) {
     }
   }
   block(scene, 1.6, 0.17, 0.8, 7.5, 0.09, 11.45, CLAY);
-  return { sign: sign(scene, 7.5, 1.2, 10.13, 2.65), lamps };
+  return { lamps };
 }
 
 function makeLab(scene, house) {
@@ -278,7 +281,7 @@ function makeLab(scene, house) {
 }
 
 function sceneLighting(scene) {
-  scene.fog = new THREE.Fog("#63758b", 8, 37);
+  scene.fog = new THREE.Fog("#536476", 3.6, 26);
   const skyDome = new THREE.Mesh(new THREE.SphereGeometry(89, 24, 16), new THREE.ShaderMaterial({
     side: THREE.BackSide,
     depthWrite: false,
@@ -337,24 +340,32 @@ function sceneLighting(scene) {
 export function buildDistrict(scene) {
   const lighting = sceneLighting(scene);
   const lanterns = terrain(scene);
+  const areas = Object.fromEntries(levels.map(id => {
+    const group = new THREE.Group();
+    group.name = id;
+    scene.add(group);
+    return [id, group];
+  }));
 
-  const rgbHouse = building(scene, 0, -11, 0, 9.5, "#ce906c", "#a96451", false);
-  const association = building(scene, -14, 0, Math.PI / 2, 7.65, "#d4aa78", "#ad7251");
-  const station = building(scene, 14, 0, -Math.PI / 2, 7.65, "#83a9a6", "#476876");
+  const rgbHouse = building(areas.rgb, rooms.rgb, "#ce906c", "#a96451", false);
+  const association = building(areas.asotema, rooms.asotema, "#d4aa78", "#ad7251");
+  const station = building(areas.talkapp, rooms.talkapp, "#83a9a6", "#476876");
+  const controlRoom = building(areas.traffic, rooms.traffic, "#94a5a6", "#3d5e69", false);
   roofTerrace(association);
   radioAntenna(station);
-  const lab = makeLab(scene, rgbHouse);
-  const traffic = crossing(scene);
-  const workshop = buildWorkshop(scene, block, piece, sign);
-  const props = buildCampaignProps(scene, block);
-  for (const [id, x, z, yaw] of [[1, 11.04, 2.4, -Math.PI / 2], [2, -11.04, -2.4, Math.PI / 2], [3, 3.35, -8.02, 0]]) {
-    props.addWindow(x, 1.97, z, yaw, id);
+  const lab = makeLab(areas.rgb, rgbHouse);
+  const traffic = crossing(areas.traffic);
+  const workshop = buildWorkshop(areas.ambacar, block, piece, sign);
+  const props = buildCampaignProps(scene, block, areas, { rgb: rgbHouse, asotema: association, talkapp: station, traffic: controlRoom });
+  const windows = [["talkapp", 11.04, 2.4, -Math.PI / 2], ["asotema", -11.04, -2.4, Math.PI / 2], ["rgb", 3.35, -8.02, 0]];
+  for (const [index, [id, x, z, yaw]] of windows.entries()) {
+    props.addWindow(areas[id], x, 1.97, z, yaw, index + 1);
   }
   const signs = {
     rgb: sign(rgbHouse, 0, 3.12, 2.94, 3.8),
     asotema: sign(association, 0, 3.12, 2.94, 3.55),
     talkapp: sign(station, 0, 3.12, 2.94, 3.55),
-    traffic: traffic.sign,
+    traffic: sign(controlRoom, 0, 2.97, rooms.traffic.depth / 2 + .16, 2.8),
     ambacar: workshop.sign
   };
   let previous = {};
@@ -362,7 +373,7 @@ export function buildDistrict(scene) {
     lab,
     traffic,
     workshop,
-    props, lighting, lanterns, material,
+    areas, props, lighting, lanterns, material,
     setLabels(labels) {
       for (const [id, mesh] of Object.entries(signs)) {
         if (previous[id] === labels[id]) continue;

@@ -1,4 +1,4 @@
-import { createDesktop } from "./desktop.js";
+import { createDesktop } from "./desktop.js?v=interiors";
 
 const fields = ["branch", "division", "role"];
 const solution = { branch: "quito", division: "service", role: "support" };

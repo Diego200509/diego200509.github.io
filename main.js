@@ -1,10 +1,10 @@
 import { loadLanguage, projectPage, projects, saveLanguage, translatePage, translations } from "./content.js";
 import { experience, experienceMarkup } from "./experience.js";
-import { setupMission } from "./game/mission.js";
+import { setupMission } from "./game/mission.js?v=interiors";
 import { createLookInput } from "./game/look-input.js?v=campaign";
-import { loadCampaign, stations as destinations } from "./game/campaign.js";
-import { campaignText } from "./game/campaign-text.js";
-import { setupDevices } from "./game/devices.js";
+import { levels, loadCampaign, stations as destinations } from "./game/campaign.js?v=levels";
+import { campaignText } from "./game/campaign-text.js?v=interiors";
+import { setupDevices } from "./game/devices.js?v=interiors";
 import { createDistrictSound } from "./game/sound.js";
 import { bindTouchControls } from "./game/touch-input.js";
 import { archiveProjects, renderArchiveCards } from "./project-archive.js";
@@ -28,8 +28,9 @@ const mapDialog = get("map-dialog");
 const projectDialog = get("project-dialog");
 const missionDialog = get("mission-dialog");
 const deviceDialog = get("device-dialog");
+const desktopDialog = get("device-desktop-dialog");
 const settingsDialog = get("campaign-settings");
-const worldDialogs = [mapDialog, projectDialog, missionDialog, deviceDialog, settingsDialog];
+const worldDialogs = [mapDialog, projectDialog, missionDialog, deviceDialog, desktopDialog, settingsDialog];
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const mobile = matchMedia("(pointer: coarse)");
 const mouse = matchMedia("(any-pointer: fine)");
@@ -46,7 +47,7 @@ let combatStatus;
 let phase = "explore";
 let devicePending;
 let queuedSignal;
-let signalId;
+let visibleSignal;
 let signalTimer;
 let loadStage = 0;
 let thirdPerson = false;
@@ -115,13 +116,12 @@ const workshopMission = setupMission(missionDialog, () => language, {
   },
   onProject: () => openProject(ambacar.id)
 });
-const devices = setupDevices(deviceDialog, () => language, campaign, (id, data) => world.complete(id, data), openProject);
+const devices = setupDevices(deviceDialog, desktopDialog, () => language, campaign, (id, data) => world.complete(id, data), openProject);
 
 function markVisit(id) {
   if (progress.visited.has(id)) return;
   progress.visited.add(id);
   storeProgress();
-  renderProgress();
 }
 
 function renderCards() {
@@ -182,8 +182,14 @@ function openProject(id) {
   projectDialog.showModal();
 }
 
-function renderProgress() {
-  get("visited").textContent = words().visited(progress.visited.size, destinations.length);
+function levelName(id) {
+  return id === "return" ? copy().returnLevel : projectById.get(id)?.name[language] ?? "Ambacar";
+}
+
+function renderLevel() {
+  const text = copy();
+  get("campaign-level").textContent = campaign.done("power") ? text.campaignComplete :
+    `${text.level(campaign.level, levels.length)} · ${levelName(campaign.state.station)}`;
 }
 
 function renderMap() {
@@ -196,11 +202,12 @@ function renderMap() {
     button.type = "button";
     button.dataset.destination = id;
     label.textContent = project?.[language].location ?? words().garage;
-    subtitle.textContent = project?.name[language] ?? "Ambacar";
+    subtitle.textContent = levelName(id);
     const allowed = campaign.travelAllowed(id);
     const station = campaign.state.station === "return" ? "ambacar" : campaign.state.station;
     const goal = station === id && !campaign.done("power");
-    status.textContent = [goal && copy().current, allowed ? (progress.visited.has(id) ? words().seen : words().unseen) : copy().locked].filter(Boolean).join(" · ");
+    const visited = campaign.state.reached.includes(id) || progress.visited.has(id);
+    status.textContent = [goal && copy().current, allowed ? (visited ? words().seen : words().unseen) : copy().onFoot].filter(Boolean).join(" · ");
     button.disabled = !allowed;
     if (goal) button.setAttribute("aria-current", "location");
     button.append(label, subtitle, status);
@@ -213,9 +220,8 @@ function renderMap() {
   const plaza = document.createElement("span");
   plaza.className = "map-plaza";
   plaza.textContent = words().plaza;
-  const buttons = destinations.map(createDestination);
-  buttons.splice(2, 0, plaza);
-  get("map-list").replaceChildren(...buttons);
+  const buttons = destinations.filter(campaign.unlocked).map(createDestination);
+  get("map-list").replaceChildren(plaza, ...buttons);
   get("map-hint").textContent = copy().mapHint;
 }
 
@@ -231,7 +237,7 @@ function renderTarget() {
 
 function renderCombat() {
   if (!combatStatus) return;
-  const { health, ammo, ammoLimit, reloading, charging, charged, attackWarning, exposed, aim, sprinting, crouching, damage } = combatStatus;
+  const { health, ammo, ammoLimit, reloading, charging, charged, attackWarning, exposed, aim, enemy, sprinting, crouching, damage } = combatStatus;
   const text = copy();
   get("campaign-hud").hidden = !inGame || phase === "wake" || !campaign.state.emitter;
   get("health").value = health;
@@ -243,6 +249,14 @@ function renderCombat() {
   if (get("combat-status").textContent !== warning) get("combat-status").textContent = warning;
   get("touch-crouch").setAttribute("aria-pressed", String(crouching));
   game.dataset.aim = aim;
+  get("enemy-vitals").hidden = !enemy;
+  if (enemy) {
+    get("enemy-name").textContent = text.enemies[enemy.id];
+    get("enemy-health-value").textContent = `${enemy.hp}/${enemy.max}`;
+    const meter = get("enemy-health");
+    meter.max = enemy.max;
+    meter.value = enemy.hp;
+  }
   const indicator = get("damage-indicator");
   indicator.hidden = damage === null || phase !== "explore";
   if (!indicator.hidden) {
@@ -253,16 +267,21 @@ function renderCombat() {
 
 function renderSignal() {
   const signal = get("campaign-signal");
-  signal.hidden = !signalId || (!inGame && !opening);
-  signal.textContent = copy().signals[signalId] ?? "";
+  const title = get("campaign-signal-level");
+  const text = copy();
+  const { id, level } = visibleSignal ?? {};
+  signal.hidden = !id || (!inGame && !opening);
+  title.hidden = !level;
+  title.textContent = level ? `${text.levelUnlocked(level)} · ${levelName(levels[level - 1])}` : "";
+  get("campaign-signal-text").textContent = text.signals[id] ?? "";
 }
 
-function showSignal(id) {
+function showSignal(id, level) {
   clearTimeout(signalTimer);
-  signalId = id;
+  visibleSignal = { id, level };
   renderSignal();
   signalTimer = setTimeout(() => {
-    signalId = undefined;
+    visibleSignal = undefined;
     renderSignal();
   }, id === "wake" ? 3300 : 5600);
 }
@@ -361,7 +380,7 @@ function render() {
   get("game-error").textContent = words().gameError;
   renderCards();
   renderExperience();
-  renderProgress();
+  renderLevel();
   renderCamera();
   renderTarget();
   renderCombat();
@@ -409,7 +428,7 @@ function resumeWorld() {
   world.resume(duration);
   sound.ambience(document.hidden ? 0 : .029);
   if (queuedSignal) {
-    showSignal(queuedSignal);
+    showSignal(queuedSignal.id, queuedSignal.level);
     sound.cue("relay");
     queuedSignal = undefined;
   }
@@ -465,7 +484,7 @@ async function enterGame() {
     await nextPaint();
     if (request !== openingRequest) return;
     if (!world) {
-      const { createWorld } = await import("./game/world.js?v=campaign");
+      const { createWorld } = await import("./game/world.js?v=interiors");
       if (request !== openingRequest) return;
       setLoadStage(1);
       await nextPaint();
@@ -489,18 +508,19 @@ async function enterGame() {
         onSignal: showSignal,
         onSound: sound.cue,
         onTransition: fadeScene,
-        onResult(id, cue) {
+        onResult(id, cue, level) {
           if (id === "zeus") {
             progress.workshop = true;
             storeProgress();
           }
           if (cue) {
-            if (anyDialogOpen()) queuedSignal = cue;
+            if (anyDialogOpen()) queuedSignal = { id: cue, level };
             else {
-              showSignal(cue);
+              showSignal(cue, level);
               sound.cue("relay");
             }
           }
+          renderLevel();
           renderControls();
           renderEntry();
         },
@@ -552,7 +572,7 @@ function exitGame() {
   devicePending = undefined;
   queuedSignal = undefined;
   clearTimeout(signalTimer);
-  signalId = undefined;
+  visibleSignal = undefined;
   cancelCameraTransition();
   lookInput.release();
   clearWorldInput();
@@ -644,6 +664,7 @@ get("restart-no").addEventListener("click", () => {
 });
 get("restart-yes").addEventListener("click", () => {
   campaign.reset();
+  renderLevel();
   settingsDialog.close();
   queuedSignal = undefined;
   world.stop();

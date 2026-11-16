@@ -11,6 +11,10 @@ Portafolio bilingüe de Diego Jijón. La campaña 3D **Después del apagón** co
 
 ZEUS desbloquea la salida de Ambacar y concede el emisor. El navegador guarda los hitos y los puntos seguros de la campaña. Puedes continuar desde la portada o volver a empezar desde **Ajustes**. Las demos usan datos ficticios.
 
+La campaña tiene seis niveles. Empieza en Ambacar y revela Laboratorio RGB, TalkApp, Semáforo IA y ASOTEMA al completar sus objetivos en orden. Recoger el repuesto abre el regreso al taller y revela el generador, que se puede poner en marcha tras desactivar al supervisor. Las estaciones descubiertas se pueden volver a visitar y el viaje rápido se habilita al llegar a sus puntos seguros.
+
+Entra en cada estación para usar sus equipos. Ambacar, RGB y ASOTEMA abren un escritorio con su aplicación. TalkApp usa el celular y Semáforo IA se controla desde la tableta de la caseta. Los interiores son puntos seguros. En la calle, los robots resisten más, golpean más fuerte y atacan más rápido conforme avanzas.
+
 ## Código
 
 - `content.js` contiene las fichas de proyectos y las traducciones de la interfaz.

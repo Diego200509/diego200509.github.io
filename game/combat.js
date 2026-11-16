@@ -14,6 +14,13 @@ const groups = [
   [["marksman", -4, 9.1], ["assault", -.6, 12.7], ["marksman", -7.7, 4.75]],
   [["supervisor", -4.6, 13.25], ["patrol", -2.7, 14.1], ["patrol", -5.1, 11.1]]
 ];
+const waveTuning = [
+  { health: 1.42, damage: 1.10, pace: 1 },
+  { health: 1.62, damage: 1.18, pace: 1.04 },
+  { health: 1.82, damage: 1.28, pace: 1.09 },
+  { health: 2.02, damage: 1.38, pace: 1.13 },
+  { health: 2.16, damage: 1.46, pace: 1.17 }
+];
 const ammoLimit = 8;
 const pulseRange = 28;
 const shell = new THREE.BoxGeometry(1, 1, 1);
@@ -35,7 +42,10 @@ export function createCombat(scene, collision, campaign, events) {
   }
 
   const robots = groups.flatMap((group, wave) => group.map(([id, x, z], index) => {
-    const design = designs[id];
+    const base = designs[id];
+    const tuning = waveTuning[wave];
+    const design = { ...base, hp: Math.round(base.hp * tuning.health), damage: Math.round(base.damage * tuning.damage),
+      speed: base.speed * tuning.pace, windup: Math.max(.72, base.windup / tuning.pace), pace: tuning.pace };
     const body = new THREE.Group();
     body.visible = false;
     body.scale.setScalar(design.scale);
@@ -265,10 +275,10 @@ export function createCombat(scene, collision, campaign, events) {
           events.sound("hostile");
         }
         robot.mode = "recover";
-        robot.timer = 1.6 + robot.index * .27;
+        robot.timer = (1.6 + robot.index * .27) / design.pace;
       }
     } else if (robot.mode === "rush") {
-      moveRobot(robot, robot.attack, 7.15, dt);
+      moveRobot(robot, robot.attack, 7.15 * design.pace, dt);
       if (!robot.hit && distance < 1.45 && clearShot) {
         harm(design.damage, body.position);
         robot.hit = true;

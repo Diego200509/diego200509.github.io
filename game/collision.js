@@ -1,4 +1,5 @@
 import * as THREE from "../vendor/three.module.min.js";
+import { roomBox, rooms, roomWalls } from "./interiors.js";
 import { workshopLocal, workshopPoint, workshopTerminal, workshopYaw } from "./workshop.js";
 
 const bodyRadius = .25;
@@ -28,8 +29,9 @@ export function createCollision() {
   add(0, -.16, 0, 44, .32, 44);
   add(0, .6, -16.2, 36, 1.2, .45);
   for (const x of [-18.2, 18.2]) add(x, .55, .7, .48, 1.1, 36);
-  add(0, 2, -11, 9.5, 4.1, 5.45);
-  for (const x of [-14, 14]) add(x, 2, 0, 5.45, 4.1, 7.65);
+  const areaVolumes = Object.fromEntries(Object.entries(rooms).map(([id, room]) =>
+    [id, roomWalls(room).map(box => add(...roomBox(room, box)))]));
+  areaVolumes.return = [];
   for (const x of [-3.7, 3.7]) add(x, 1.69, 0, .25, 3.38, 6, true);
   for (const x of [-2.6, 2.6]) add(x, 1.69, 2.87, 2.33, 3.38, .28, true);
   add(0, 1.69, -2.87, 7.62, 3.38, .3, true);
@@ -46,6 +48,7 @@ export function createCollision() {
   return {
     add,
     door,
+    areaVolumes,
     canStand(x, z, height) {
       if (x <= -17.55 || x >= 17.55 || z <= -15.7 || z >= 19.4) return false;
       const room = workshopLocal(x, z);

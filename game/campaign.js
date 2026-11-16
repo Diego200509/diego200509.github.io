@@ -1,7 +1,7 @@
 export const stations = ["ambacar", "rgb", "talkapp", "traffic", "asotema"];
+export const levels = [...stations, "return"];
 export const milestones = ["zeus", "rgb", "talkapp", "traffic", "expense", "supply", "supervisor", "power"];
 export const campaignKey = "district-campaign";
-const checkpoints = [...stations, "return"];
 const rewards = { rgb: "chain", talkapp: "scanner", traffic: "interrupt", supply: "battery" };
 
 export function loadCampaign(storage) {
@@ -21,6 +21,11 @@ export function loadCampaign(storage) {
       expense: "asotema", supply: "asotema", supervisor: "return", power: "return" })[next] ?? "return";
   }
 
+  function unlocked(id) {
+    const index = levels.indexOf(id);
+    return index >= 0 && index <= levels.indexOf(state.station);
+  }
+
   state = initial();
   if (loaded?.version === 1) {
     // Accept only the contiguous, valid portion of a saved campaign.
@@ -35,10 +40,10 @@ export function loadCampaign(storage) {
     state.prisms = state.completed.includes("rgb") ? [0, 1, 2] :
       [0, 1, 2].filter(index => state.emitter && Array.isArray(loaded.prisms) && loaded.prisms.includes(index));
     state.station = destination();
-    if (checkpoints.indexOf(loaded.checkpoint) >= 0 && checkpoints.indexOf(loaded.checkpoint) <= checkpoints.indexOf(state.station)) {
+    if (unlocked(loaded.checkpoint)) {
       state.checkpoint = loaded.checkpoint;
     }
-    state.reached = checkpoints.filter(id => id === "ambacar" || (checkpoints.indexOf(id) <= checkpoints.indexOf(state.station) &&
+    state.reached = levels.filter(id => id === "ambacar" || (unlocked(id) &&
       (id === state.checkpoint || (Array.isArray(loaded.reached) && loaded.reached.includes(id)))));
     for (const id of stations) {
       if (Number.isSafeInteger(loaded.demos?.[id]) && loaded.demos[id] > 0) state.demos[id] = loaded.demos[id];
@@ -57,6 +62,8 @@ export function loadCampaign(storage) {
 
   return {
     get state() { return state; },
+    get level() { return levels.indexOf(state.station) + 1; },
+    unlocked,
     done,
     next,
     reset() { state = initial(); save(); },
@@ -78,14 +85,14 @@ export function loadCampaign(storage) {
       save();
     },
     checkpoint(id) {
-      if (!checkpoints.includes(id) || checkpoints.indexOf(id) > checkpoints.indexOf(state.station) || state.checkpoint === id) return false;
+      if (!unlocked(id) || state.checkpoint === id) return false;
       state.checkpoint = id;
       if (!state.reached.includes(id)) state.reached.push(id);
       save();
       return true;
     },
     travelAllowed(id) {
-      return done("zeus") && stations.includes(id) && (done("power") || state.reached.includes(id));
+      return done("zeus") && stations.includes(id) && unlocked(id) && (done("power") || state.reached.includes(id));
     },
     complete(result, data) {
       if (next() !== result || (result === "rgb" && state.prisms.length !== 3)) return false;

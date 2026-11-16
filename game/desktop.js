@@ -1,6 +1,6 @@
 const labels = {
-  es: { leave: "Volver al taller", launch: "Abrir ZEUS", minimize: "Minimizar ZEUS", restore: "Restaurar tamaño de ZEUS", maximize: "Maximizar ZEUS", close: "Cerrar ZEUS" },
-  en: { leave: "Back to workshop", launch: "Open ZEUS", minimize: "Minimize ZEUS", restore: "Restore ZEUS window size", maximize: "Maximize ZEUS", close: "Close ZEUS" }
+  es: { leave: "Volver al taller", launch: "Abrir", minimize: "Minimizar", restore: "Restaurar tamaño de", maximize: "Maximizar", close: "Cerrar" },
+  en: { leave: "Back to workshop", launch: "Open", minimize: "Minimize", restore: "Restore size of", maximize: "Maximize", close: "Close" }
 };
 
 function inside(value, extent, size) {
@@ -19,6 +19,7 @@ export function createDesktop(dialog, getLanguage) {
   const wide = matchMedia("(min-width: 681px)");
   let clockTimer;
   let drag = null;
+  let appName;
 
   function updateClock(format) {
     const time = new Date();
@@ -47,7 +48,7 @@ export function createDesktop(dialog, getLanguage) {
   function setMaximized(value) {
     appWindow.toggleAttribute("data-maximized", value);
     const copy = labels[getLanguage()];
-    const label = value ? copy.restore : copy.maximize;
+    const label = `${value ? copy.restore : copy.maximize} ${appName}`;
     maximize.setAttribute("aria-label", label);
     maximize.title = label;
     maximize.firstElementChild.textContent = value ? "❐" : "□";
@@ -57,7 +58,7 @@ export function createDesktop(dialog, getLanguage) {
     appWindow.hidden = false;
     dock.setAttribute("aria-expanded", "true");
     launcher.setAttribute("aria-expanded", "true");
-    appWindow.querySelector("#mission-window-title").focus({ preventScroll: true });
+    get("window-name").focus({ preventScroll: true });
   }
 
   function hideWindow(focus) {
@@ -131,14 +132,16 @@ export function createDesktop(dialog, getLanguage) {
   });
 
   return {
-    open() {
+    open({ name = "ZEUS", leave } = {}) {
+      appName = name;
       const language = getLanguage();
       const copy = labels[language];
-      get("leave").textContent = copy.leave;
+      get("leave").textContent = leave ?? copy.leave;
       for (const key of ["launch", "minimize", "close"]) {
         const button = get(key);
-        button.setAttribute("aria-label", copy[key]);
-        button.title = copy[key];
+        const label = `${copy[key]} ${appName}`;
+        button.setAttribute("aria-label", label);
+        button.title = label;
       }
       setMaximized(false);
       resetPosition();

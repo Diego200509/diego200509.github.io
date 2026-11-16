@@ -1,21 +1,20 @@
 import * as THREE from "../vendor/three.module.min.js";
 import { createAvatar } from "./avatar.js";
 import { createPlayerCamera } from "./camera.js?v=campaign";
-import { createCollision } from "./collision.js";
-import { createCombat } from "./combat.js";
-import { consoles, generator, seat, stand, supply } from "./district-props.js";
+import { createCollision } from "./collision.js?v=interiors";
+import { createCombat } from "./combat.js?v=interiors";
+import { generator, seat, stand } from "./district-props.js?v=interiors";
+import { consoles, entrances, roomContains, roomPoint, rooms, supply } from "./interiors.js";
 import { muralColors } from "./mural.js";
-import { buildDistrict } from "./scene.js";
+import { buildDistrict } from "./scene.js?v=interiors";
 import { workshopLocal, workshopPoint, workshopTerminal, workshopYaw } from "./workshop.js";
 
 const stops = {
   ambacar: { ...workshopPoint(.25, .55), yaw: workshopYaw - .32 },
-  rgb: { x: -3.15, z: -5.82, yaw: 0 },
-  talkapp: { x: 9.1, z: .1, yaw: -Math.PI / 2 },
-  traffic: { x: 7.5, z: 11.95, yaw: 0 },
-  asotema: { x: -8.94, z: -.9, yaw: Math.PI / 2 },
+  ...Object.fromEntries(Object.entries(rooms).map(([id, room]) => [id, roomPoint(room, 0, .62)])),
   return: { ...workshopPoint(0, 5.45), yaw: -.68 }
 };
+const roomIds = Object.keys(rooms);
 const zeus = { ...workshopPoint(workshopTerminal.x, workshopTerminal.z - .23), yaw: workshopYaw };
 const door = workshopPoint(0, 2.88);
 const workshopExit = workshopPoint(0, 3.9);
@@ -41,14 +40,14 @@ export function createWorld(viewport, campaign, callbacks) {
   renderer.toneMappingExposure = 1.14;
   viewport.append(renderer.domElement);
 
-  const { lab, traffic, workshop, props, lighting, lanterns, material, setLabels } = buildDistrict(scene);
+  const { lab, traffic, workshop, areas, props, lighting, lanterns, material, setLabels } = buildDistrict(scene);
   const collision = createCollision();
   for (const volume of props.cover) collision.add(...volume);
-  for (const [id, { x, z }] of Object.entries(consoles)) {
-    collision.add(x, .78, z, id === "asotema" ? .47 : 1.06, 1.56, id === "asotema" ? 1.06 : .47);
+  for (const [id, cover] of Object.entries(props.areaCover)) {
+    collision.areaVolumes[id].push(...cover.map(volume => collision.add(...volume)));
   }
   const cars = props.cars.map(car => collision.add(car.position.x, .57, car.position.z, 1.88, 1.13, 1.23));
-  const storageGate = collision.add(supply.x + .62, .825, supply.z, .22, 1.65, 1.7);
+  const storageGate = collision.add(...props.gateVolume);
   const player = createPlayerCamera(camera, collision);
   const avatar = createAvatar(scene);
   const position = player.position;
@@ -70,7 +69,7 @@ export function createWorld(viewport, campaign, callbacks) {
   const motion = new THREE.Vector3();
   const fromDevice = new THREE.Vector3();
   const deviceScreen = new THREE.Vector3();
-  const fogColor = new THREE.Color("#63758b");
+  const fogColor = new THREE.Color("#536476");
   const clearFog = new THREE.Color("#b7ac9c");
   const horizon = new THREE.Color("#57687c");
   const clearHorizon = new THREE.Color("#c79262");
@@ -95,6 +94,7 @@ export function createWorld(viewport, campaign, callbacks) {
   let transit;
   let returnTime = 0;
   let restoration = 0;
+  let visibleLevel;
   let damaged = 0;
   let damageDirection = 0;
   let activeAction = null;
@@ -132,9 +132,13 @@ export function createWorld(viewport, campaign, callbacks) {
 
   function playing() { return running && phase === "explore" && !document.hidden; }
 
+  function activeRoom() {
+    return roomIds.find(id => areas[id].visible && roomContains(rooms[id], position));
+  }
+
   function updateView(dt, instant = false) {
     const local = workshopLocal(position.x, position.z);
-    const indoors = Math.abs(local.x) < 3.6 && Math.abs(local.z) < 2.84;
+    const indoors = Boolean(activeRoom()) || (Math.abs(local.x) < 3.6 && Math.abs(local.z) < 2.84);
     const height = THREE.MathUtils.lerp(eyeStanding, eyeCrouching, crouchBlend) - sitting * .49;
     player.update(yaw, pitch, indoors, height, dt, instant || reducedMotion.matches, sitting);
     avatar.body.position.copy(position);
@@ -181,18 +185,16 @@ export function createWorld(viewport, campaign, callbacks) {
     reportTarget();
   }
 
-  function isSafe() {
+  function isSafe(roomId = activeRoom()) {
     const room = workshopLocal(position.x, position.z);
     if (Math.abs(room.x) < 3.45 && Math.abs(room.z) < 2.69) return true;
     if (!campaign.done("zeus")) return true;
-    return Object.entries(stops).some(([id, spot]) => {
-      if (id === "ambacar" || (id !== campaign.state.station && !campaign.state.reached.includes(id))) return false;
-      return near(spot, position, id === "return" ? 1.7 : 2.0);
-    });
+    return Boolean(roomId) || (campaign.unlocked("return") && near(stops.return, position, 1.7));
   }
 
   function reportTarget() {
     const next = campaign.next();
+    const roomId = activeRoom();
     let action = null;
     let index = null;
     if (phase === "explore" && !returnTime) {
@@ -208,29 +210,30 @@ export function createWorld(viewport, campaign, callbacks) {
           index = id;
           action = "prism";
         }
-      } else if ((next === "rgb" || campaign.done("rgb")) && near(position, consoles.rgb, 1.92)) action = "rgb";
-      else if ((next === "talkapp" || campaign.done("talkapp")) && near(position, stops.talkapp, 1.95)) action = "talkapp";
-      else if ((next === "traffic" || campaign.done("traffic")) && near(position, consoles.traffic, 1.92)) action = "traffic";
-      else if (next === "supply" && near(position, supply, .91)) action = "supply";
-      else if ((next === "expense" || campaign.done("expense")) && near(position, consoles.asotema, 1.88)) action = "expense";
+      } else if (roomId === "rgb" && near(position, consoles.rgb, 1.65)) action = "rgb";
+      else if (roomId === "talkapp" && near(position, consoles.talkapp, 1.65)) action = "talkapp";
+      else if (roomId === "traffic" && near(position, consoles.traffic, 1.55)) action = "traffic";
+      else if (roomId === "asotema" && next === "supply" && near(position, supply, .75)) action = "supply";
+      else if (roomId === "asotema" && near(position, consoles.asotema, 1.64)) action = "expense";
       else if (next === "power" && near(position, generator, 1.85)) action = "power";
     }
     activeAction = { action, index };
-    const safe = isSafe();
+    const safe = isSafe(roomId);
     const stage = campaign.state.station;
-    if (playing() && !returnTime && stage !== "ambacar" && near(position, stops[stage], 2.0) && campaign.checkpoint(stage)) {
+    const reached = stage === roomId || (stage === "return" && near(position, stops.return, 1.7));
+    if (playing() && !returnTime && reached && campaign.checkpoint(stage)) {
       combat.refill();
       if (stage !== "return") callbacks.onVisit(stage);
       callbacks.onSignal("safe");
     }
-    if (playing() && next === "talkapp" && !phoneNotified && near(position, stops.talkapp, 4.3)) {
+    if (playing() && next === "talkapp" && !phoneNotified && near(position, entrances.talkapp, 3.7)) {
       phoneNotified = true;
       callbacks.onSignal("phone");
       callbacks.onSound("phone");
       navigator.vibrate?.(70);
     }
     const state = { action, next, prisms: campaign.state.prisms.length,
-      phone: (next === "talkapp" && near(position, stops.talkapp, 2)) || (campaign.done("talkapp") && safe) };
+      phone: action === "talkapp" || (campaign.done("talkapp") && safe) };
     const key = JSON.stringify(state);
     if (previousTarget !== key) {
       previousTarget = key;
@@ -239,11 +242,12 @@ export function createWorld(viewport, campaign, callbacks) {
   }
 
   function complete(id, data) {
+    const lastLevel = campaign.level;
     if (!campaign.complete(id, data)) return false;
     combat.refill();
     const cue = { zeus: campaign.state.emitter, rgb: "chain", talkapp: "scanner", traffic: "interrupt",
       expense: "expense", supply: "supply", power: "power" }[id];
-    callbacks.onResult(id, cue);
+    callbacks.onResult(id, cue, campaign.level > lastLevel ? campaign.level : undefined);
     if (id === "power") {
       combat.reset();
       setPhase("finish");
@@ -296,17 +300,27 @@ export function createWorld(viewport, campaign, callbacks) {
     return x !== position.x || z !== position.z;
   }
 
+  function syncAreas() {
+    if (visibleLevel === campaign.level) return;
+    visibleLevel = campaign.level;
+    for (const [id, area] of Object.entries(areas)) {
+      area.visible = campaign.unlocked(id);
+      for (const volume of collision.areaVolumes[id] ?? []) volume.active = area.visible;
+    }
+    renderer.shadowMap.needsUpdate = true;
+  }
+
   function updateDistrict(dt) {
     workshop.update(dt, time * 1000, campaign.done("zeus"), campaign.done("zeus"), reducedMotion.matches);
     collision.door.box.min.y = workshop.doorBottom;
     collision.door.active = workshop.doorVisible;
     props.update(dt, time, campaign, reducedMotion.matches);
-    storageGate.active = !campaign.done("expense");
+    storageGate.active = areas.asotema.visible && props.gateBlocked;
     cars.forEach((car, index) => {
       const x = props.cars[index].position.x;
       car.box.min.x = x - .94;
       car.box.max.x = x + .94;
-      car.active = x < 19;
+      car.active = areas.traffic.visible && props.cars[index].visible;
     });
     for (const [index, crystal] of lab.prisms.entries()) {
       crystal.visible = !campaign.state.prisms.includes(index);
@@ -332,19 +346,23 @@ export function createWorld(viewport, campaign, callbacks) {
     const powered = campaign.done("power");
     restoration = reducedMotion.matches ? Number(powered) : THREE.MathUtils.damp(restoration, Number(powered), .95, dt);
     scene.fog.color.lerpColors(fogColor, clearFog, restoration);
-    scene.fog.near = 8 + 15 * restoration;
-    scene.fog.far = 37 + 40 * restoration;
+    scene.fog.near = 3.6 + 19.4 * restoration;
+    scene.fog.far = 26 + 51 * restoration;
     lighting.sky.intensity = 1.08 + .75 * restoration;
     lighting.sun.intensity = .74 + 1.45 * restoration;
     lighting.skyDome.material.uniforms.horizon.value.lerpColors(horizon, clearHorizon, restoration);
     lighting.skyDome.material.uniforms.zenith.value.lerpColors(zenith, clearZenith, restoration);
-    lighting.haze.uniforms.strength.value = .29 * (1 - restoration);
+    lighting.haze.uniforms.strength.value = .44 * (1 - restoration);
     lighting.haze.uniforms.drift.value = reducedMotion.matches ? 0 : time * .12;
     props.lightWindows(restoration);
     const next = campaign.next();
+    const currentRoom = activeRoom();
+    const stationBeacon = id => currentRoom === id ? consoles[id] : entrances[id];
     const beacon = next === "zeus" ? zeus :
-      next === "rgb" ? (prisms.find((_, index) => !campaign.state.prisms.includes(index)) ?? consoles.rgb) :
-      next === "expense" ? consoles.asotema : next === "supply" ? supply :
+      next === "rgb" ? (prisms.find((_, index) => !campaign.state.prisms.includes(index)) ?? stationBeacon("rgb")) :
+      next === "expense" ? stationBeacon("asotema") :
+      next === "supply" ? (currentRoom === "asotema" ? supply : entrances.asotema) :
+      next === "talkapp" || next === "traffic" ? stationBeacon(next) :
       next === "power" ? generator : next === "supervisor" ? stops.return : stops[next];
     props.beacon.visible = Boolean(beacon);
     if (beacon) props.beacon.position.set(beacon.x, 2.15 + (reducedMotion.matches ? 0 : Math.sin(time * 2.4) * .15), beacon.z);
@@ -353,11 +371,13 @@ export function createWorld(viewport, campaign, callbacks) {
   function reportStatus(height) {
     const { health, ammo, ammoLimit, reloading, charging, chargeTime, attackWarning, exposed } = combat.status();
     let aim = "";
+    let enemy = null;
     if (phase === "explore" && campaign.state.emitter && !returnTime) {
       const hit = combat.aim(camera, position, yaw, height);
       aim = hit.weak ? "weak" : hit.robot ? "robot" : hit.fraction < .98 ? "cover" : "";
+      if (hit.robot) enemy = { id: hit.robot.id, hp: hit.robot.hp, max: hit.robot.design.hp };
     }
-    const state = { health, ammo, ammoLimit, reloading, charging, charged: chargeTime >= .56, attackWarning, exposed, aim,
+    const state = { health, ammo, ammoLimit, reloading, charging, charged: chargeTime >= .56, attackWarning, exposed, aim, enemy,
       sprinting, crouching, damage: damaged > 0 ? damageDirection : null };
     const key = JSON.stringify(state);
     if (key === previousStatus) return;
@@ -373,6 +393,7 @@ export function createWorld(viewport, campaign, callbacks) {
     if (transit) {
       player.frameDevice(Math.min(1, phaseTime / transit.duration), transit.fade);
     } else if (phase === "wake" || phase === "explore" || phase === "finish" || phase === "respawn") {
+      syncAreas();
       time += dt;
       if (phase === "wake") {
         const rise = clamp((phaseTime - 1.42) / .96, 0, 1);
@@ -441,6 +462,7 @@ export function createWorld(viewport, campaign, callbacks) {
       previousTarget = previousStatus = "";
       clearInput();
       combat.reset();
+      syncAreas();
       if (campaign.state.awakened) {
         setPhase("explore");
         spawn(campaign.state.checkpoint);
@@ -527,7 +549,7 @@ export function createWorld(viewport, campaign, callbacks) {
     phone() {
       if (!playing() || returnTime) return;
       reportTarget();
-      if ((campaign.next() === "talkapp" && near(position, stops.talkapp, 2)) || (campaign.done("talkapp") && isSafe())) callbacks.onDevice("talkapp");
+      if (activeAction.action === "talkapp" || (campaign.done("talkapp") && isSafe())) callbacks.onDevice("talkapp");
     },
     interact,
     complete,

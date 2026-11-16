@@ -7,8 +7,8 @@
   <meta name="theme-color" content="#17191c">
   <title>Distrito Cero · Diego Jijón</title>
   <link rel="icon" href="./assets/mark.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=campaign">
-  <link rel="stylesheet" href="./campaign.css">
+  <link rel="stylesheet" href="./styles.css?v=levels">
+  <link rel="stylesheet" href="./campaign.css?v=interiors">
   <link rel="stylesheet" href="./site-header.css?v=section-links">
   <link rel="stylesheet" href="./landing.css?v=header">
   <link rel="stylesheet" href="./archive.css?v=header">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="./traffic-demo.css?v=header">
   <link rel="stylesheet" href="./workstation.css?v=desktop">
   <script type="importmap">{"imports":{"./content.js":"./content.js?v=workstation","./experience.js":"./experience.js?v=visual","./project-archive.js":"./project-archive.js?v=sicop","./site-footer.js":"./site-footer.js?v=inline"}}</script>
-  <script type="module" src="./main.js?v=campaign"></script>
+  <script type="module" src="./main.js?v=interiors"></script>
   <script type="module" src="./landing.js?v=header"></script>
   <script type="module" src="./district-preview.js?v=2"></script>
   <script type="module" src="./asotema-demo.js"></script>
@@ -486,7 +486,7 @@
       <button class="button game-button" id="exit" type="button" data-t="exit">← Salir</button>
       <div class="game-progress">
         <span data-t="district">DISTRITO CERO</span>
-        <span id="visited" aria-live="polite"></span>
+        <span id="campaign-level"></span>
       </div>
       <div class="game-menu">
         <button class="button game-button" id="camera-button" type="button" aria-pressed="false" disabled data-t="camera">Cámara</button>
@@ -517,9 +517,16 @@
       </div>
       <p id="emitter-status"></p>
       <p id="combat-status" role="status"></p>
+      <div class="enemy-vitals" id="enemy-vitals" hidden>
+        <label for="enemy-health"><span id="enemy-name"></span> <strong id="enemy-health-value"></strong></label>
+        <meter id="enemy-health" min="0" max="100" value="100"></meter>
+      </div>
     </div>
     <div id="damage-indicator" class="damage-indicator" role="status" hidden></div>
-    <p id="campaign-signal" class="campaign-signal" role="status" hidden></p>
+    <p id="campaign-signal" class="campaign-signal" role="status" hidden>
+      <strong id="campaign-signal-level" hidden></strong>
+      <span id="campaign-signal-text"></span>
+    </p>
     <div class="crosshair" aria-hidden="true"></div>
     <div class="game-bottom" id="game-bottom">
       <p id="objective" class="objective" aria-live="polite"></p>
@@ -599,11 +606,62 @@
     <p id="map-hint"></p>
   </dialog>
   <dialog class="sheet device-sheet" id="device-dialog" aria-labelledby="device-title">
-    <header class="device-header">
-      <h2 id="device-title"></h2>
-      <form method="dialog"><button class="button secondary" id="device-close" type="submit" autofocus></button></form>
-    </header>
-    <div id="device-body" class="device-body"></div>
+    <div class="device-screen">
+      <div class="device-status-bar" aria-hidden="true">
+        <time data-device-clock></time>
+        <span class="device-camera"></span>
+        <span class="device-indicators"><span class="device-signal-bars"></span><span class="device-battery"></span></span>
+      </div>
+      <header class="device-header">
+        <form method="dialog"><button class="device-exit" type="submit" autofocus><span aria-hidden="true">‹</span> <span data-device-leave></span></button></form>
+        <h2 id="device-title" data-app-name tabindex="-1"></h2>
+      </header>
+      <div class="device-scroll" data-device-page>
+        <div class="device-body" data-device-body></div>
+      </div>
+      <div class="device-home" data-device-launchpad hidden>
+        <button type="button" data-device-launch><span class="mission-zeus-icon device-app-icon" data-app-icon aria-hidden="true"></span><span data-app-name></span></button>
+      </div>
+      <button class="device-home-bar" type="button" data-device-home></button>
+    </div>
+  </dialog>
+  <dialog class="sheet mission-sheet device-desktop" id="device-desktop-dialog" aria-labelledby="device-desktop-title">
+    <div class="mission-desktop">
+      <header class="mission-desktop-bar">
+        <span class="mission-desktop-name"><img src="./assets/mark.svg" width="21" height="21" alt=""><strong id="device-desktop-title"></strong></span>
+        <div class="mission-desktop-actions">
+          <time class="mission-clock" data-desktop="clock"></time>
+          <form method="dialog"><button class="mission-leave" type="submit"><span aria-hidden="true">←</span> <span data-desktop="leave"></span></button></form>
+        </div>
+      </header>
+      <div class="mission-desktop-space" data-desktop="space">
+        <button class="mission-shortcut" type="button" data-desktop="launch" aria-controls="district-desktop-app">
+          <span class="mission-zeus-icon device-app-icon" data-app-icon aria-hidden="true"></span><span data-app-name></span>
+        </button>
+        <section class="mission-window" id="district-desktop-app" data-desktop="window" aria-labelledby="device-desktop-window-title" hidden>
+          <header class="mission-window-bar" data-desktop="titlebar">
+            <div class="mission-window-name" id="device-desktop-window-title" data-desktop="window-name" tabindex="-1">
+              <span class="mission-zeus-icon device-app-icon" data-app-icon aria-hidden="true"></span><strong data-app-name></strong>
+            </div>
+            <div class="mission-window-actions">
+              <button type="button" data-desktop="minimize"><span aria-hidden="true">−</span></button>
+              <button type="button" data-desktop="maximize"><span aria-hidden="true">□</span></button>
+              <button type="button" data-desktop="close"><span aria-hidden="true">×</span></button>
+            </div>
+          </header>
+          <div class="mission-browser">
+            <p class="mission-tab" data-app-name></p>
+            <div class="mission-address"><svg aria-hidden="true" focusable="false"><use href="./assets/landing-icons.svg#shield"></use></svg><span data-device-address></span></div>
+            <div class="device-body device-desktop-body" data-device-body></div>
+          </div>
+        </section>
+      </div>
+      <div class="mission-dock">
+        <button class="mission-dock-app" type="button" data-desktop="dock" aria-controls="district-desktop-app" aria-expanded="false">
+          <span class="mission-zeus-icon device-app-icon" data-app-icon aria-hidden="true"></span><span data-app-name></span>
+        </button>
+      </div>
+    </div>
   </dialog>
   <dialog class="sheet settings-sheet" id="campaign-settings" aria-labelledby="settings-title">
     <div class="sheet-top">
@@ -638,7 +696,7 @@
         </button>
         <section class="mission-window" id="mission-zeus" data-desktop="window" aria-labelledby="mission-window-title" hidden>
           <header class="mission-window-bar" data-desktop="titlebar">
-            <div class="mission-window-name" id="mission-window-title" tabindex="-1"><span class="mission-zeus-icon" aria-hidden="true">Z</span><strong>ZEUS</strong></div>
+            <div class="mission-window-name" id="mission-window-title" data-desktop="window-name" tabindex="-1"><span class="mission-zeus-icon" aria-hidden="true">Z</span><strong>ZEUS</strong></div>
             <div class="mission-window-actions">
               <button type="button" data-desktop="minimize" aria-label="Minimizar ZEUS"><span aria-hidden="true">−</span></button>
               <button type="button" data-desktop="maximize" aria-label="Maximizar ZEUS"><span aria-hidden="true">□</span></button>
