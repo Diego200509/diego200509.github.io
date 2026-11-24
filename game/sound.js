@@ -1,3 +1,5 @@
+import { createDistrictScore } from "./soundtrack.js";
+
 const notes = {
   wake: [[67, 0, .8, "sine"], [112, .82, .28, "triangle"]],
   warning: [[300, 0, .16], [410, .18, .22]],
@@ -14,6 +16,9 @@ export function createDistrictSound() {
   let master;
   let level = .55;
   let ambient;
+  let score;
+  let scoreBus;
+  let musicVolume = .65;
   return {
     start() {
       const Audio = window.AudioContext || window.webkitAudioContext;
@@ -27,6 +32,10 @@ export function createDistrictSound() {
           ambient = context.createGain();
           ambient.gain.value = 0;
           ambient.connect(master);
+          scoreBus = context.createGain();
+          scoreBus.connect(master);
+          score = createDistrictScore(context, scoreBus);
+          score.level(musicVolume);
           const hum = context.createOscillator();
           hum.frequency.value = 49;
           hum.connect(ambient);
@@ -39,9 +48,20 @@ export function createDistrictSound() {
       level = value;
       if (master) master.gain.setTargetAtTime(level, context.currentTime, .025);
     },
+    musicLevel(value) {
+      musicVolume = value;
+      score?.level(value);
+    },
+    music(state) { score?.update(state); },
     ambience(value) { if (ambient) ambient.gain.setTargetAtTime(value, context.currentTime, .13); },
     cue(id) {
       if (context?.state !== "running" || !notes[id]) return;
+      if (id === "warning") {
+        const now = context.currentTime;
+        scoreBus.gain.cancelScheduledValues(now);
+        scoreBus.gain.setTargetAtTime(.46, now, .026);
+        scoreBus.gain.setTargetAtTime(1, now + .40, .22);
+      }
       for (const [frequency, delay, duration, type = "sine"] of notes[id]) {
         const time = context.currentTime + delay;
         const tone = context.createOscillator();

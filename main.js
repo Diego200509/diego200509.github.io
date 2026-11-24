@@ -3,9 +3,9 @@ import { experience, experienceMarkup } from "./experience.js";
 import { setupMission } from "./game/mission.js?v=interiors";
 import { createLookInput } from "./game/look-input.js?v=campaign";
 import { levels, loadCampaign, stations as destinations } from "./game/campaign.js?v=levels";
-import { campaignText } from "./game/campaign-text.js?v=controls";
+import { campaignText } from "./game/campaign-text.js?v=soundtrack";
 import { setupDevices } from "./game/devices.js?v=interiors";
-import { createDistrictSound } from "./game/sound.js";
+import { createDistrictSound } from "./game/sound.js?v=soundtrack";
 import { bindTouchControls } from "./game/touch-input.js";
 import { setupSettingsMenu } from "./game/settings-menu.js";
 import { archiveProjects, renderArchiveCards } from "./project-archive.js";
@@ -58,11 +58,15 @@ const campaign = loadCampaign({
   setItem: (key, value) => localStorage.setItem(key, value)
 });
 const sound = createDistrictSound();
-const preferences = { sensitivity: 1, volume: .55, left: false, mute: false };
+const scoreChapters = { zeus: "workshop", rgb: "plaza", talkapp: "talkapp", traffic: "traffic",
+  expense: "asotema", supply: "asotema", supervisor: "return", power: "generator" };
+let scoreScene = "workshop";
+const preferences = { sensitivity: 1, volume: .55, music: .65, left: false, mute: false };
 try {
   const saved = JSON.parse(localStorage.getItem("district-input"));
   if (Number.isFinite(saved?.sensitivity)) preferences.sensitivity = Math.max(.45, Math.min(2.15, saved.sensitivity));
   if (Number.isFinite(saved?.volume)) preferences.volume = Math.max(0, Math.min(1, saved.volume));
+  if (Number.isFinite(saved?.music)) preferences.music = Math.max(0, Math.min(1, saved.music));
   preferences.left = saved?.left === true;
   preferences.mute = saved?.mute === true;
 } catch {}
@@ -326,7 +330,7 @@ function renderSettings() {
   for (const [id, key] of Object.entries({
     "health-label": "life", "phone-button": "phone", "settings-title": "settings", "settings-button-label": "settings",
     "sensitivity-label": "sensitivity",
-    "left-hand-label": "leftHand", "volume-label": "volume", "mute-label": "mute", "campaign-restart": "restart",
+    "left-hand-label": "leftHand", "volume-label": "volume", "music-label": "music", "mute-label": "mute", "campaign-restart": "restart",
     "restart-copy": "restartConfirm", "restart-yes": "restart", "restart-no": "cancel", "intro-title": "intro",
     "intro-skip": "skip", "touch-fire": "fire", "touch-crouch": "crouch", "touch-reload": "reload",
     "touch-scan": "scan", "touch-charge": "pulse"
@@ -336,9 +340,10 @@ function renderSettings() {
   get("joystick").setAttribute("aria-label", text.move);
   get("game-sensitivity").value = preferences.sensitivity;
   get("game-volume").value = preferences.volume;
+  get("game-music").value = preferences.music;
   get("game-left-hand").checked = preferences.left;
   get("game-mute").checked = preferences.mute;
-  sound.level(preferences.mute ? 0 : preferences.volume);
+  applySoundSettings();
   settingsMenu.render();
 }
 
@@ -406,11 +411,30 @@ function clearWorldInput() {
   world?.clearInput();
 }
 
+function syncWorldSound() {
+  const audible = inGame && !document.hidden;
+  const ducked = !["explore", "wake", "finish"].includes(phase) || anyDialogOpen();
+  if (!ducked) {
+    scoreScene = phase === "wake" ? "wake" : phase === "finish" ? "finale" : scoreChapters[campaign.next()] ?? "restored";
+  }
+  sound.ambience(audible ? (ducked ? .006 : .029) : 0);
+  if (!audible || preferences.mute || !preferences.volume || !preferences.music) {
+    sound.music(null);
+    return;
+  }
+  sound.music({ scene: scoreScene, threat: phase === "explore" ? combatStatus?.threat ?? 0 : 0, ducked });
+}
+
+function applySoundSettings() {
+  sound.level(preferences.mute ? 0 : preferences.volume);
+  sound.musicLevel(preferences.music);
+  syncWorldSound();
+}
+
 function pauseWorld(kind, id) {
   cancelCameraTransition();
   lookInput.release();
   clearWorldInput();
-  sound.ambience(.006);
   return world.pause(kind, id);
 }
 
@@ -423,7 +447,6 @@ function resumeWorld() {
   const duration = reducedMotion.matches ? 0 : 260;
   fadeScene("teleport", duration);
   world.resume(duration);
-  sound.ambience(document.hidden ? 0 : .029);
   if (queuedSignal) {
     showSignal(queuedSignal.id, queuedSignal.level);
     sound.cue("relay");
@@ -479,7 +502,7 @@ async function enterGame() {
     await nextPaint();
     if (request !== openingRequest) return;
     if (!world) {
-      const { createWorld } = await import("./game/world.js?v=robots");
+      const { createWorld } = await import("./game/world.js?v=soundtrack");
       if (request !== openingRequest) return;
       setLoadStage(1);
       await nextPaint();
@@ -496,10 +519,16 @@ async function enterGame() {
           game.dataset.phase = next;
           if (next !== "explore" && next !== "wake") clearWorldInput();
           if (next === "explore" && document.activeElement === get("intro-skip")) focusWorld();
+          syncWorldSound();
           renderControls();
           renderCombat();
         },
-        onStatus(state) { combatStatus = state; renderCombat(); },
+        onStatus(state) {
+          const threatChanged = combatStatus?.threat !== state.threat;
+          combatStatus = state;
+          if (threatChanged) syncWorldSound();
+          renderCombat();
+        },
         onSignal: showSignal,
         onSound: sound.cue,
         onTransition: fadeScene,
@@ -515,6 +544,7 @@ async function enterGame() {
               sound.cue("relay");
             }
           }
+          if (id !== "power") syncWorldSound();
           renderLevel();
           renderControls();
           renderEntry();
@@ -547,7 +577,7 @@ async function enterGame() {
     renderControls();
     renderTarget();
     renderCombat();
-    sound.ambience(.029);
+    syncWorldSound();
     focusWorld();
   } catch (error) {
     if (request !== openingRequest) return;
@@ -571,7 +601,7 @@ function exitGame() {
   cancelCameraTransition();
   lookInput.release();
   clearWorldInput();
-  sound.ambience(0);
+  syncWorldSound();
   for (const dialog of worldDialogs) if (dialog.open) dialog.close();
   world?.stop();
   game.removeAttribute("aria-busy");
@@ -664,11 +694,11 @@ get("restart-yes").addEventListener("click", () => {
   focusWorld();
 });
 
-for (const [id, key] of [["game-sensitivity", "sensitivity"], ["game-volume", "volume"], ["game-left-hand", "left"], ["game-mute", "mute"]]) {
+for (const [id, key] of [["game-sensitivity", "sensitivity"], ["game-volume", "volume"], ["game-music", "music"], ["game-left-hand", "left"], ["game-mute", "mute"]]) {
   get(id).addEventListener("input", ({ target: input }) => {
     preferences[key] = input.type === "checkbox" ? input.checked : Number(input.value);
     try { localStorage.setItem("district-input", JSON.stringify(preferences)); } catch {}
-    sound.level(preferences.mute ? 0 : preferences.volume);
+    applySoundSettings();
     renderControls();
   });
 }
@@ -712,8 +742,10 @@ document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     lookInput.release();
     clearWorldInput();
+  } else if (inGame) {
+    sound.start();
   }
-  sound.ambience(document.hidden || !inGame ? 0 : inputActive() ? .029 : .006);
+  syncWorldSound();
   renderControls();
 });
 document.addEventListener("pointerdown", event => {

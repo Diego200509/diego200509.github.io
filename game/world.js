@@ -2,7 +2,7 @@ import * as THREE from "../vendor/three.module.min.js";
 import { createAvatar } from "./avatar.js";
 import { createPlayerCamera } from "./camera.js?v=campaign";
 import { createCollision } from "./collision.js?v=robots";
-import { createCombat } from "./combat.js?v=robots";
+import { createCombat } from "./combat.js?v=soundtrack";
 import { generator, seat, stand } from "./district-props.js?v=interiors";
 import { consoles, entrances, roomContains, roomPoint, rooms, supply } from "./interiors.js";
 import { muralColors } from "./mural.js";
@@ -369,7 +369,7 @@ export function createWorld(viewport, campaign, callbacks) {
   }
 
   function reportStatus(height) {
-    const { health, ammo, ammoLimit, reloading, charging, chargeTime, attackWarning, exposed } = combat.status();
+    const { health, ammo, ammoLimit, reloading, charging, chargeTime, attackWarning, exposed, threat } = combat.status();
     let aim = "";
     let enemy = null;
     if (phase === "explore" && campaign.state.emitter && !returnTime) {
@@ -377,7 +377,7 @@ export function createWorld(viewport, campaign, callbacks) {
       aim = hit.weak ? "weak" : hit.robot ? "robot" : hit.fraction < .98 ? "cover" : "";
       if (hit.robot) enemy = { id: hit.robot.id, hp: hit.robot.hp, max: hit.robot.design.hp };
     }
-    const state = { health, ammo, ammoLimit, reloading, charging, charged: chargeTime >= .56, attackWarning, exposed, aim, enemy,
+    const state = { health, ammo, ammoLimit, reloading, charging, charged: chargeTime >= .56, attackWarning, exposed, threat, aim, enemy,
       sprinting, crouching, damage: damaged > 0 ? damageDirection : null };
     const key = JSON.stringify(state);
     if (key === previousStatus) return;

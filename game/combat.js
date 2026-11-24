@@ -117,6 +117,7 @@ export function createCombat(scene, collision, campaign, events) {
   let recoil = 0;
   let attackWarning = false;
   let exposed = false;
+  let threat = 0;
   let activeWave = -1;
 
   const armored = robot => robot.id === "armor" || robot.id === "supervisor";
@@ -419,6 +420,9 @@ export function createCombat(scene, collision, campaign, events) {
     if (facesPlayer) turnToward(robot, position.x - body.position.x, position.z - body.position.z, dt, 12);
     const warning = robot.mode === "prepare";
     const vulnerable = armored(robot) && moduleOpen(robot);
+    if (hostile && robot.mode !== "patrol" && robot.alertUntil > age) {
+      threat = Math.max(threat, robot.id === "supervisor" ? 2 : 1);
+    }
     attackWarning ||= warning && clearShot;
     exposed ||= vulnerable && hostile && (seesPlayer || clearShot);
     robot.assembly.visible = vulnerable;
@@ -437,12 +441,13 @@ export function createCombat(scene, collision, campaign, events) {
   }
 
   return {
-    status: () => ({ health, ammo, ammoLimit, reloading: reloadTimer > 0, charging, chargeTime, recoil, attackWarning, exposed }),
+    status: () => ({ health, ammo, ammoLimit, reloading: reloadTimer > 0, charging, chargeTime, recoil, attackWarning, exposed, threat }),
     refill,
     reload,
     reset() {
       refill();
       charging = false;
+      threat = 0;
       chargeTime = fireTimer = scannerTimer = recoil = 0;
       for (const item of pulses) { item.mesh.visible = false; item.life = 0; }
       for (const robot of robots) {
@@ -508,6 +513,7 @@ export function createCombat(scene, collision, campaign, events) {
       }
       if (charging) chargeTime = Math.min(.56, chargeTime + dt);
       attackWarning = exposed = false;
+      threat = 0;
       activeWave = campaign.done("supervisor") ? -1 :
         ["zeus", "rgb", "talkapp", "traffic", "supply"].findLastIndex(result => campaign.done(result));
       const target = position.clone().addScaledVector(up, height - .35);
