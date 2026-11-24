@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="./styles.css?v=controls">
   <link rel="stylesheet" href="./campaign.css?v=controls">
   <link rel="stylesheet" href="./site-header.css?v=section-links">
-  <link rel="stylesheet" href="./landing.css?v=header">
+  <link rel="stylesheet" href="./landing.css?v=layout">
   <link rel="stylesheet" href="./archive.css?v=header">
   <link rel="stylesheet" href="./site-footer.css?v=header">
   <link rel="stylesheet" href="./district-preview.css?v=palette">
@@ -19,8 +19,8 @@
   <link rel="stylesheet" href="./traffic-demo.css?v=header">
   <link rel="stylesheet" href="./workstation.css?v=desktop">
   <script type="importmap">{"imports":{"./content.js":"./content.js?v=workstation","./experience.js":"./experience.js?v=visual","./project-archive.js":"./project-archive.js?v=sicop","./site-footer.js":"./site-footer.js?v=inline"}}</script>
-<script type="module" src="./main.js?v=soundtrack"></script>
-  <script type="module" src="./landing.js?v=header"></script>
+  <script type="module" src="./main.js?v=soundtrack"></script>
+  <script type="module" src="./landing.js?v=layout"></script>
   <script type="module" src="./district-preview.js?v=2"></script>
   <script type="module" src="./asotema-demo.js"></script>
   <script type="module" src="./rgb-demo.js?v=case-studies"></script>
@@ -91,17 +91,17 @@
     </section>
     <section class="featured content landing-chapter" id="featured" aria-labelledby="featured-title">
       <span class="chapter-seam" aria-hidden="true"></span>
-      <div data-reveal>
+      <div class="featured-copy" data-reveal>
         <p class="eyebrow featured-label"><svg aria-hidden="true" focusable="false"><use href="./assets/landing-icons.svg#briefcase"></use></svg><span data-t="featured">CASO DESTACADO · AMBACAR</span></p>
         <h2 id="featured-title" data-t="featuredTitle">Gestión de usuarios ZEUS</h2>
         <p data-t="featuredCopy">En mis prácticas trabajé en el módulo de AMBYSOFT para crear y editar usuarios y asignarles agencias, divisiones y roles. Diseñé pantallas y las conecté con los servicios del backend.</p>
         <button type="button" class="button secondary" id="featured-detail" data-t="featuredDetail">Ver mi aporte ↗</button>
       </div>
+      <figure class="featured-preview" data-reveal="from-left">
+        <img src="./assets/ambacar-taller.webp" width="960" height="568" loading="lazy" decoding="async" alt="Entrada abierta del taller de Ambacar en el mundo 3D" data-alt="workshopPreviewAlt">
+        <figcaption data-t="workshopPreview">Taller de Ambacar en Distrito Cero</figcaption>
+      </figure>
       <div class="featured-flow" data-reveal>
-        <figure class="featured-preview">
-          <img src="./assets/ambacar-taller.webp" width="960" height="568" loading="lazy" decoding="async" alt="Entrada abierta del taller de Ambacar en el mundo 3D" data-alt="workshopPreviewAlt">
-          <figcaption data-t="workshopPreview">Taller de Ambacar en Distrito Cero</figcaption>
-        </figure>
         <h3 data-t="flowTitle">Registro de un usuario</h3>
         <ol class="flow-steps">
           <li>
@@ -134,7 +134,7 @@
       </header>
       <div class="project-grid" id="project-grid" data-reveal="sequence">
         <article class="project-card" id="asotema-demo" aria-labelledby="asotema-title">
-          <div class="asotema-preview">
+          <div class="project-stage asotema-preview">
             <div class="asotema-preview-header">
               <span data-t="asotemaSimulation">Simulación</span>
               <button id="asotema-reset" type="button" aria-label="Reiniciar simulación" data-aria="asotemaReset" aria-disabled="true" disabled>↺</button>
@@ -162,7 +162,7 @@
           </div>
         </article>
         <article class="project-card" id="talkapp" aria-labelledby="talkapp-title">
-          <div class="talkapp-preview">
+          <div class="project-stage talkapp-preview">
             <div class="talkapp-preview-label" data-t="talkPreview">Chat de ejemplo</div>
             <div class="talkapp-conversation" id="talkapp-conversation" aria-live="polite">
               <div data-talk-chat="direct">
@@ -187,7 +187,7 @@
           </div>
         </article>
         <article class="project-card traffic-card" id="traffic-demo" aria-labelledby="traffic-title">
-          <div class="traffic-scene" aria-hidden="true">
+          <div class="project-stage traffic-scene" aria-hidden="true">
             <div class="traffic-road traffic-road-vertical"></div>
             <div class="traffic-road traffic-road-horizontal"></div>
             <div class="traffic-crosswalk traffic-crosswalk-vertical"></div>
@@ -237,7 +237,7 @@
           </div>
         </article>
         <article class="project-card rgb-card" id="rgb-demo" aria-labelledby="rgb-title">
-          <div class="rgb-preview">
+          <div class="project-stage rgb-preview">
             <img id="rgb-original" src="./assets/rgb-frutas.webp" width="880" height="660" loading="lazy" alt="Frutas de varios colores en cestas" data-alt="rgbSampleAlt">
             <canvas id="rgb-result" width="880" height="660" aria-hidden="true"></canvas>
             <span class="rgb-side rgb-before" data-t="rgbBefore">Original</span>
@@ -289,17 +289,6 @@
     <section class="profile content landing-chapter" id="profile" aria-labelledby="profile-title">
       <span class="chapter-seam" aria-hidden="true"></span>
       <header class="section-title" data-reveal><h2 id="profile-title" data-t="profile">Sobre mí</h2></header>
-      <div class="profile-media" data-reveal>
-        <figure class="profile-portrait">
-          <img src="./assets/diego-jijon.jpg" width="460" height="460" alt="Retrato de Diego Jijón" data-alt="profilePhotoAlt" loading="lazy" decoding="async">
-          <figcaption><strong>Diego Jijón</strong><span data-t="profileLocation">Ambato, Ecuador</span></figcaption>
-        </figure>
-        <dl class="profile-stats" aria-label="Cifras de mi trabajo" data-aria="profileStats">
-          <div><dt data-t="profileRepos">Repos públicos</dt><dd>40</dd></div>
-          <div><dt data-t="profileDemos">Demos interactivas</dt><dd>4</dd></div>
-          <div><dt data-t="profilePulls">Pull requests fusionados</dt><dd>16+</dd></div>
-        </dl>
-      </div>
       <div class="profile-story" data-reveal>
         <p class="profile-availability" data-t="profileRemote">Abierto a oportunidades remotas</p>
         <p class="profile-copy profile-intro" data-t="profileIntro">Estudio Ingeniería en Software en la Universidad Técnica de Ambato. Me gusta conectar interfaces con APIs y bases de datos.</p>
@@ -326,6 +315,17 @@
           <a class="button primary" href="./cv.html" id="cv-link"><svg aria-hidden="true" focusable="false"><use href="./assets/landing-icons.svg#document"></use></svg><span data-t="cv">Ver CV</span></a>
           <a class="button secondary" href="https://www.linkedin.com/in/diego-jij%C3%B3n-undefined-981508311/" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true" focusable="false"><use href="./assets/landing-icons.svg#linkedin"></use></svg>LinkedIn ↗</a>
         </div>
+      </div>
+      <div class="profile-media" data-reveal="from-left">
+        <figure class="profile-portrait">
+          <img src="./assets/diego-jijon.jpg" width="460" height="460" alt="Retrato de Diego Jijón" data-alt="profilePhotoAlt" loading="lazy" decoding="async">
+          <figcaption><strong>Diego Jijón</strong><span data-t="profileLocation">Ambato, Ecuador</span></figcaption>
+        </figure>
+        <dl class="profile-stats" aria-label="Cifras de mi trabajo" data-aria="profileStats">
+          <div><dt data-t="profileRepos">Repos públicos</dt><dd>40</dd></div>
+          <div><dt data-t="profileDemos">Demos interactivas</dt><dd>4</dd></div>
+          <div><dt data-t="profilePulls">Pull requests fusionados</dt><dd>16+</dd></div>
+        </dl>
       </div>
     </section>
     <section class="content landing-chapter" id="technologies" aria-labelledby="technologies-title">

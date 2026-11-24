@@ -1,4 +1,5 @@
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+const wideLayout = matchMedia("(min-width: 761px)");
 const header = document.querySelector("#top");
 const main = document.querySelector("#main");
 const navigation = [...header.querySelectorAll("nav a[href^='#']")]
@@ -12,15 +13,16 @@ let highlightedChapter = null;
 
 function reveal(target) {
   if (reducedMotion.matches || target.contains(document.activeElement)) return;
-  const sequence = target.dataset.reveal === "sequence";
-  const items = sequence ? [...target.children] : [target];
+  const mode = target.dataset.reveal;
+  const items = mode === "sequence" ? [...target.children] : [target];
+  const origin = mode === "from-left" && wideLayout.matches ? "-20px 0" : "0 16px";
   items.forEach((item, index) => {
     const animation = item.animate(
       [
-        { opacity: .24, translate: "0 30px" },
+        { opacity: .4, translate: origin },
         { opacity: 1, translate: "0 0" }
       ],
-      { duration: 740, delay: Math.min(index, 3) * 105, easing, fill: "backwards" }
+      { duration: 620, delay: Math.min(index, 3) * 78, easing, fill: "backwards" }
     );
     chapterAnimations.add(animation);
     const forget = () => chapterAnimations.delete(animation);
@@ -36,7 +38,7 @@ if ("IntersectionObserver" in window && "animate" in Element.prototype) {
       observer.unobserve(target);
       reveal(target);
     }
-  }, { rootMargin: "0px 0px -11% 0px" });
+  }, { rootMargin: "0px 0px -6% 0px" });
 
   for (const item of revealItems) {
     if (item.getBoundingClientRect().top > innerHeight * .83) observer.observe(item);
