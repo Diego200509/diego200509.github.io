@@ -1,6 +1,6 @@
 const email = "diegojijon2005@gmail.com";
 const profiles = [
-  { name: "LinkedIn", icon: "linkedin", url: "https://www.linkedin.com/in/diego-jij%C3%B3n-undefined-981508311/" },
+  { name: "LinkedIn", icon: "linkedin", url: "https://www.linkedin.com/in/diegojijon/" },
   { name: "GitHub", icon: "github", url: "https://github.com/Diego200509" },
   { name: "Instagram", icon: "instagram", url: "https://www.instagram.com/diegojijon09/" }
 ];
