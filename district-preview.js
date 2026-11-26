@@ -8,7 +8,8 @@ const trailerToggle = document.querySelector("#trailer-toggle");
 const trailerError = document.querySelector("#trailer-error");
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const openingKey = "district-opening-seen";
-const openingVersion = "2";
+const openingVersion = "3";
+const openingTime = 6000;
 
 function rememberOpening() {
   try { sessionStorage.setItem(openingKey, openingVersion); } catch {}
@@ -29,7 +30,7 @@ function startOpening() {
 
   const listeners = new AbortController();
   const options = { signal: listeners.signal };
-  let timeout = setTimeout(() => dismiss(true), 2200);
+  const timeout = setTimeout(() => dismiss(true), openingTime + 500);
 
   function hide() {
     opening.hidden = true;
@@ -53,20 +54,13 @@ function startOpening() {
     }
   }
 
-  function skipOpening() {
-    rememberOpening();
-    dismiss();
-  }
-
   openingVideo.addEventListener("playing", () => {
     if (document.hidden || !atTop()) return dismiss();
-    clearTimeout(timeout);
     opening.dataset.playing = "";
-    rememberOpening();
-    timeout = setTimeout(() => dismiss(true), 2300);
   }, { ...options, once: true });
   openingVideo.addEventListener("ended", () => dismiss(true), options);
-  skip.addEventListener("click", skipOpening, options);
+  openingVideo.addEventListener("error", () => { delete opening.dataset.playing; }, options);
+  skip.addEventListener("click", dismiss, options);
   window.addEventListener("pointerdown", (event) => {
     if (!skip.contains(event.target)) dismiss();
   }, { ...options, capture: true });
@@ -74,7 +68,7 @@ function startOpening() {
     if (!opening.contains(event.target)) dismiss();
   }, options);
   window.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") skipOpening();
+    if (event.key === "Escape") dismiss();
   }, options);
   window.addEventListener("hashchange", dismiss, options);
   window.addEventListener("scroll", () => {
@@ -88,8 +82,10 @@ function startOpening() {
   }, options);
 
   openingVideo.muted = true;
+  opening.style.setProperty("--opening-time", `${openingTime}ms`);
+  rememberOpening();
   opening.hidden = false;
-  openingVideo.src = "./assets/distrito-intro.mp4";
+  openingVideo.src = "./assets/distrito-intro.mp4?v=district-media";
   openingVideo.play().catch(() => {});
 }
 
@@ -101,7 +97,8 @@ function toggleTrailer(show) {
   trailerError.hidden = true;
   trailer.hidden = !show;
   if (show) {
-    trailer.src = "./assets/distrito-trailer.mp4";
+    trailer.poster = "./assets/distrito-trailer.webp?v=district-media";
+    trailer.src = "./assets/distrito-trailer.mp4?v=district-media";
     trailer.play().catch(() => {});
   } else {
     trailer.pause();

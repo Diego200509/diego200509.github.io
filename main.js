@@ -40,6 +40,7 @@ const arrows = { ArrowUp: "KeyW", ArrowDown: "KeyS" };
 let language = loadLanguage();
 let world;
 let inGame = false;
+let enteredDistrict = false;
 let opening = false;
 let openingRequest = 0;
 let detailId = null;
@@ -482,6 +483,7 @@ async function enterGame() {
   if (inGame || opening) return;
   opening = true;
   const request = ++openingRequest;
+  const showUntil = performance.now() + (enteredDistrict || reducedMotion.matches ? 0 : 3200);
   sound.start();
 
   get("game-error").hidden = true;
@@ -566,11 +568,15 @@ async function enterGame() {
     updateDistrictLabels();
     await world.prepare();
     if (request !== openingRequest) return;
+    const remaining = showUntil - performance.now();
+    if (remaining > 0) await new Promise(resolve => setTimeout(resolve, remaining));
+    if (request !== openingRequest) return;
     world.start();
     setLoadStage(3);
     await nextPaint();
     if (request !== openingRequest) return;
     inGame = true;
+    enteredDistrict = true;
     loading.hidden = true;
     game.removeAttribute("aria-busy");
     cameraButton.disabled = false;

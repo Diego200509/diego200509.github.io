@@ -7,21 +7,21 @@
   <meta name="theme-color" content="#17191c">
   <title>Distrito Cero · Diego Jijón</title>
   <link rel="icon" href="./assets/mark.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=controls">
+  <link rel="stylesheet" href="./styles.css?v=district-media">
   <link rel="stylesheet" href="./campaign.css?v=controls">
   <link rel="stylesheet" href="./site-header.css?v=section-links">
   <link rel="stylesheet" href="./landing.css?v=layout">
   <link rel="stylesheet" href="./archive.css?v=header">
   <link rel="stylesheet" href="./site-footer.css?v=header">
-  <link rel="stylesheet" href="./district-preview.css?v=palette">
+  <link rel="stylesheet" href="./district-preview.css?v=district-media">
   <link rel="stylesheet" href="./asotema-demo.css?v=header">
   <link rel="stylesheet" href="./rgb-demo.css?v=header">
   <link rel="stylesheet" href="./traffic-demo.css?v=header">
   <link rel="stylesheet" href="./workstation.css?v=desktop">
-  <script type="importmap">{"imports":{"./content.js":"./content.js?v=workstation","./experience.js":"./experience.js?v=visual","./project-archive.js":"./project-archive.js?v=sicop","./site-footer.js":"./site-footer.js?v=inline"}}</script>
-  <script type="module" src="./main.js?v=soundtrack"></script>
+  <script type="importmap">{"imports":{"./content.js":"./content.js?v=district-media","./experience.js":"./experience.js?v=visual","./project-archive.js":"./project-archive.js?v=sicop","./site-footer.js":"./site-footer.js?v=inline"}}</script>
+  <script type="module" src="./main.js?v=district-media"></script>
   <script type="module" src="./landing.js?v=layout"></script>
-  <script type="module" src="./district-preview.js?v=2"></script>
+  <script type="module" src="./district-preview.js?v=district-media"></script>
   <script type="module" src="./asotema-demo.js"></script>
   <script type="module" src="./rgb-demo.js?v=case-studies"></script>
   <script type="module" src="./traffic-demo.js?v=case-studies"></script>
@@ -33,6 +33,7 @@
     <div class="district-opening-brand" aria-hidden="true">
       <img src="./assets/mark.svg" width="38" height="38" alt="">
       <p>Distrito <em>Cero</em></p>
+      <span class="district-opening-subtitle" data-t="openingSubtitle">Después del apagón</span>
       <span class="district-opening-line"></span>
     </div>
   </div>
@@ -79,7 +80,7 @@
           <div class="portrait-frame">
             <img src="./assets/distrito-retrato.webp" width="1100" height="860" alt="Retrato 3D del rostro de Diego Jijón" data-alt="avatarAlt" fetchpriority="high">
             <video id="district-trailer" controls playsinline preload="none" aria-label="Tráiler de Distrito Cero" data-aria="trailerLabel" aria-describedby="trailer-description" hidden></video>
-            <p class="sr-only" id="trailer-description" data-t="trailerDescription">Diego recorre la plaza. Una vista aérea muestra el distrito y, frente al Laboratorio RGB, los prismas devuelven el color al mural.</p>
+            <p class="sr-only" id="trailer-description" data-t="trailerDescription">Recorrido por el taller de Ambacar, el mural de Laboratorio RGB, TalkApp, el cruce de Semáforo IA y ASOTEMA. Un robot supervisor patrulla antes de que el distrito recupere la luz.</p>
             <p class="district-trailer-error" id="trailer-error" role="status" data-t="trailerError" hidden>No se pudo reproducir el tráiler.</p>
           </div>
           <figcaption>
@@ -98,7 +99,7 @@
         <button type="button" class="button secondary" id="featured-detail" data-t="featuredDetail">Ver mi aporte ↗</button>
       </div>
       <figure class="featured-preview" data-reveal="from-left">
-        <img src="./assets/ambacar-taller.webp" width="960" height="568" loading="lazy" decoding="async" alt="Entrada abierta del taller de Ambacar en el mundo 3D" data-alt="workshopPreviewAlt">
+        <img src="./assets/ambacar-taller.webp?v=district-media" width="960" height="600" loading="lazy" decoding="async" alt="Entrada abierta del taller de Ambacar en el mundo 3D" data-alt="workshopPreviewAlt">
         <figcaption data-t="workshopPreview">Taller de Ambacar en Distrito Cero</figcaption>
       </figure>
       <div class="featured-flow" data-reveal>
@@ -499,14 +500,9 @@
       </div>
     </header>
     <div id="loading" class="loading" data-phase="0" hidden>
-      <div class="loading-plan" aria-hidden="true">
-        <span class="plan-road"></span>
-        <span class="plan-block plan-lab"></span><span class="plan-block plan-hall"></span>
-        <span class="plan-block plan-comms"></span><span class="plan-block plan-garage"></span>
-        <span class="plan-block plan-crossing"></span><span class="plan-square"></span>
-      </div>
       <div class="loading-copy">
-        <p class="eyebrow" data-t="district">DISTRITO CERO</p>
+        <img src="./assets/mark.svg" width="34" height="34" alt="">
+        <p class="loading-title" data-t="district">DISTRITO CERO</p>
         <p id="loading-stage" role="status"></p>
         <progress id="loading-progress" max="3" value="0" aria-label="Carga del distrito" data-aria="loadingProgress"></progress>
       </div>

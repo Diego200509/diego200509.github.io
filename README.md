@@ -2,6 +2,29 @@
 
 Portafolio bilingüe de Diego Jijón. La campaña 3D **Después del apagón** conecta Ambacar, Laboratorio RGB, TalkApp, Semáforo IA y ASOTEMA. El menú de proyectos y el CV se pueden consultar desde la portada.
 
+## Vista previa
+
+![Portada del portafolio de Diego Jijón con acceso a la campaña 3D, el tráiler y los proyectos](./assets/portafolio-portada.webp)
+
+<details>
+<summary>Ver la nueva pantalla de carga</summary>
+
+![Intro de Distrito Cero con una vista aérea del barrio, la barra de progreso y el botón Saltar](./assets/portafolio-carga.webp)
+
+</details>
+
+### Tráiler de Después del apagón
+
+[![Distrito Cero restaurado, con la plaza y las estaciones vistas desde el aire. Ver el tráiler.](./assets/distrito-trailer.webp)](./assets/distrito-trailer.mp4)
+
+El tráiler recorre las cinco estaciones de la campaña y muestra el regreso de la luz al distrito. [Ver el tráiler en MP4](./assets/distrito-trailer.mp4)
+
+### Capturas de la campaña
+
+| Taller de Ambacar | Laboratorio RGB |
+| --- | --- |
+| ![Entrada abierta del taller de Ambacar en Distrito Cero](./assets/ambacar-taller.webp) | ![Mural restaurado frente al Laboratorio RGB en Distrito Cero](./assets/distrito-laboratorio-rgb.webp) |
+
 ## Controles
 
 La guía de teclado, ratón y pantalla táctil está en **Ajustes → Controles** dentro del juego.
