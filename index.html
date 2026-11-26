@@ -13,29 +13,32 @@
   <link rel="stylesheet" href="./landing.css?v=layout">
   <link rel="stylesheet" href="./archive.css?v=header">
   <link rel="stylesheet" href="./site-footer.css?v=header">
-  <link rel="stylesheet" href="./district-preview.css?v=district-media">
+  <link rel="stylesheet" href="./district-preview.css?v=trailer-opening">
   <link rel="stylesheet" href="./asotema-demo.css?v=header">
   <link rel="stylesheet" href="./rgb-demo.css?v=header">
   <link rel="stylesheet" href="./traffic-demo.css?v=header">
   <link rel="stylesheet" href="./workstation.css?v=desktop">
-  <script type="importmap">{"imports":{"./content.js":"./content.js?v=district-media","./experience.js":"./experience.js?v=visual","./project-archive.js":"./project-archive.js?v=sicop","./site-footer.js":"./site-footer.js?v=inline"}}</script>
+  <script type="importmap">{"imports":{"./content.js":"./content.js?v=trailer-opening","./experience.js":"./experience.js?v=visual","./project-archive.js":"./project-archive.js?v=sicop","./site-footer.js":"./site-footer.js?v=inline"}}</script>
   <script type="module" src="./main.js?v=district-media"></script>
   <script type="module" src="./landing.js?v=layout"></script>
-  <script type="module" src="./district-preview.js?v=district-media"></script>
+  <script type="module" src="./district-preview.js?v=trailer-opening"></script>
   <script type="module" src="./asotema-demo.js"></script>
   <script type="module" src="./rgb-demo.js?v=case-studies"></script>
   <script type="module" src="./traffic-demo.js?v=case-studies"></script>
 </head>
 <body>
   <div class="district-opening" id="district-opening" role="region" aria-label="Intro de Distrito Cero" data-aria="openingLabel" hidden>
-    <video id="opening-video" muted playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
-    <button class="district-skip" id="opening-skip" type="button" data-t="skipOpening">Saltar</button>
+    <video id="opening-video" playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+    <div class="district-opening-actions">
+      <button id="opening-sound" type="button" data-t="enableOpeningSound" hidden>Activar sonido</button>
+      <button id="opening-skip" type="button" data-t="skipOpening">Saltar</button>
+    </div>
     <div class="district-opening-brand" aria-hidden="true">
       <img src="./assets/mark.svg" width="38" height="38" alt="">
       <p>Distrito <em>Cero</em></p>
       <span class="district-opening-subtitle" data-t="openingSubtitle">Después del apagón</span>
-      <span class="district-opening-line"></span>
     </div>
+    <span class="district-opening-line" aria-hidden="true"></span>
   </div>
   <a class="skip" href="#projects" data-t="skip">Ir a proyectos</a>
   <header class="site-header" id="top">

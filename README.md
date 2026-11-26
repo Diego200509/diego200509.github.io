@@ -9,7 +9,9 @@ Portafolio bilingüe de Diego Jijón. La campaña 3D **Después del apagón** co
 <details>
 <summary>Ver la nueva pantalla de carga</summary>
 
-![Intro de Distrito Cero con una vista aérea del barrio, la barra de progreso y el botón Saltar](./assets/portafolio-carga.webp)
+![Tráiler de bienvenida a Distrito Cero con controles para el sonido y para saltarlo](./assets/portafolio-carga.webp)
+
+La portada reproduce el tráiler completo al abrirla. Puedes activar la música o pulsar **Saltar** para entrar directamente.
 
 </details>
 

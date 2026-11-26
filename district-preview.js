@@ -3,13 +3,15 @@ import { translations } from "./content.js";
 const opening = document.querySelector("#district-opening");
 const openingVideo = document.querySelector("#opening-video");
 const skip = document.querySelector("#opening-skip");
+const openingSound = document.querySelector("#opening-sound");
 const trailer = document.querySelector("#district-trailer");
 const trailerToggle = document.querySelector("#trailer-toggle");
 const trailerError = document.querySelector("#trailer-error");
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const openingKey = "district-opening-seen";
-const openingVersion = "3";
-const openingTime = 6000;
+const openingVersion = "4";
+const trailerSource = "./assets/distrito-trailer.mp4?v=district-media";
+const openingStallTimeout = 7000;
 
 function rememberOpening() {
   try { sessionStorage.setItem(openingKey, openingVersion); } catch {}
@@ -30,7 +32,30 @@ function startOpening() {
 
   const listeners = new AbortController();
   const options = { signal: listeners.signal };
-  const timeout = setTimeout(() => dismiss(true), openingTime + 500);
+  let timeout;
+  let lastTime = 0;
+
+  function waitForPlayback() {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => dismiss(true), openingStallTimeout);
+  }
+
+  function updateSoundLabel() {
+    const key = openingVideo.muted ? "enableOpeningSound" : "disableOpeningSound";
+    openingSound.dataset.t = key;
+    openingSound.textContent = translations[document.documentElement.lang][key];
+  }
+
+  async function playOpening() {
+    try {
+      await openingVideo.play();
+    } catch (error) {
+      if (listeners.signal.aborted) return;
+      if (error.name !== "NotAllowedError") return dismiss(true);
+      openingVideo.muted = true;
+      try { await openingVideo.play(); } catch { dismiss(true); }
+    }
+  }
 
   function hide() {
     opening.hidden = true;
@@ -57,13 +82,25 @@ function startOpening() {
   openingVideo.addEventListener("playing", () => {
     if (document.hidden || !atTop()) return dismiss();
     opening.dataset.playing = "";
+    updateSoundLabel();
+    openingSound.hidden = false;
+    waitForPlayback();
   }, { ...options, once: true });
+  openingVideo.addEventListener("timeupdate", () => {
+    const { currentTime, duration } = openingVideo;
+    if (currentTime <= lastTime || !Number.isFinite(duration) || duration <= 0) return;
+    lastTime = currentTime;
+    opening.style.setProperty("--opening-progress", Math.min(1, currentTime / duration));
+    waitForPlayback();
+  }, options);
   openingVideo.addEventListener("ended", () => dismiss(true), options);
-  openingVideo.addEventListener("error", () => { delete opening.dataset.playing; }, options);
+  openingVideo.addEventListener("error", () => dismiss(true), options);
+  openingVideo.addEventListener("volumechange", updateSoundLabel, options);
+  openingSound.addEventListener("click", async () => {
+    openingVideo.muted = !openingVideo.muted;
+    try { await openingVideo.play(); } catch { openingVideo.muted = true; }
+  }, options);
   skip.addEventListener("click", dismiss, options);
-  window.addEventListener("pointerdown", (event) => {
-    if (!skip.contains(event.target)) dismiss();
-  }, { ...options, capture: true });
   window.addEventListener("focusin", (event) => {
     if (!opening.contains(event.target)) dismiss();
   }, options);
@@ -81,12 +118,11 @@ function startOpening() {
     if (reducedMotion.matches) dismiss();
   }, options);
 
-  openingVideo.muted = true;
-  opening.style.setProperty("--opening-time", `${openingTime}ms`);
   rememberOpening();
   opening.hidden = false;
-  openingVideo.src = "./assets/distrito-intro.mp4?v=district-media";
-  openingVideo.play().catch(() => {});
+  openingVideo.src = trailerSource;
+  waitForPlayback();
+  playOpening();
 }
 
 function toggleTrailer(show) {
@@ -98,7 +134,7 @@ function toggleTrailer(show) {
   trailer.hidden = !show;
   if (show) {
     trailer.poster = "./assets/distrito-trailer.webp?v=district-media";
-    trailer.src = "./assets/distrito-trailer.mp4?v=district-media";
+    trailer.src = trailerSource;
     trailer.play().catch(() => {});
   } else {
     trailer.pause();
