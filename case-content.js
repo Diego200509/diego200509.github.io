@@ -16,6 +16,7 @@ export const caseLabels = {
 export const caseDetails = {
   asotema: {
     icon: "document",
+    capture: { src: "./assets/asotema-aplicacion.webp", width: 1296, height: 650 },
     es: {
       headline: "Del aporte del socio al registro contable",
       demoTitle: "Un recorrido por la cuenta del socio",
@@ -29,7 +30,8 @@ export const caseDetails = {
         ["Laravel", "La API guarda el préstamo, calcula las cuotas y registra los movimientos de partida doble."],
         ["MySQL", "Los movimientos se vinculan con la cuenta y la operación que los originó."]
       ],
-      evidence: [["Documentación de préstamos y asientos", "SISTEMA_PRESTAMOS.md"], ["Servicio de préstamos en Laravel", "api/app/Services/PrestamoService.php"]]
+      evidence: [["Documentación de préstamos y asientos", "SISTEMA_PRESTAMOS.md"], ["Servicio de préstamos en Laravel", "api/app/Services/PrestamoService.php"]],
+      capture: "Estado de cuenta en la aplicación de ASOTEMA con depósitos y retiros de un socio ficticio."
     },
     en: {
       headline: "From member contributions to the ledger",
@@ -44,7 +46,8 @@ export const caseDetails = {
         ["Laravel", "The API saves loans, calculates installments, and posts double-entry transactions."],
         ["MySQL", "Each ledger entry is linked to its account and the transaction that created it."]
       ],
-      evidence: [["Loan and ledger documentation", "SISTEMA_PRESTAMOS.md"], ["Laravel loan service", "api/app/Services/PrestamoService.php"]]
+      evidence: [["Loan and ledger documentation", "SISTEMA_PRESTAMOS.md"], ["Laravel loan service", "api/app/Services/PrestamoService.php"]],
+      capture: "An account statement in the ASOTEMA app showing deposits and withdrawals for a fictional member."
     }
   },
   talkapp: {
