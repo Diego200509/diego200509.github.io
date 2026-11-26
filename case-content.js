@@ -49,6 +49,7 @@ export const caseDetails = {
   },
   talkapp: {
     icon: "socketdotio",
+    capture: { src: "./assets/talkapp-aplicacion.webp", width: 1296, height: 720 },
     es: {
       headline: "Del primer mensaje a la videollamada",
       demoTitle: "Sigue el recorrido de un mensaje o llamada",
@@ -62,7 +63,8 @@ export const caseDetails = {
         ["Express y Socket.IO", "El servidor valida el acceso y distribuye mensajes, estados y eventos de señalización."],
         ["MongoDB y WebRTC", "MongoDB conserva el historial. WebRTC negocia el intercambio de audio y video."]
       ],
-      evidence: [["Eventos del chat", "back/socket/chat.handlers.js"], ["Señalización de videollamadas", "back/socket/call.handlers.js"]]
+      evidence: [["Eventos del chat", "back/socket/chat.handlers.js"], ["Señalización de videollamadas", "back/socket/call.handlers.js"]],
+      capture: "Conversación entre dos cuentas de prueba en la aplicación web de TalkApp."
     },
     en: {
       headline: "From the first message to the video call",
@@ -77,7 +79,8 @@ export const caseDetails = {
         ["Express and Socket.IO", "The server validates access and distributes messages, status updates, and signaling events."],
         ["MongoDB and WebRTC", "MongoDB stores history. WebRTC negotiates the exchange of audio and video."]
       ],
-      evidence: [["Chat events", "back/socket/chat.handlers.js"], ["Video call signaling", "back/socket/call.handlers.js"]]
+      evidence: [["Chat events", "back/socket/chat.handlers.js"], ["Video call signaling", "back/socket/call.handlers.js"]],
+      capture: "A conversation between two test accounts in the TalkApp web application."
     }
   },
   traffic: {
@@ -115,6 +118,7 @@ export const caseDetails = {
   },
   rgb: {
     icon: "canvas-api",
+    capture: { src: "./assets/rgb-aplicacion.webp", width: 1480, height: 760 },
     es: {
       headline: "Tres canales, una imagen",
       demoTitle: "Del píxel al histograma",

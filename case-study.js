@@ -1,7 +1,7 @@
 import { loadLanguage, projectPage, projects, saveLanguage, translatePage, translations } from "./content.js";
 import { mountContactFooter } from "./site-footer.js";
 import { mountSiteHeader } from "./site-header.js?v=section-links";
-import { caseDetails, caseLabels } from "./case-content.js?v=sections";
+import { caseDetails, caseLabels } from "./case-content.js?v=project-captures";
 import { caseDemos } from "./case-demos.js";
 
 const study = document.querySelector("#case-study");
@@ -42,6 +42,7 @@ function render(language) {
   const ui = translations[language];
   const labels = caseLabels[language];
   const copy = detail[language];
+  const capture = detail.capture;
   const overview = project[language];
   const name = project.name[language];
   const stack = language === "en" && project.stackEn ? project.stackEn : project.stack;
@@ -100,7 +101,7 @@ function render(language) {
           ${evidenceLink(project.repo + "/commits/main/?author=Diego200509", "github", labels.commits)}
           ${copy.evidence.map(([label, path]) => evidenceLink(project.repo + "/blob/main/" + path, "document", label)).join("")}
         </ul>
-        ${copy.capture ? `<figure class="case-capture"><a href="./assets/rgb-aplicacion.webp" target="_blank" rel="noopener noreferrer"><img src="./assets/rgb-aplicacion.webp" width="1480" height="760" loading="lazy" alt="${copy.capture}"></a><figcaption>${copy.capture}</figcaption></figure>` : ""}
+        ${capture ? `<figure class="case-capture"><a href="${capture.src}" target="_blank" rel="noopener noreferrer"><img src="${capture.src}" width="${capture.width}" height="${capture.height}" loading="lazy" alt="${copy.capture}"></a><figcaption>${copy.capture}</figcaption></figure>` : ""}
       </div>
     </section>
     <section class="case-related" aria-labelledby="case-related-title">
