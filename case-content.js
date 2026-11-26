@@ -88,6 +88,7 @@ export const caseDetails = {
   },
   traffic: {
     icon: "python",
+    capture: { src: "./assets/semaforo-ia-aplicacion.webp", width: 1812, height: 650 },
     es: {
       headline: "Cómo cambia una cola cuando el verde se adapta",
       demoTitle: "Dos semáforos, las mismas llegadas",
@@ -101,7 +102,8 @@ export const caseDetails = {
         ["Control difuso", "Una base de reglas combina las entradas para proponer la duración de la fase verde."],
         ["Algoritmo genético", "La evaluación usa métricas de espera y cola para comparar configuraciones del controlador."]
       ],
-      evidence: [["Controlador difuso", "difuso/controlador.py"], ["Función de evaluación genética", "genetico/fitness.py"]]
+      evidence: [["Controlador difuso", "difuso/controlador.py"], ["Función de evaluación genética", "genetico/fitness.py"]],
+      capture: "Simulador de escritorio en Pygame a los 48 segundos de tráfico pico. Control de tiempo fijo a la izquierda y control difuso adaptativo con parámetros base a la derecha."
     },
     en: {
       headline: "What happens to a queue when green time adapts?",
@@ -116,7 +118,8 @@ export const caseDetails = {
         ["Fuzzy control", "A rule base combines the inputs to propose how long the green phase should last."],
         ["Genetic algorithm", "The fitness function uses waiting and queue metrics to compare controller configurations."]
       ],
-      evidence: [["Fuzzy controller", "difuso/controlador.py"], ["Genetic fitness function", "genetico/fitness.py"]]
+      evidence: [["Fuzzy controller", "difuso/controlador.py"], ["Genetic fitness function", "genetico/fitness.py"]],
+      capture: "Pygame desktop simulator at 48 seconds of peak traffic. Fixed-time control on the left and adaptive fuzzy control with baseline settings on the right."
     }
   },
   rgb: {
